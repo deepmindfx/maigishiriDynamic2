@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Filter, Ban as Bank, Trash2, AlertTriangle, User, Mail, Phone, CreditCard, RefreshCw, Eye, EyeOff, Shield } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { formatDate } from '../../lib/utils';
 
 type VirtualAccount = {
@@ -20,6 +21,7 @@ type VirtualAccount = {
 const VirtualAccountManagement: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { siteName } = useAppSettingsStore();
   const [virtualAccounts, setVirtualAccounts] = useState<VirtualAccount[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

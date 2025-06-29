@@ -4,12 +4,14 @@ import { ArrowLeft, AlertCircle, Clock, Copy, RefreshCw, CreditCard, Wallet, Ban
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import { useAuthStore } from '../../store/authStore';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { formatCurrency } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 
 const FundWalletPage: React.FC = () => {
   const navigate = useNavigate();
   const { user, refreshUserData } = useAuthStore();
+  const { siteName } = useAppSettingsStore();
   const [copied, setCopied] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [fundingCharges, setFundingCharges] = useState({
@@ -190,7 +192,7 @@ const FundWalletPage: React.FC = () => {
                 <div className="mb-4">
                   <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Account Name</p>
                   <p className="font-medium text-gray-900 dark:text-white">
-                    Haaman Network - {user.name}
+                    {siteName} - {user.name}
                   </p>
                 </div>
 
@@ -404,7 +406,7 @@ const FundWalletPage: React.FC = () => {
                     Please contact our support team to arrange a manual wallet funding.
                   </p>
                   <p className="text-sm font-medium text-[#0F9D58] mt-2">
-                    support@haamannetwork.com
+                    support@example.com
                   </p>
                 </div>
               </div>
@@ -421,7 +423,7 @@ const FundWalletPage: React.FC = () => {
             If you have any questions about funding your wallet, please contact our support team.
           </p>
           <p className="text-sm text-[#0F9D58] font-medium mt-1">
-            support@haamannetwork.com
+            support@example.com
           </p>
         </div>
       </div>

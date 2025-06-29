@@ -36,6 +36,19 @@ serve(async (req) => {
       throw new Error("Missing required user information");
     }
 
+    // Get site name from admin settings
+    const { data: siteNameSetting, error: siteNameError } = await supabase
+      .from('admin_settings')
+      .select('value')
+      .eq('key', 'site_name')
+      .single();
+
+    const siteName = siteNameSetting?.value || 'Haaman Network';
+
+    if (siteNameError) {
+      console.log("Error fetching site name, using default:", siteNameError);
+    }
+
     // Generate a unique transaction reference
     const txRef = `haaman-va-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
@@ -49,7 +62,7 @@ serve(async (req) => {
       phonenumber: phoneNumber || "",
       firstname: firstName,
       lastname: lastName,
-      narration: `Haaman Network - ${firstName} ${lastName}`,
+      narration: `${siteName} - ${firstName} ${lastName}`,
       is_permanent: isPermanent,
     };
 

@@ -38,18 +38,21 @@ import VirtualAccountManagement from './pages/admin/VirtualAccountManagement';
 import SupportTicketsManagement from './pages/admin/SupportTicketsManagement';
 
 import { useAuthStore } from './store/authStore';
+import { useAppSettingsStore } from './store/appSettingsStore';
 
 function App() {
   const { checkAuth, isAuthenticated, user, initRealtimeSubscription, cleanupRealtimeSubscription } = useAuthStore();
+  const { fetchSettings } = useAppSettingsStore();
 
   useEffect(() => {
     checkAuth();
+    fetchSettings();
     
     // Cleanup function
     return () => {
       cleanupRealtimeSubscription();
     };
-  }, [checkAuth, cleanupRealtimeSubscription]);
+  }, [checkAuth, fetchSettings, cleanupRealtimeSubscription]);
   
   // Initialize realtime subscription when user is authenticated
   useEffect(() => {

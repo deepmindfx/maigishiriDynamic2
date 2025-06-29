@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Bell, Moon, Sun, Menu, X } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { formatCurrency } from '../../lib/utils';
 
 type HeaderProps = {
@@ -13,6 +14,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
+  const { siteName, siteLogoUrl } = useAppSettingsStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isHomePage = location.pathname === '/' && !isAuthenticated;
@@ -32,9 +34,15 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
           {/* Logo */}
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-lg">
-              <span className="text-[#0F9D58] font-bold text-xl">H</span>
+              {siteLogoUrl ? (
+                <img src={siteLogoUrl} alt={siteName} className="w-8 h-8 object-contain" />
+              ) : (
+                <span className="text-[#0F9D58] font-bold text-xl">
+                  {siteName.charAt(0)}
+                </span>
+              )}
             </div>
-            <span className="text-white font-bold text-xl hidden sm:block">Haaman Network</span>
+            <span className="text-white font-bold text-xl hidden sm:block">{siteName}</span>
           </div>
 
           {/* Desktop Navigation */}
@@ -132,9 +140,13 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
       <div className="container-pad h-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#0F9D58] rounded-lg flex items-center justify-center">
-            <span className="text-white font-bold text-lg">H</span>
+            {siteLogoUrl ? (
+              <img src={siteLogoUrl} alt={siteName} className="w-6 h-6 object-contain" />
+            ) : (
+              <span className="text-white font-bold text-lg">{siteName.charAt(0)}</span>
+            )}
           </div>
-          <span className="text-xl font-bold text-[#0F9D58]">Haaman Network</span>
+          <span className="text-xl font-bold text-[#0F9D58]">{siteName}</span>
         </div>
         
         <div className="flex items-center space-x-4">

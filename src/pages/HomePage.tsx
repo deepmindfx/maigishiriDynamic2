@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { PlusCircle, Phone, Wifi, Zap, BookOpen, Shield, Clock, Gift, Download, QrCode, ChevronDown, ShoppingBag, Tv, MessageCircle, Users } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useServiceConfigStore } from '../store/serviceConfigStore';
+import { useAppSettingsStore } from '../store/appSettingsStore';
 import { supabase } from '../lib/supabase';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
@@ -14,22 +15,23 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAuthStore();
   const { config: serviceConfig, fetchConfig } = useServiceConfigStore();
+  const { siteName, siteLogoUrl } = useAppSettingsStore();
   const [bannerSettings, setBannerSettings] = useState({
     hero_banner_image: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg',
     hero_banner_image_alt: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg',
     steps_banner_image: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg',
     hero_title: 'The Ultimate Digital Services & E-commerce Platform.',
     hero_subtitle: 'Pay bills, shop online, and manage your digital life all in one secure platform.',
-    steps_title: '3 Simple Steps to Enjoy Haaman Network.',
+    steps_title: `3 Simple Steps to Enjoy ${siteName}.`,
     download_app_url: 'https://play.google.com/store/apps',
     download_app_enabled: 'true',
   });
 
   const [footerSettings, setFooterSettings] = useState({
     footer_phone: '+234 907 599 2464',
-    footer_email: 'support@haamannetwork.com',
+    footer_email: 'support@example.com',
     footer_address: 'Lagos, Nigeria',
-    footer_company_name: 'Haaman Network',
+    footer_company_name: siteName,
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +57,7 @@ const HomePage: React.FC = () => {
     };
 
     initializeSettings();
-  }, [fetchConfig]);
+  }, [fetchConfig, siteName]);
 
   const fetchBannerSettings = async () => {
     try {
@@ -90,7 +92,11 @@ const HomePage: React.FC = () => {
           settings[setting.key] = setting.value;
         });
 
-        setBannerSettings(prev => ({ ...prev, ...settings }));
+        setBannerSettings(prev => ({ 
+          ...prev, 
+          ...settings,
+          steps_title: settings.steps_title?.replace('Haaman Network', siteName) || `3 Simple Steps to Enjoy ${siteName}.`
+        }));
       }
     } catch (error) {
       console.warn('Network error fetching banner settings:', error);
@@ -126,6 +132,11 @@ const HomePage: React.FC = () => {
         data.forEach(setting => {
           settings[setting.key] = setting.value;
         });
+
+        // Use siteName as fallback for footer_company_name
+        if (!settings.footer_company_name) {
+          settings.footer_company_name = siteName;
+        }
 
         setFooterSettings(prev => ({ ...prev, ...settings }));
       }
@@ -230,23 +241,23 @@ const HomePage: React.FC = () => {
 
   const features = [
     {
-      title: 'Simplify Your Payments with Haaman Network',
-      description: 'With Haaman Network, you can enjoy a hassle-free payment experience for all your essential bills and services. We offer a simple, fast, and secure way to pay your utility bills, shop online, and even place bets all in one place.',
+      title: `Simplify Your Payments with ${siteName}`,
+      description: `With ${siteName}, you can enjoy a hassle-free payment experience for all your essential bills and services. We offer a simple, fast, and secure way to pay your utility bills, shop online, and even place bets all in one place.`,
       icon: <Shield size={32} />,
     },
     {
       title: 'Save Time and Effort',
-      description: 'Say goodbye to the tedious task of paying bills and shopping from multiple platforms. Haaman Network streamlines the process, allowing you to make payments and purchases with just a few clicks. Plus, our platform is available 24/7.',
+      description: 'Say goodbye to the tedious task of paying bills and shopping from multiple platforms. Our platform streamlines the process, allowing you to make payments and purchases with just a few clicks. Plus, our platform is available 24/7.',
       icon: <Clock size={32} />,
     },
     {
       title: 'Secure and Reliable',
-      description: 'Your security is our top priority at Haaman Network. We use the latest technology to ensure that your personal and financial information is always safe and protected. Our platform is also reliable, with a seamless payment process.',
+      description: `Your security is our top priority at ${siteName}. We use the latest technology to ensure that your personal and financial information is always safe and protected. Our platform is also reliable, with a seamless payment process.`,
       icon: <Shield size={32} />,
     },
     {
       title: 'Earn Rewards',
-      description: 'With Haaman Network, you can earn rewards for every successful referral you make. Simply share your referral code with friends and family, and when they sign up and make their first deposit, you\'ll both receive a bonus.',
+      description: `With ${siteName}, you can earn rewards for every successful referral you make. Simply share your referral code with friends and family, and when they sign up and make their first deposit, you'll both receive a bonus.`,
       icon: <Gift size={32} />,
     },
   ];
@@ -255,11 +266,11 @@ const HomePage: React.FC = () => {
     {
       number: '1',
       title: 'Download and Install the App',
-      description: 'Visit your app store, search for "Haaman Network" and download and install the app on your mobile device.',
+      description: `Visit your app store, search for "${siteName}" and download and install the app on your mobile device.`,
     },
     {
       number: '2',
-      title: 'Sign Up on Haaman Network for free',
+      title: `Sign Up on ${siteName} for free`,
       description: 'Open the app and follow the quick and easy sign-up process. All you need is your basic personal information.',
     },
     {
@@ -270,14 +281,14 @@ const HomePage: React.FC = () => {
   ];
 
   const faqs = [
-    { question: 'Why Should I use Haaman Network', answer: 'Haaman Network provides a secure, fast, and convenient way to pay all your bills and shop online in one place.' },
-    { question: 'How Can I Pay For Utility On Haaman Network', answer: 'You can pay for utilities by funding your wallet and selecting the utility service you want to pay for.' },
-    { question: 'How do I Pay Or deposit on Haaman Network?', answer: 'You can deposit funds using your debit/credit card or bank transfer through our secure payment gateway.' },
+    { question: `Why Should I use ${siteName}`, answer: `${siteName} provides a secure, fast, and convenient way to pay all your bills and shop online in one place.` },
+    { question: `How Can I Pay For Utility On ${siteName}`, answer: 'You can pay for utilities by funding your wallet and selecting the utility service you want to pay for.' },
+    { question: `How do I Pay Or deposit on ${siteName}?`, answer: 'You can deposit funds using your debit/credit card or bank transfer through our secure payment gateway.' },
     { question: 'What Happen If my card doesn\'t work?', answer: 'If your card doesn\'t work, please contact our support team or try using a different payment method.' },
     { question: 'I was debited for a failed transaction', answer: 'If you were debited for a failed transaction, please contact our support team with your transaction reference for immediate resolution.' },
-    { question: 'What is Haaman Network?', answer: 'Haaman Network is a leading digital services and e-commerce platform that enables users to easily and securely pay for various bills, subscriptions, and shop online.' },
-    { question: 'Is Haaman Network safe and secure to use?', answer: 'Yes, Haaman Network uses advanced security measures to protect your personal and financial information.' },
-    { question: 'How do I add money to my Haaman Network wallet?', answer: 'You can add money to your wallet using debit/credit cards or bank transfers through our secure payment system.' },
+    { question: `What is ${siteName}?`, answer: `${siteName} is a leading digital services and e-commerce platform that enables users to easily and securely pay for various bills, subscriptions, and shop online.` },
+    { question: `Is ${siteName} safe and secure to use?`, answer: `Yes, ${siteName} uses advanced security measures to protect your personal and financial information.` },
+    { question: `How do I add money to my ${siteName} wallet?`, answer: 'You can add money to your wallet using debit/credit cards or bank transfers through our secure payment system.' },
   ];
 
   // Get current year for copyright
@@ -486,7 +497,7 @@ const HomePage: React.FC = () => {
         <div className="container-pad">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Why choose <span className="text-[#0F9D58]">Haaman Network</span>
+              Why choose <span className="text-[#0F9D58]">{siteName}</span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Experience seamless digital services and e-commerce with our comprehensive platform designed for your convenience.
@@ -634,7 +645,11 @@ const HomePage: React.FC = () => {
             <div className="lg:col-span-2">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-[#0F9D58] rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-lg">H</span>
+                  {siteLogoUrl ? (
+                    <img src={siteLogoUrl} alt={siteName} className="w-6 h-6 object-contain" />
+                  ) : (
+                    <span className="text-white font-bold text-lg">{siteName.charAt(0)}</span>
+                  )}
                 </div>
                 <span className="text-lg sm:text-xl font-bold">{footerSettings.footer_company_name}</span>
               </div>

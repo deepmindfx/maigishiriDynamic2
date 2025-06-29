@@ -233,6 +233,17 @@ const AdminSettings: React.FC = () => {
         key: 'service_store_status',
         value: 'active',
         description: 'Status for e-commerce store: active, disabled, or coming_soon'
+      },
+      // App name and logo settings
+      {
+        key: 'site_name',
+        value: 'Haaman Network',
+        description: 'The name of the application displayed throughout the site'
+      },
+      {
+        key: 'site_logo_url',
+        value: 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg',
+        description: 'URL for the site logo image'
       }
     ];
 
@@ -420,6 +431,8 @@ const AdminSettings: React.FC = () => {
         return <Mail className="text-blue-500" size={20} />;
       case 'site_name':
         return <Globe className="text-blue-500" size={20} />;
+      case 'site_logo_url':
+        return <QrCode className="text-blue-500" size={20} />;
       case 'support_email':
       case 'footer_email':
         return <Mail className="text-purple-500" size={20} />;
@@ -486,8 +499,9 @@ const AdminSettings: React.FC = () => {
   };
 
   const settingCategories = {
+    'App Branding': ['site_name', 'site_logo_url'],
     'API Configuration': ['maskawa_token', 'maskawa_base_url', 'flutterwave_public_key', 'flutterwave_encryption_key'],
-    'General': ['site_name', 'support_email', 'support_phone'],
+    'General': ['support_email', 'support_phone'],
     'Footer Information': ['footer_company_name', 'footer_email', 'footer_phone', 'footer_address'],
     'Homepage Banners': ['hero_banner_image', 'hero_banner_image_alt', 'steps_banner_image'],
     'Homepage Content': ['hero_title', 'hero_subtitle', 'steps_title'],
@@ -631,6 +645,11 @@ const AdminSettings: React.FC = () => {
             <div key={category} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{category}</h2>
+                {category === 'App Branding' && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Configure the application name and logo that appear throughout the site
+                  </p>
+                )}
                 {category === 'API Configuration' && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     Configure MASKAWASUBAPI and Flutterwave integration settings for services
@@ -732,7 +751,7 @@ const AdminSettings: React.FC = () => {
                               )}
                             </button>
                           </div>
-                        ) : setting.key.includes('image') ? (
+                        ) : setting.key.includes('image') || setting.key === 'site_logo_url' ? (
                           <div className="space-y-3">
                             <input
                               type="url"
@@ -745,7 +764,7 @@ const AdminSettings: React.FC = () => {
                               <div className="relative">
                                 <img
                                   src={formData[key] || setting.value}
-                                  alt="Banner preview"
+                                  alt="Image preview"
                                   className="w-full h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
@@ -906,6 +925,18 @@ const AdminSettings: React.FC = () => {
                         {setting.key === 'funding_charge_display_text' && (
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             Custom message to display to users about funding charges
+                          </p>
+                        )}
+
+                        {setting.key === 'site_name' && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            This name will be displayed throughout the application
+                          </p>
+                        )}
+
+                        {setting.key === 'site_logo_url' && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            URL for the logo image (recommended size: 64x64px)
                           </p>
                         )}
                       </div>
