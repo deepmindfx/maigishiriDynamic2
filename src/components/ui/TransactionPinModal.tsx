@@ -52,7 +52,9 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
     try {
       const isValid = await verifyTransactionPin(pinToVerify);
       if (isValid) {
+        // Call onSuccess and immediately close the modal
         onSuccess();
+        onClose();
       } else {
         setError('Incorrect PIN. Please try again.');
         setPin('');
