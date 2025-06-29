@@ -26,6 +26,19 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
   const [isProcessing, setIsProcessing] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Reset state when modal opens/closes or when changing pin status changes
+  useEffect(() => {
+    if (isOpen) {
+      setStep(isChangingPin ? 'current' : 'new');
+      setCurrentPin('');
+      setNewPin('');
+      setConfirmPin('');
+      setError('');
+      setIsProcessing(false);
+      setIsSuccess(false);
+    }
+  }, [isOpen, isChangingPin]);
+
   const resetState = () => {
     setStep(isChangingPin ? 'current' : 'new');
     setCurrentPin('');

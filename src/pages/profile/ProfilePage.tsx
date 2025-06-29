@@ -9,7 +9,7 @@ import SetPinModal from '../../components/ui/SetPinModal';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
-  const { user, logout, updateUser, createVirtualAccount, resetTransactionPin } = useAuthStore();
+  const { user, logout, updateUser, createVirtualAccount } = useAuthStore();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
     name: user?.name || '',
@@ -21,8 +21,6 @@ const ProfilePage: React.FC = () => {
   const [virtualAccountError, setVirtualAccountError] = useState('');
   const [showSetPinModal, setShowSetPinModal] = useState(false);
   const [isChangingPin, setIsChangingPin] = useState(false);
-  const [showResetPinConfirm, setShowResetPinConfirm] = useState(false);
-  const [isResettingPin, setIsResettingPin] = useState(false);
 
   if (!user) {
     navigate('/login');
@@ -101,19 +99,6 @@ const ProfilePage: React.FC = () => {
   const handleSetPin = () => {
     setIsChangingPin(user.hasPin);
     setShowSetPinModal(true);
-  };
-
-  const handleResetPin = async () => {
-    setIsResettingPin(true);
-    try {
-      await resetTransactionPin();
-      setShowResetPinConfirm(false);
-      alert('Your PIN has been reset. You can now set a new PIN.');
-    } catch (error: any) {
-      alert(error.message || 'Failed to reset PIN. Please try again.');
-    } finally {
-      setIsResettingPin(false);
-    }
   };
 
   return (
@@ -224,49 +209,7 @@ const ProfilePage: React.FC = () => {
           >
             {user.hasPin ? 'Change PIN' : 'Set PIN'}
           </Button>
-          
-          {user.hasPin && (
-            <Button
-              variant="outline"
-              onClick={() => setShowResetPinConfirm(true)}
-              className="flex-1 text-red-500 border-red-200 hover:bg-red-50"
-              icon={<Key size={16} />}
-            >
-              Reset PIN
-            </Button>
-          )}
         </div>
-
-        {/* Reset PIN Confirmation */}
-        {showResetPinConfirm && (
-          <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <h3 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
-              Are you sure you want to reset your PIN?
-            </h3>
-            <p className="text-xs text-red-700 dark:text-red-300 mb-3">
-              This will remove your current PIN. You'll need to set a new PIN before making any transactions.
-            </p>
-            <div className="flex space-x-3">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowResetPinConfirm(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={handleResetPin}
-                isLoading={isResettingPin}
-                className="flex-1 bg-red-500 hover:bg-red-600"
-              >
-                Reset PIN
-              </Button>
-            </div>
-          </div>
-        )}
       </Card>
 
       {/* Virtual Account Section */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, AlertTriangle, Lock, CheckCircle } from 'lucide-react';
+import { X, AlertCircle, Clock, CheckCircle, Lock } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import PinInput from './PinInput';
 import Button from './Button';
@@ -109,7 +109,7 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
         {pinStatus.isLocked ? (
           <div className="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg mb-6">
             <div className="flex items-start">
-              <AlertTriangle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
+              <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={20} />
               <div className="ml-3">
                 <h3 className="text-sm font-medium text-red-800 dark:text-red-200">PIN Locked</h3>
                 <p className="text-sm text-red-700 dark:text-red-300 mt-1">
@@ -133,7 +133,7 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
             />
             
             <Button
-              onClick={() => handleVerifyPin()}
+              onClick={() => handleVerifyPin(pin)}
               isLoading={isVerifying}
               disabled={pin.length !== 4 || isVerifying}
               className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
