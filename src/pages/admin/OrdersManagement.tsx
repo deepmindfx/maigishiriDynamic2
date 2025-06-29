@@ -1,28 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowLeft, 
-  Package, 
-  Truck, 
-  CheckCircle, 
-  Clock, 
-  XCircle,
-  Eye,
-  MapPin,
-  RefreshCw,
-  ChevronLeft,
-  ChevronRight,
-  Download,
-  FileText,
-  Calendar,
-  Search,
-  Filter,
-  Edit,
-  Timeline,
-  Ban,
-  AlertTriangle,
-  Phone
-} from 'lucide-react';
+import { ArrowLeft, Package, Truck, CheckCircle, Clock, XCircle, Eye, MapPin, RefreshCw, ChevronLeft, ChevronRight, Download, FileText, Calendar, Search, Filter, Edit, Baseline as Timeline, Ban, AlertTriangle, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 import Card from '../../components/ui/Card';
