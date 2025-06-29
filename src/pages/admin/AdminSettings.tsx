@@ -30,7 +30,10 @@ import {
   BookOpen,
   Ticket,
   ShoppingBag,
-  MessageCircle
+  MessageCircle,
+  Trash2,
+  Calendar,
+  AlertTriangle
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
@@ -55,6 +58,12 @@ const AdminSettings: React.FC = () => {
   const [showFlutterwaveEncryptionKey, setShowFlutterwaveEncryptionKey] = useState(false);
   const [loadingServices, setLoadingServices] = useState(false);
   const [savingService, setSavingService] = useState<string | null>(null);
+  
+  // Transaction clearing states
+  const [clearUntilDate, setClearUntilDate] = useState<string>('');
+  const [showClearAllConfirmModal, setShowClearAllConfirmModal] = useState(false);
+  const [showClearFromDateConfirmModal, setShowClearFromDateConfirmModal] = useState(false);
+  const [isClearing, setIsClearing] = useState(false);
 
   useEffect(() => {
     if (!user?.isAdmin) {
@@ -333,6 +342,55 @@ const AdminSettings: React.FC = () => {
     }
   };
 
+  // Handle clearing all transactions
+  const handleClearTransactions = async (clearAll: boolean = true) => {
+    if (!user?.isAdmin) return;
+    
+    setIsClearing(true);
+    try {
+      let query = supabase.from('transactions').delete();
+      
+      if (!clearAll && clearUntilDate) {
+        // Convert the date string to a Date object
+        const dateObj = new Date(clearUntilDate);
+        // Set the time to 23:59:59 to include the entire day
+        dateObj.setHours(23, 59, 59, 999);
+        
+        // Format the date as an ISO string for the query
+        const formattedDate = dateObj.toISOString();
+        
+        // Delete transactions up to and including the selected date
+        query = query.lte('created_at', formattedDate);
+      }
+      
+      const { error, count } = await query;
+      
+      if (error) throw error;
+      
+      // Log the admin action
+      await supabase.from('admin_logs').insert([{
+        admin_id: user?.id,
+        action: clearAll ? 'clear_all_transactions' : 'clear_transactions_until_date',
+        details: { 
+          date: clearAll ? null : clearUntilDate,
+          timestamp: new Date().toISOString()
+        },
+      }]);
+      
+      // Close modals
+      setShowClearAllConfirmModal(false);
+      setShowClearFromDateConfirmModal(false);
+      
+      // Show success message
+      alert(`Successfully cleared ${count || 'all'} transactions.`);
+    } catch (error) {
+      console.error('Error clearing transactions:', error);
+      alert('Error clearing transactions. Please try again.');
+    } finally {
+      setIsClearing(false);
+    }
+  };
+
   const getSettingIcon = (key: string) => {
     switch (key) {
       case 'referral_bonus_percentage':
@@ -517,6 +575,75 @@ const AdminSettings: React.FC = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Transaction Data Management Section */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transaction Data Management</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Clear transaction records from the database. This action cannot be undone.
+            </p>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-6">
+              <div className="flex items-start">
+                <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={18} />
+                <div className="ml-3">
+                  <h4 className="font-medium text-red-800 dark:text-red-200 text-sm">Warning: Destructive Action</h4>
+                  <p className="mt-1 text-sm text-red-700 dark:text-red-300">
+                    Clearing transactions will permanently delete transaction records from the database. This action cannot be undone and may affect user wallet balances and reporting.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Clear All Transactions */}
+              <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <Trash2 className="text-red-500 mr-3" size={20} />
+                  <h3 className="font-medium text-gray-900 dark:text-white">Clear All Transactions</h3>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  This will delete all transaction records from the database.
+                </p>
+                <button
+                  onClick={() => setShowClearAllConfirmModal(true)}
+                  className="w-full px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                >
+                  Clear All Transactions
+                </button>
+              </div>
+              
+              {/* Clear Transactions from Date */}
+              <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                <div className="flex items-center mb-4">
+                  <Calendar className="text-orange-500 mr-3" size={20} />
+                  <h3 className="font-medium text-gray-900 dark:text-white">Clear Transactions by Date</h3>
+                </div>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                  Delete all transactions up to and including the selected date.
+                </p>
+                <div className="mb-4">
+                  <input
+                    type="date"
+                    value={clearUntilDate}
+                    onChange={(e) => setClearUntilDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F9D58]"
+                  />
+                </div>
+                <button
+                  onClick={() => setShowClearFromDateConfirmModal(true)}
+                  disabled={!clearUntilDate}
+                  className="w-full px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Clear Transactions Up To Date
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Service Management Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -875,6 +1002,104 @@ const AdminSettings: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Clear All Transactions Confirmation Modal */}
+      {showClearAllConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <AlertTriangle className="text-red-500 mr-3" size={24} />
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Clear All Transactions</h2>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Are you sure you want to delete <strong>ALL</strong> transaction records? This action cannot be undone.
+              </p>
+              
+              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                <div className="flex items-start">
+                  <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={16} />
+                  <div className="ml-3">
+                    <p className="text-sm text-red-700 dark:text-red-300">
+                      <strong>Warning:</strong> This will permanently delete all transaction records but will NOT affect user wallet balances. This is primarily for database maintenance.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowClearAllConfirmModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleClearTransactions(true)}
+                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                  disabled={isClearing}
+                >
+                  {isClearing ? 'Clearing...' : 'Yes, Clear All'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clear Transactions from Date Confirmation Modal */}
+      {showClearFromDateConfirmModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <AlertTriangle className="text-orange-500 mr-3" size={24} />
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Clear Transactions by Date</h2>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Are you sure you want to delete all transaction records up to and including <strong>{new Date(clearUntilDate).toLocaleDateString()}</strong>? This action cannot be undone.
+              </p>
+              
+              <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg p-4 mb-4">
+                <div className="flex items-start">
+                  <AlertTriangle className="text-orange-600 dark:text-orange-400 flex-shrink-0 mt-0.5" size={16} />
+                  <div className="ml-3">
+                    <p className="text-sm text-orange-700 dark:text-orange-300">
+                      <strong>Warning:</strong> This will permanently delete all transaction records up to the selected date but will NOT affect user wallet balances. This is primarily for database maintenance.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowClearFromDateConfirmModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => handleClearTransactions(false)}
+                  className="flex-1 px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+                  disabled={isClearing}
+                >
+                  {isClearing ? 'Clearing...' : 'Yes, Clear Transactions'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
