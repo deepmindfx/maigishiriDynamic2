@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, AlertCircle, Lock, CheckCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import PinInput from './PinInput';
@@ -82,12 +82,8 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
 
   const handleConfirmPinComplete = (pin: string) => {
     setConfirmPin(pin);
-    // Auto-submit if pins match
-    if (newPin === pin) {
-      handleSetPin();
-    } else {
-      setError('PINs do not match');
-    }
+    // Remove automatic comparison here - we'll let the user click the button
+    // This ensures both state variables are fully updated before comparison
   };
 
   if (!isOpen) return null;
