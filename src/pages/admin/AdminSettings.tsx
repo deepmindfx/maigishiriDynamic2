@@ -2,6 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
+  Plus, 
+  Edit, 
+  Trash2, 
+  Search, 
+  Filter,
   Save,
   Settings,
   Percent,
@@ -568,40 +573,6 @@ const AdminSettings: React.FC = () => {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Transaction Management Section */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transaction Management</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Manage transaction data in the system. Be careful with these actions as they can permanently delete data.
-            </p>
-          </div>
-          
-          <div className="p-6 space-y-6">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
-              <div className="flex items-start">
-                <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={20} />
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Danger Zone</h3>
-                  <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                    The actions below can permanently delete transaction data. These actions cannot be undone.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleClearTransactions}
-                className="flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                <Trash2 size={16} className="mr-2" />
-                Clear All Transactions
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Service Management Section */}
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
@@ -945,6 +916,40 @@ const AdminSettings: React.FC = () => {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Transaction Management Section - Moved to bottom */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transaction Management</h2>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Manage transaction data in the system. Be careful with these actions as they can permanently delete data.
+            </p>
+          </div>
+          
+          <div className="p-6 space-y-6">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
+              <div className="flex items-start">
+                <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={20} />
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Danger Zone</h3>
+                  <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                    The actions below can permanently delete transaction data. These actions cannot be undone.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-4">
+              <button
+                onClick={handleClearTransactions}
+                className="flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              >
+                <Trash2 size={16} className="mr-2" />
+                Clear All Transactions
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* API Integration Info */}
