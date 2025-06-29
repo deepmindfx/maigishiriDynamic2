@@ -13,7 +13,15 @@ import {
   ChevronLeft,
   ChevronRight,
   Download,
-  FileText
+  FileText,
+  Calendar,
+  Search,
+  Filter,
+  Edit,
+  Timeline,
+  Ban,
+  AlertTriangle,
+  Phone
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
