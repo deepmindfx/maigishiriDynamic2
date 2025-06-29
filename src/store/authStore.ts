@@ -25,6 +25,7 @@ type AuthState = {
   verifyTransactionPin: (pin: string) => Promise<boolean>;
   checkPinStatus: () => Promise<{hasPin: boolean, isLocked: boolean, lockedUntil: string | null}>;
   resetTransactionPin: () => Promise<void>;
+  resetTransactionPinForAdmin: (userId: string) => Promise<void>;
 };
 
 // Function to generate a random alphanumeric string for referral codes
@@ -974,6 +975,61 @@ export const useAuthStore = create<AuthState>()(
           }));
         } catch (error) {
           console.error('Error resetting transaction PIN:', error);
+          throw error;
+        }
+      },
+
+      // New function for admin to reset a user's PIN
+      resetTransactionPinForAdmin: async (userId: string) => {
+        const state = get();
+        if (!state.user || !state.user.isAdmin) {
+          throw new Error('Admin privileges required');
+        }
+
+        try {
+          const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+          if (!supabaseUrl) {
+            throw new Error('Supabase URL not configured');
+          }
+
+          // Get the current session for authentication
+          const { data: { session } } = await supabase.auth.getSession();
+          if (!session) {
+            throw new Error('User not authenticated');
+          }
+
+          const response = await fetch(`${supabaseUrl}/functions/v1/handle-pin`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`,
+            },
+            body: JSON.stringify({
+              action: 'reset_pin',
+              userId: userId,
+              adminId: state.user.id, // Include admin ID for logging
+            }),
+          });
+
+          const result = await response.json();
+          
+          if (!result.success) {
+            throw new Error(result.error || 'Failed to reset user transaction PIN');
+          }
+
+          // Log the admin action
+          await supabase.from('admin_logs').insert([{
+            admin_id: state.user.id,
+            action: 'reset_user_pin',
+            details: { 
+              target_user_id: userId,
+              timestamp: new Date().toISOString()
+            },
+          }]);
+
+          return { success: true };
+        } catch (error) {
+          console.error('Error resetting user transaction PIN:', error);
           throw error;
         }
       },

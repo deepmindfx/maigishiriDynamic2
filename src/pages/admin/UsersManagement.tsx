@@ -17,7 +17,8 @@ import {
   Download,
   FileText,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Key
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
@@ -38,11 +39,13 @@ type User = {
   referral_earnings: number;
   created_at: string;
   referrer_name?: string;
+  transaction_pin?: string;
+  hasPin?: boolean;
 };
 
 const UsersManagement: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, resetTransactionPinForAdmin } = useAuthStore();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -54,6 +57,11 @@ const UsersManagement: React.FC = () => {
   const [isBanning, setIsBanning] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportScope, setExportScope] = useState<'current' | 'all'>('current');
+  const [showResetPinModal, setShowResetPinModal] = useState(false);
+  const [userToResetPin, setUserToResetPin] = useState<User | null>(null);
+  const [isResettingPin, setIsResettingPin] = useState(false);
+  const [resetPinSuccess, setResetPinSuccess] = useState(false);
+  const [resetPinError, setResetPinError] = useState('');
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -92,7 +100,7 @@ const UsersManagement: React.FC = () => {
       // First get the total count for pagination with search applied
       let countQuery = supabase
         .from('profiles')
-        .select('*', { count: 'exact', head: true });
+        .select('id', { count: 'exact', head: true });
       
       // Apply search filter to count query if provided
       if (searchQuery) {
@@ -144,7 +152,8 @@ const UsersManagement: React.FC = () => {
         const referrer = user.referred_by ? userMap.get(user.referred_by) : null;
         return {
           ...user,
-          referrer_name: referrer ? referrer.name : null
+          referrer_name: referrer ? referrer.name : null,
+          hasPin: !!user.transaction_pin
         };
       }) || [];
       
@@ -261,6 +270,36 @@ const UsersManagement: React.FC = () => {
       alert('Error banning user. Please try again.');
     } finally {
       setIsBanning(false);
+    }
+  };
+
+  const handleResetPin = async () => {
+    if (!userToResetPin) return;
+    
+    setIsResettingPin(true);
+    setResetPinError('');
+    setResetPinSuccess(false);
+    
+    try {
+      await resetTransactionPinForAdmin(userToResetPin.id);
+      setResetPinSuccess(true);
+      
+      // Update the user in the local state
+      setUsers(prevUsers => 
+        prevUsers.map(u => 
+          u.id === userToResetPin.id ? { ...u, hasPin: false } : u
+        )
+      );
+      
+      // If the user is currently selected in the modal, update that too
+      if (selectedUser && selectedUser.id === userToResetPin.id) {
+        setSelectedUser({ ...selectedUser, hasPin: false });
+      }
+    } catch (error) {
+      console.error('Error resetting user PIN:', error);
+      setResetPinError(error.message || 'Failed to reset PIN. Please try again.');
+    } finally {
+      setIsResettingPin(false);
     }
   };
 
@@ -737,6 +776,18 @@ const UsersManagement: React.FC = () => {
                           </button>
                           <button
                             onClick={() => {
+                              setUserToResetPin(user);
+                              setShowResetPinModal(true);
+                              setResetPinSuccess(false);
+                              setResetPinError('');
+                            }}
+                            className="text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300"
+                            title="Reset PIN"
+                          >
+                            <Key size={16} />
+                          </button>
+                          <button
+                            onClick={() => {
                               setSelectedUser(user);
                               setShowBanModal(true);
                             }}
@@ -872,6 +923,32 @@ const UsersManagement: React.FC = () => {
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Referral Earnings</label>
                     <p className="text-xl font-semibold text-gray-900 dark:text-white">{formatCurrency(selectedUser.referral_earnings)}</p>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Transaction PIN</label>
+                    <div className="flex items-center">
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        selectedUser.hasPin 
+                          ? 'bg-green-100 text-green-800' 
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {selectedUser.hasPin ? 'PIN Set' : 'No PIN'}
+                      </span>
+                      {selectedUser.id !== user?.id && (
+                        <button
+                          onClick={() => {
+                            setUserToResetPin(selectedUser);
+                            setShowResetPinModal(true);
+                            setResetPinSuccess(false);
+                            setResetPinError('');
+                            setShowUserModal(false);
+                          }}
+                          className="ml-2 text-blue-600 hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-300 text-xs"
+                        >
+                          Reset PIN
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1054,6 +1131,91 @@ const UsersManagement: React.FC = () => {
                 >
                   {isBanning ? 'Banning...' : 'Ban User'}
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reset PIN Confirmation Modal */}
+      {showResetPinModal && userToResetPin && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center">
+                <Key className="text-blue-500 mr-3" size={24} />
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Reset User's PIN</h2>
+              </div>
+            </div>
+            
+            <div className="p-6">
+              {resetPinSuccess ? (
+                <div className="text-center">
+                  <div className="w-16 h-16 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <CheckCircle className="text-green-500" size={28} />
+                  </div>
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">PIN Reset Successfully</h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    The transaction PIN for <strong>{userToResetPin.name}</strong> has been reset successfully. The user will need to set a new PIN before making any transactions.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    Are you sure you want to reset the transaction PIN for <strong>{userToResetPin.name}</strong>? This will remove their current PIN and they will need to set a new one before making any transactions.
+                  </p>
+                  
+                  {resetPinError && (
+                    <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
+                      <div className="flex items-start">
+                        <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={16} />
+                        <div className="ml-3">
+                          <p className="text-sm text-red-700 dark:text-red-300">
+                            {resetPinError}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                    <div className="flex items-start">
+                      <AlertTriangle className="text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" size={16} />
+                      <div className="ml-3">
+                        <p className="text-sm text-blue-700 dark:text-blue-300">
+                          <strong>Note:</strong> This action is useful when a user has forgotten their PIN or is locked out of their account due to too many failed PIN attempts.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="bg-gray-100 dark:bg-gray-700 rounded-lg p-4">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white mb-2">User Information</h3>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Name: {userToResetPin.name}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">Email: {userToResetPin.email}</p>
+                    <p className="text-sm text-gray-700 dark:text-gray-300">PIN Status: {userToResetPin.hasPin ? 'PIN Set' : 'No PIN'}</p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex space-x-3">
+                <button
+                  onClick={() => setShowResetPinModal(false)}
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  {resetPinSuccess ? 'Close' : 'Cancel'}
+                </button>
+                {!resetPinSuccess && (
+                  <button
+                    onClick={handleResetPin}
+                    disabled={isResettingPin}
+                    className="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50"
+                  >
+                    {isResettingPin ? 'Resetting...' : 'Reset PIN'}
+                  </button>
+                )}
               </div>
             </div>
           </div>
