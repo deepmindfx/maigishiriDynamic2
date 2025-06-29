@@ -37,8 +37,11 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
     }
   }, [isOpen, checkPinStatus]);
 
-  const handleVerifyPin = async () => {
-    if (pin.length !== 4) {
+  const handleVerifyPin = async (inputPin?: string) => {
+    // Use the provided inputPin if available, otherwise use the state value
+    const pinToVerify = inputPin || pin;
+    
+    if (pinToVerify.length !== 4) {
       setError('Please enter a 4-digit PIN');
       return;
     }
@@ -47,7 +50,7 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
     setError('');
 
     try {
-      const isValid = await verifyTransactionPin(pin);
+      const isValid = await verifyTransactionPin(pinToVerify);
       if (isValid) {
         onSuccess();
       } else {
@@ -126,11 +129,11 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
               disabled={isVerifying}
               autoFocus
               className="mb-6"
-              onComplete={handleVerifyPin}
+              onComplete={(completedPin) => handleVerifyPin(completedPin)}
             />
             
             <Button
-              onClick={handleVerifyPin}
+              onClick={() => handleVerifyPin()}
               isLoading={isVerifying}
               disabled={pin.length !== 4 || isVerifying}
               className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
