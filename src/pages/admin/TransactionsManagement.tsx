@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, formatDateTime } from '../../lib/utils';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -337,7 +337,7 @@ const TransactionsManagement: React.FC = () => {
       // Add table
       const tableColumn = ["Date", "Reference", "Type", "Description", "Amount", "Status"];
       const tableRows = transactionsToExport.map(transaction => [
-        formatDate(transaction.created_at),
+        formatDateTime(transaction.created_at),
         transaction.reference,
         transaction.type.replace('_', ' ').toUpperCase(),
         getTransactionLabel(transaction.type, transaction.details),
@@ -426,7 +426,7 @@ const TransactionsManagement: React.FC = () => {
       const headers = ['Date', 'Reference', 'Type', 'Description', 'User', 'Amount', 'Status'];
       
       const rows = transactionsToExport.map(transaction => [
-        formatDate(transaction.created_at),
+        formatDateTime(transaction.created_at),
         transaction.reference,
         transaction.type.replace('_', ' '),
         getTransactionLabel(transaction.type, transaction.details),
@@ -820,7 +820,7 @@ const TransactionsManagement: React.FC = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                      {formatDate(transaction.created_at)}
+                      {formatDateTime(transaction.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                       <button
@@ -947,7 +947,7 @@ const TransactionsManagement: React.FC = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
-                  <p className="text-gray-900 dark:text-white">{formatDate(selectedTransaction.created_at)}</p>
+                  <p className="text-gray-900 dark:text-white">{formatDateTime(selectedTransaction.created_at)}</p>
                 </div>
               </div>
               
