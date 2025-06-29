@@ -35,6 +35,14 @@ type Transaction = {
   user_email?: string;
 };
 
+type TransactionBreakdown = {
+  [key: string]: {
+    count: number;
+    amount: number;
+    percentage: number;
+  }
+};
+
 const TransactionsManagement: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
@@ -47,6 +55,8 @@ const TransactionsManagement: React.FC = () => {
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
   const [exportScope, setExportScope] = useState<'current' | 'all'>('current');
+  const [transactionBreakdown, setTransactionBreakdown] = useState<TransactionBreakdown>({});
+  const [loadingBreakdown, setLoadingBreakdown] = useState(false);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -60,6 +70,7 @@ const TransactionsManagement: React.FC = () => {
       return;
     }
     fetchTransactions();
+    fetchTransactionBreakdown();
   }, [user, navigate, currentPage, statusFilter, typeFilter]);
 
   // Debounce search to avoid too many requests
@@ -67,6 +78,7 @@ const TransactionsManagement: React.FC = () => {
     const timer = setTimeout(() => {
       if (searchQuery) {
         fetchTransactions(true);
+        fetchTransactionBreakdown();
       }
     }, 500);
     
@@ -164,6 +176,62 @@ const TransactionsManagement: React.FC = () => {
     }
   };
 
+  const fetchTransactionBreakdown = async () => {
+    setLoadingBreakdown(true);
+    try {
+      // Fetch all transactions matching the current filters (without pagination)
+      let query = supabase
+        .from('transactions')
+        .select('type, amount, status');
+      
+      // Apply filters
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter);
+      }
+      
+      // Apply search if provided
+      if (searchQuery) {
+        query = query.or(
+          `reference.ilike.%${searchQuery}%,details->phone.ilike.%${searchQuery}%,details->network.ilike.%${searchQuery}%`
+        );
+      }
+      
+      const { data, error } = await query;
+      
+      if (error) throw error;
+      
+      // Calculate breakdown by transaction type
+      const breakdown: TransactionBreakdown = {};
+      let totalAmount = 0;
+      
+      // First calculate total amount for successful transactions
+      data?.filter(t => t.status === 'success').forEach(t => {
+        totalAmount += Number(t.amount);
+      });
+      
+      // Group by transaction type
+      const transactionTypes = ['wallet_funding', 'airtime', 'data', 'electricity', 'product_purchase', 'referral_reward'];
+      
+      transactionTypes.forEach(type => {
+        const typeTransactions = data?.filter(t => t.type === type && t.status === 'success') || [];
+        const typeAmount = typeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
+        const percentage = totalAmount > 0 ? (typeAmount / totalAmount) * 100 : 0;
+        
+        breakdown[type] = {
+          count: typeTransactions.length,
+          amount: typeAmount,
+          percentage
+        };
+      });
+      
+      setTransactionBreakdown(breakdown);
+    } catch (error) {
+      console.error('Error fetching transaction breakdown:', error);
+    } finally {
+      setLoadingBreakdown(false);
+    }
+  };
+
   const handleUpdateStatus = async (transactionId: string, newStatus: string) => {
     if (!confirm(`Are you sure you want to mark this transaction as ${newStatus}?`)) return;
 
@@ -183,6 +251,7 @@ const TransactionsManagement: React.FC = () => {
       }]);
 
       fetchTransactions();
+      fetchTransactionBreakdown();
     } catch (error) {
       console.error('Error updating transaction status:', error);
     }
@@ -713,46 +782,44 @@ const TransactionsManagement: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-6 mb-6 border border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Transaction Breakdown</h3>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {transactionTypes.filter(type => type !== 'all').map(type => {
-              const typeTransactions = transactions.filter(t => t.type === type && t.status === 'success');
-              const typeTotal = typeTransactions.reduce((sum, t) => sum + Number(t.amount), 0);
-              const typeCount = typeTransactions.length;
-              const totalRevenue = transactions
-                .filter(t => t.status === 'success')
-                .reduce((sum, t) => sum + Number(t.amount), 0);
-              const typePercentage = totalRevenue > 0 ? (typeTotal / totalRevenue) * 100 : 0;
-              
-              return (
-                <div key={type} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="font-medium text-gray-900 dark:text-white capitalize">
-                      {type.replace('_', ' ')}
-                    </span>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      {typeCount} transactions
-                    </span>
+          {loadingBreakdown ? (
+            <div className="flex justify-center py-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0F9D58]"></div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Object.entries(transactionBreakdown).map(([type, data]) => {
+                return (
+                  <div key={type} className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-gray-900 dark:text-white capitalize">
+                        {type.replace('_', ' ')}
+                      </span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {data.count} transactions
+                      </span>
+                    </div>
+                    
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        {data.percentage.toFixed(1)}% of revenue
+                      </span>
+                      <span className="font-bold text-[#0F9D58]">
+                        {formatCurrency(data.amount)}
+                      </span>
+                    </div>
+                    
+                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                      <div 
+                        className="bg-[#0F9D58] h-2 rounded-full" 
+                        style={{ width: `${Math.min(100, data.percentage)}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {typePercentage.toFixed(1)}% of revenue
-                    </span>
-                    <span className="font-bold text-[#0F9D58]">
-                      {formatCurrency(typeTotal)}
-                    </span>
-                  </div>
-                  
-                  <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
-                    <div 
-                      className="bg-[#0F9D58] h-2 rounded-full" 
-                      style={{ width: `${Math.min(100, typePercentage)}%` }}
-                    ></div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         {/* Transactions Table */}
