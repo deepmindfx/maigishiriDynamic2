@@ -4,6 +4,7 @@ import { supabase } from '../lib/supabase';
 type AppSettingsState = {
   siteName: string;
   siteLogoUrl: string;
+  appBaseUrl: string;
   isLoading: boolean;
   error: string | null;
   fetchSettings: () => Promise<void>;
@@ -12,6 +13,7 @@ type AppSettingsState = {
 export const useAppSettingsStore = create<AppSettingsState>((set) => ({
   siteName: 'Haaman Network', // Default fallback value
   siteLogoUrl: 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg', // Default fallback value
+  appBaseUrl: 'https://haamannetwork.com', // Default fallback value
   isLoading: false,
   error: null,
   
@@ -21,7 +23,7 @@ export const useAppSettingsStore = create<AppSettingsState>((set) => ({
       const { data, error } = await supabase
         .from('admin_settings')
         .select('key, value')
-        .in('key', ['site_name', 'site_logo_url']);
+        .in('key', ['site_name', 'site_logo_url', 'app_base_url']);
 
       if (error) throw error;
 
@@ -33,6 +35,7 @@ export const useAppSettingsStore = create<AppSettingsState>((set) => ({
       set({
         siteName: settings.site_name || 'Haaman Network',
         siteLogoUrl: settings.site_logo_url || 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg',
+        appBaseUrl: settings.app_base_url || 'https://haamannetwork.com',
         isLoading: false
       });
       

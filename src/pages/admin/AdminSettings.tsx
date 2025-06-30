@@ -2,11 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Search, 
-  Filter,
   Save,
   Settings,
   Percent,
@@ -36,8 +31,7 @@ import {
   Ticket,
   ShoppingBag,
   MessageCircle,
-  AlertTriangle,
-  Calendar
+  Link
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
@@ -62,10 +56,6 @@ const AdminSettings: React.FC = () => {
   const [showFlutterwaveEncryptionKey, setShowFlutterwaveEncryptionKey] = useState(false);
   const [loadingServices, setLoadingServices] = useState(false);
   const [savingService, setSavingService] = useState<string | null>(null);
-  const [showClearTransactionsModal, setShowClearTransactionsModal] = useState(false);
-  const [clearTransactionsInput, setClearTransactionsInput] = useState('');
-  const [clearFromDate, setClearFromDate] = useState('');
-  const [clearingTransactions, setClearingTransactions] = useState(false);
 
   useEffect(() => {
     if (!user?.isAdmin) {
@@ -234,16 +224,11 @@ const AdminSettings: React.FC = () => {
         value: 'active',
         description: 'Status for e-commerce store: active, disabled, or coming_soon'
       },
-      // App name and logo settings
+      // App base URL setting
       {
-        key: 'site_name',
-        value: 'Haaman Network',
-        description: 'The name of the application displayed throughout the site'
-      },
-      {
-        key: 'site_logo_url',
-        value: 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg',
-        description: 'URL for the site logo image'
+        key: 'app_base_url',
+        value: 'https://haamannetwork.com',
+        description: 'Base URL for the application (used for referral links and other external URLs)'
       }
     ];
 
@@ -355,50 +340,6 @@ const AdminSettings: React.FC = () => {
     }
   };
 
-  const handleClearTransactions = () => {
-    setShowClearTransactionsModal(true);
-  };
-
-  const handleConfirmClearTransactions = async () => {
-    if (clearTransactionsInput !== 'DELETE') {
-      return;
-    }
-
-    setClearingTransactions(true);
-    try {
-      let query = supabase.from('transactions').delete();
-      
-      // If a date is specified, only delete transactions from that date
-      if (clearFromDate) {
-        query = query.gte('created_at', new Date(clearFromDate).toISOString());
-      }
-      
-      const { error } = await query;
-
-      if (error) throw error;
-
-      // Log admin action
-      await supabase.from('admin_logs').insert([{
-        admin_id: user?.id,
-        action: 'clear_transactions',
-        details: { 
-          from_date: clearFromDate || 'all',
-          timestamp: new Date().toISOString()
-        },
-      }]);
-
-      alert('Transactions cleared successfully!');
-      setShowClearTransactionsModal(false);
-      setClearTransactionsInput('');
-      setClearFromDate('');
-    } catch (error) {
-      console.error('Error clearing transactions:', error);
-      alert('Error clearing transactions. Please try again.');
-    } finally {
-      setClearingTransactions(false);
-    }
-  };
-
   const getSettingIcon = (key: string) => {
     switch (key) {
       case 'referral_bonus_percentage':
@@ -433,6 +374,8 @@ const AdminSettings: React.FC = () => {
         return <Globe className="text-blue-500" size={20} />;
       case 'site_logo_url':
         return <QrCode className="text-blue-500" size={20} />;
+      case 'app_base_url':
+        return <Link className="text-blue-500" size={20} />;
       case 'support_email':
       case 'footer_email':
         return <Mail className="text-purple-500" size={20} />;
@@ -499,9 +442,8 @@ const AdminSettings: React.FC = () => {
   };
 
   const settingCategories = {
-    'App Branding': ['site_name', 'site_logo_url'],
     'API Configuration': ['maskawa_token', 'maskawa_base_url', 'flutterwave_public_key', 'flutterwave_encryption_key'],
-    'General': ['support_email', 'support_phone'],
+    'General': ['site_name', 'site_logo_url', 'app_base_url', 'support_email', 'support_phone'],
     'Footer Information': ['footer_company_name', 'footer_email', 'footer_phone', 'footer_address'],
     'Homepage Banners': ['hero_banner_image', 'hero_banner_image_alt', 'steps_banner_image'],
     'Homepage Content': ['hero_title', 'hero_subtitle', 'steps_title'],
@@ -645,14 +587,14 @@ const AdminSettings: React.FC = () => {
             <div key={category} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
               <div className="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{category}</h2>
-                {category === 'App Branding' && (
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Configure the application name and logo that appear throughout the site
-                  </p>
-                )}
                 {category === 'API Configuration' && (
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                     Configure MASKAWASUBAPI and Flutterwave integration settings for services
+                  </p>
+                )}
+                {category === 'General' && (
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                    Configure site name, logo, and base URL for the application
                   </p>
                 )}
                 {category === 'Footer Information' && (
@@ -764,7 +706,7 @@ const AdminSettings: React.FC = () => {
                               <div className="relative">
                                 <img
                                   src={formData[key] || setting.value}
-                                  alt="Image preview"
+                                  alt="Banner preview"
                                   className="w-full h-32 object-cover rounded-lg border border-gray-200 dark:border-gray-600"
                                   onError={(e) => {
                                     const target = e.target as HTMLImageElement;
@@ -784,7 +726,7 @@ const AdminSettings: React.FC = () => {
                             rows={setting.key.includes('subtitle') || setting.key.includes('address') || setting.key === 'funding_charge_display_text' ? 3 : 2}
                             className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F9D58]"
                           />
-                        ) : setting.key.includes('url') ? (
+                        ) : setting.key.includes('url') || setting.key === 'app_base_url' ? (
                           <input
                             type="url"
                             value={formData[key] || setting.value}
@@ -845,6 +787,24 @@ const AdminSettings: React.FC = () => {
                         {setting.key === 'flutterwave_encryption_key' && (
                           <p className="text-xs text-red-500 dark:text-red-400 mt-1">
                             ⚠️ Keep this encryption key secure. It's used to encrypt sensitive payment data.
+                          </p>
+                        )}
+
+                        {setting.key === 'app_base_url' && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            Base URL for the application, used for referral links and other external URLs (e.g., https://example.com)
+                          </p>
+                        )}
+
+                        {setting.key === 'site_name' && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            The name of your application, displayed throughout the site
+                          </p>
+                        )}
+
+                        {setting.key === 'site_logo_url' && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                            URL to your site logo image (recommended size: 512x512px)
                           </p>
                         )}
 
@@ -927,18 +887,6 @@ const AdminSettings: React.FC = () => {
                             Custom message to display to users about funding charges
                           </p>
                         )}
-
-                        {setting.key === 'site_name' && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            This name will be displayed throughout the application
-                          </p>
-                        )}
-
-                        {setting.key === 'site_logo_url' && (
-                          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                            URL for the logo image (recommended size: 64x64px)
-                          </p>
-                        )}
                       </div>
                     </div>
                   );
@@ -946,40 +894,6 @@ const AdminSettings: React.FC = () => {
               </div>
             </div>
           ))}
-        </div>
-
-        {/* Transaction Management Section - Moved to bottom */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
-          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Transaction Management</h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Manage transaction data in the system. Be careful with these actions as they can permanently delete data.
-            </p>
-          </div>
-          
-          <div className="p-6 space-y-6">
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4">
-              <div className="flex items-start">
-                <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={20} />
-                <div className="ml-3">
-                  <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Danger Zone</h3>
-                  <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                    The actions below can permanently delete transaction data. These actions cannot be undone.
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-4">
-              <button
-                onClick={handleClearTransactions}
-                className="flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
-              >
-                <Trash2 size={16} className="mr-2" />
-                Clear All Transactions
-              </button>
-            </div>
-          </div>
         </div>
 
         {/* API Integration Info */}
@@ -995,102 +909,6 @@ const AdminSettings: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* Clear Transactions Confirmation Modal */}
-      {showClearTransactionsModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full">
-            <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-              <div className="flex items-center">
-                <AlertTriangle className="text-red-500 mr-3" size={24} />
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Clear Transactions</h2>
-              </div>
-            </div>
-            
-            <div className="p-6">
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                <strong>WARNING:</strong> This action will permanently delete transaction records from the database. This action cannot be undone.
-              </p>
-              
-              <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4 mb-4">
-                <div className="flex items-start">
-                  <AlertTriangle className="text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" size={16} />
-                  <div className="ml-2">
-                    <p className="text-sm text-red-800 dark:text-red-200">
-                      <strong>Important:</strong> Deleting transactions will affect:
-                    </p>
-                    <ul className="text-sm text-red-700 dark:text-red-300 mt-1 list-disc list-inside">
-                      <li>Transaction history for all users</li>
-                      <li>Financial reports and analytics</li>
-                      <li>Audit trails for payments and services</li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Clear transactions from date (optional)
-                </label>
-                <div className="flex items-center">
-                  <Calendar size={16} className="text-gray-500 mr-2" />
-                  <input
-                    type="date"
-                    value={clearFromDate}
-                    onChange={(e) => setClearFromDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                  />
-                </div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  Leave empty to clear all transactions
-                </p>
-              </div>
-              
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Type 'DELETE' to confirm
-                </label>
-                <input
-                  type="text"
-                  value={clearTransactionsInput}
-                  onChange={(e) => setClearTransactionsInput(e.target.value)}
-                  placeholder="Type DELETE here"
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
-                />
-              </div>
-            </div>
-
-            <div className="p-6 border-t border-gray-200 dark:border-gray-700">
-              <div className="flex space-x-3">
-                <button
-                  onClick={() => {
-                    setShowClearTransactionsModal(false);
-                    setClearTransactionsInput('');
-                    setClearFromDate('');
-                  }}
-                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleConfirmClearTransactions}
-                  disabled={clearTransactionsInput !== 'DELETE' || clearingTransactions}
-                  className="flex-1 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {clearingTransactions ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                      Deleting...
-                    </div>
-                  ) : (
-                    'Delete Transactions'
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

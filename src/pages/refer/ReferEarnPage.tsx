@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Copy, Share2, Users, Gift, TrendingUp, Award, ArrowLeft, CheckCircle, User, AlertCircle, Wifi, Phone, CreditCard, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { useAppSettingsStore } from '../../store/appSettingsStore';
 import { formatCurrency } from '../../lib/utils';
 import { supabase } from '../../lib/supabase';
 import Card from '../../components/ui/Card';
@@ -18,6 +19,7 @@ type Referral = {
 const ReferEarnPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
+  const { appBaseUrl, siteName } = useAppSettingsStore();
   const [copied, setCopied] = useState(false);
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(false);
@@ -50,7 +52,7 @@ const ReferEarnPage: React.FC = () => {
   
   // Get referral code from user
   const referralCode = user ? user.referralCode : 'HN-XXXXXXXX';
-  const referralLink = `https://haamannetwork.com/signup?ref=${referralCode}`;
+  const referralLink = `${appBaseUrl}/signup?ref=${referralCode}`;
 
   useEffect(() => {
     if (user) {
@@ -165,8 +167,8 @@ const ReferEarnPage: React.FC = () => {
   const shareReferralCode = () => {
     if (navigator.share) {
       navigator.share({
-        title: 'Join Haaman Network',
-        text: `Join me on Haaman Network and get amazing rewards! Use my referral code: ${referralCode}`,
+        title: `Join ${siteName}`,
+        text: `Join me on ${siteName} and get amazing rewards! Use my referral code: ${referralCode}`,
         url: referralLink
       }).catch(err => {
         console.error('Error sharing:', err);
@@ -482,7 +484,7 @@ const ReferEarnPage: React.FC = () => {
             </div>
             
             <h2 className="text-xl sm:text-2xl font-bold mb-2">
-              Invite friends to Haaman Network
+              Invite friends to {siteName}
             </h2>
             <p className="text-base sm:text-lg opacity-90 mb-4">
               Earn rewards for every successful referral!
@@ -908,7 +910,7 @@ const ReferEarnPage: React.FC = () => {
                   referralStats.rewardType === 'airtime' ? `Airtime reward (${formatCurrency(referralStats.airtimeAmount)})` :
                   `Cash reward (${formatCurrency(referralStats.cashAmount)})`} is given after referring {referralStats.requiredReferrals} users</li>
             )}
-            <li>• Haaman Network reserves the right to modify terms at any time</li>
+            <li>• {siteName} reserves the right to modify terms at any time</li>
           </ul>
         </div>
       </div>
