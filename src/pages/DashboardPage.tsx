@@ -19,9 +19,6 @@ import {
   Sun,
   Package,
   MessageCircle,
-  ArrowRightLeft,
-  CreditCard,
-  DollarSign,
   PlusCircle
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
@@ -223,24 +220,11 @@ const DashboardPage: React.FC = () => {
           
           <div className="p-6">
             <div className="flex items-center justify-between">
-              <div>
+              <div className="flex items-center">
                 <p className="text-sm opacity-80">Balance</p>
-                <p className="text-3xl font-bold mt-1">
-                  {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
-                </p>
-              </div>
-              
-              <div>
-                <p className="text-sm opacity-80">Card</p>
-                <p className="text-xl font-bold mt-1">Mabank</p>
-              </div>
-            </div>
-            
-            <div className="flex items-center justify-between mt-4">
-              <div className="flex items-center space-x-2">
                 <button 
                   onClick={toggleBalanceVisibility}
-                  className="opacity-75 hover:opacity-100 transition-opacity"
+                  className="opacity-75 hover:opacity-100 transition-opacity ml-2"
                 >
                   {showBalance ? (
                     <Eye size={14} />
@@ -248,49 +232,23 @@ const DashboardPage: React.FC = () => {
                     <EyeOff size={14} />
                   )}
                 </button>
-                <button 
-                  onClick={() => navigate('/transactions')}
-                  className="text-xs sm:text-sm opacity-90 hover:opacity-100 transition-opacity"
-                >
-                  History →
-                </button>
               </div>
+              
+              <div>
+                <p className="text-sm opacity-80">History</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center justify-between mt-4">
+              <p className="text-3xl font-bold">
+                {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
+              </p>
             </div>
           </div>
         </div>
         
         {/* Quick Actions */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="flex flex-col items-center">
-            <button 
-              onClick={() => navigate('/wallet/fund')}
-              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
-            >
-              <ArrowRightLeft size={24} className="text-indigo-600" />
-            </button>
-            <span className="text-xs text-indigo-600 font-medium">Transfer</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <button 
-              onClick={() => navigate('/services')}
-              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
-            >
-              <CreditCard size={24} className="text-indigo-600" />
-            </button>
-            <span className="text-xs text-indigo-600 font-medium">Payment</span>
-          </div>
-          
-          <div className="flex flex-col items-center">
-            <button 
-              onClick={() => navigate('/services')}
-              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
-            >
-              <DollarSign size={24} className="text-indigo-600" />
-            </button>
-            <span className="text-xs text-indigo-600 font-medium">Payout</span>
-          </div>
-          
           <div className="flex flex-col items-center">
             <button 
               onClick={() => navigate('/wallet/fund')}
