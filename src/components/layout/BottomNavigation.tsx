@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, ShoppingBag, TrendingUp, User } from 'lucide-react';
+import { Wallet, BarChart2, Bell, Hexagon } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { cn } from '../../lib/utils';
 
@@ -8,22 +8,22 @@ const navigationItems = [
   {
     name: 'Home',
     path: '/',
-    icon: Home,
+    icon: Wallet, // Represents Home/Dashboard (wallet icon from image)
   },
   {
     name: 'Shop',
     path: '/store',
-    icon: ShoppingBag,
+    icon: BarChart2, // Represents Shop (bar chart icon from image)
   },
   {
     name: 'Refer & Earn',
     path: '/refer',
-    icon: TrendingUp,
+    icon: Bell, // Represents Refer & Earn (bell icon from image)
   },
   {
     name: 'Profile',
     path: '/profile',
-    icon: User,
+    icon: Hexagon, // Represents Profile (hexagon icon from image)
   },
 ];
 
@@ -36,37 +36,28 @@ const BottomNavigation: React.FC = () => {
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 flex items-center justify-around z-50 px-2 sm:px-6 safe-area-pb">
+    <div className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-md h-16 bg-bottomNav-bg rounded-full flex items-center justify-around z-50 px-2 sm:px-6 shadow-lg safe-area-pb">
       {navigationItems.map((item) => (
         <NavLink
           key={item.path}
           to={item.path}
-          className={({ isActive }) =>
-            cn(
-              'bottom-nav-item flex flex-col items-center justify-center text-center pt-2 pb-1 w-full min-h-[3rem]',
-              isActive ? 'bottom-nav-item-active' : 'bottom-nav-item-inactive'
-            )
-          }
+          className="flex-1 flex items-center justify-center h-full"
           end
         >
           {({ isActive }) => {
             const IconComponent = item.icon;
             return (
-              <>
+              <div className={cn(
+                'flex items-center justify-center w-12 h-12 rounded-full transition-colors duration-200',
+                isActive ? 'bg-bottomNav-active' : 'bg-transparent'
+              )}>
                 <IconComponent
                   size={20}
                   className={cn(
-                    'mb-1',
-                    isActive ? 'text-green-500' : 'text-gray-500 dark:text-gray-400'
+                    isActive ? 'text-white' : 'text-gray-400'
                   )}
                 />
-                <span className={cn(
-                  'text-xs leading-tight',
-                  isActive ? 'text-green-500 font-medium' : 'text-gray-500 dark:text-gray-400'
-                )}>
-                  {item.name}
-                </span>
-              </>
+              </div>
             );
           }}
         </NavLink>
