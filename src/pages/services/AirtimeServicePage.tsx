@@ -22,39 +22,39 @@ type Beneficiary = {
 
 const networkProviders = [
   { 
-    value: 'mtn', 
+    value: 'MTN', 
     label: 'MTN',
     color: 'bg-yellow-500',
-    imageUrl: '/logos/mtn.png'
+    imageUrl: 'https://i.ibb.co/350xQ0HH/mtn.png'
   },
   { 
-    value: 'airtel', 
+    value: 'AIRTEL', 
     label: 'Airtel',
     color: 'bg-red-500',
-    imageUrl: '/logos/airtel.png'
+    imageUrl: 'https://i.ibb.co/LzNyT4v4/airtel.png'
   },
   { 
-    value: 'glo', 
+    value: 'GLO', 
     label: 'Glo',
     color: 'bg-green-500',
-    imageUrl: '/logos/glo.png'
+    imageUrl: 'https://i.ibb.co/NnZLfCHC/glo.jpg'
   },
   { 
-    value: '9mobile', 
+    value: '9MOBILE', 
     label: '9mobile',
     color: 'bg-teal-500',
-    imageUrl: '/logos/9-mobile.webp'
+    imageUrl: 'https://i.ibb.co/zW7WwvnL/9-mobile.webp'
   },
 ];
 
-// Predefined airtime amounts with cashback
+// Predefined airtime amounts
 const predefinedAmounts = [
-  { amount: 50, cashback: 1 },
-  { amount: 100, cashback: 2 },
-  { amount: 200, cashback: 4 },
-  { amount: 500, cashback: 10 },
-  { amount: 1000, cashback: 20 },
-  { amount: 2000, cashback: 40 },
+  { amount: 50 },
+  { amount: 100 },
+  { amount: 200 },
+  { amount: 500 },
+  { amount: 1000 },
+  { amount: 2000 },
 ];
 
 const AirtimeServicePage: React.FC = () => {
@@ -65,6 +65,7 @@ const AirtimeServicePage: React.FC = () => {
   const [selectedNetwork, setSelectedNetwork] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [amount, setAmount] = useState('');
+  const [selectedAmountValue, setSelectedAmountValue] = useState<number | null>(null);
   const [saveAsBeneficiary, setSaveAsBeneficiary] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState('');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
@@ -75,6 +76,7 @@ const AirtimeServicePage: React.FC = () => {
   const [loadingBeneficiaries, setLoadingBeneficiaries] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSetPinModal, setShowSetPinModal] = useState(false);
+  const [showNetworkSelector, setShowNetworkSelector] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -123,7 +125,7 @@ const AirtimeServicePage: React.FC = () => {
               user_id: user.id,
               name: `Beneficiary (${network})`,
               phone_number: phone,
-              network: network.toLowerCase(), // Ensure network is lowercase to match networkProviders
+              network: network.toUpperCase(), // Ensure network is uppercase to match networkProviders
               type: 'airtime',
               created_at: transaction.created_at
             });
@@ -184,7 +186,7 @@ const AirtimeServicePage: React.FC = () => {
 
       // Process the airtime transaction first (before deducting wallet)
       const result = await serviceAPI.processAirtimeTransaction(user.id, {
-        network: selectedNetwork,
+        network: selectedNetwork.toLowerCase(),
         amount: numAmount,
         phoneNumber: phoneNumber,
       });
@@ -267,6 +269,7 @@ const AirtimeServicePage: React.FC = () => {
 
   const handleAmountSelect = (selectedAmount: number) => {
     setAmount(selectedAmount.toString());
+    setSelectedAmountValue(selectedAmount);
     // If network and phone number are already set, proceed to next step
     if (selectedNetwork && phoneNumber) {
       handleContinue();
@@ -298,17 +301,11 @@ const AirtimeServicePage: React.FC = () => {
         {/* Network and Phone Number Display */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
           <div className="flex items-center space-x-3">
-            <div className="relative">
-              <div 
-                className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600"
-                onClick={() => {
-                  // Show network selection modal or dropdown
-                  // For now, we'll just cycle through networks
-                  const currentIndex = networkProviders.findIndex(n => n.value === selectedNetwork);
-                  const nextIndex = (currentIndex + 1) % networkProviders.length;
-                  setSelectedNetwork(networkProviders[nextIndex].value);
-                }}
-              >
+            <div 
+              className="relative"
+              onClick={() => setShowNetworkSelector(!showNetworkSelector)}
+            >
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600">
                 {selectedNetwork ? (
                   <img 
                     src={networkProviders.find(n => n.value === selectedNetwork)?.imageUrl} 
@@ -319,6 +316,31 @@ const AirtimeServicePage: React.FC = () => {
                   <span className="text-gray-400 text-xs">Network</span>
                 )}
               </div>
+              
+              {/* Network Selector Dropdown */}
+              {showNetworkSelector && (
+                <div className="absolute top-14 left-0 z-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-2 w-48">
+                  {networkProviders.map(provider => (
+                    <div 
+                      key={provider.value}
+                      className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        setSelectedNetwork(provider.value);
+                        setShowNetworkSelector(false);
+                      }}
+                    >
+                      <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                        <img 
+                          src={provider.imageUrl} 
+                          alt={provider.label}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <span className="font-medium">{provider.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
             
             <div className="flex-1">
@@ -366,10 +388,15 @@ const AirtimeServicePage: React.FC = () => {
               <div 
                 key={item.amount}
                 onClick={() => handleAmountSelect(item.amount)}
-                className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center cursor-pointer hover:shadow-md transition-shadow"
+                className={`rounded-xl p-4 cursor-pointer transition-all ${
+                  selectedAmountValue === item.amount
+                    ? 'bg-[#2C204D]/10 border-2 border-[#2C204D]'
+                    : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
+                }`}
               >
-                <p className="text-xl font-bold text-gray-900 dark:text-white">₦{item.amount}</p>
-                <p className="text-xs text-gray-500 dark:text-gray-400">Pay ₦{item.amount}</p>
+                <div className="mb-2">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">₦{item.amount}</h3>
+                </div>
               </div>
             ))}
           </div>
@@ -385,7 +412,10 @@ const AirtimeServicePage: React.FC = () => {
               <input
                 type="number"
                 value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                onChange={(e) => {
+                  setAmount(e.target.value);
+                  setSelectedAmountValue(null); // Clear selected amount when custom amount is entered
+                }}
                 placeholder="50-500,000"
                 min="50"
                 max="500000"
@@ -570,6 +600,7 @@ const AirtimeServicePage: React.FC = () => {
                   setSelectedNetwork('');
                   setPhoneNumber('');
                   setAmount('');
+                  setSelectedAmountValue(null);
                   setSaveAsBeneficiary(false);
                   setBeneficiaryName('');
                   setIsSuccess(null);
