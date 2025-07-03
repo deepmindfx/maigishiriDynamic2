@@ -35,7 +35,7 @@ const generateRandomReferralCode = (length = 8) => {
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
-  return `HN-${result}`;
+  return `MD-${result}`;
 };
 
 export const useAuthStore = create<AuthState>()(

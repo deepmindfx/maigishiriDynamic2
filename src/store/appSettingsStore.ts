@@ -11,7 +11,7 @@ type AppSettingsState = {
 };
 
 export const useAppSettingsStore = create<AppSettingsState>((set) => ({
-  siteName: 'Haaman Network', // Default fallback value
+  siteName: 'Maigishiri Dynamic', // Default fallback value
   siteLogoUrl: 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg', // Default fallback value
   appBaseUrl: 'https://haamannetwork.com', // Default fallback value
   isLoading: false,
@@ -33,14 +33,14 @@ export const useAppSettingsStore = create<AppSettingsState>((set) => ({
       });
 
       set({
-        siteName: settings.site_name || 'Haaman Network',
+        siteName: settings.site_name || 'Maigishiri Dynamic',
         siteLogoUrl: settings.site_logo_url || 'https://images.pexels.com/photos/5632402/pexels-photo-5632402.jpeg',
         appBaseUrl: settings.app_base_url || 'https://haamannetwork.com',
         isLoading: false
       });
       
       // Update document title
-      document.title = settings.site_name || 'Haaman Network';
+      document.title = settings.site_name || 'Maigishiri Dynamic';
     } catch (error) {
       console.error('Error fetching app settings:', error);
       set({ 

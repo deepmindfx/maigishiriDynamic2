@@ -357,7 +357,7 @@ const SupportTicketsManagement: React.FC = () => {
       // Add title
       doc.setFontSize(18);
       doc.setTextColor(15, 157, 88); // Primary color #0F9D58
-      doc.text('Haaman Network - Support Tickets Report', 105, 15, { align: 'center' });
+      doc.text('Maigishiri Dynamic - Support Tickets Report', 105, 15, { align: 'center' });
       
       // Add filters info
       doc.setFontSize(10);
@@ -415,7 +415,7 @@ const SupportTicketsManagement: React.FC = () => {
       });
       
       // Save the PDF
-      doc.save(`haaman-support-tickets-${new Date().toISOString().split('T')[0]}.pdf`);
+      doc.save(`maigishiri-support-tickets-${new Date().toISOString().split('T')[0]}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Failed to generate PDF. Please try again.');
@@ -453,7 +453,7 @@ const SupportTicketsManagement: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      link.setAttribute('download', `haaman-support-tickets-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute('download', `maigishiri-support-tickets-${new Date().toISOString().split('T')[0]}.csv`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
@@ -693,51 +693,47 @@ const SupportTicketsManagement: React.FC = () => {
                 {sortedTickets.length > 0 ? (
                   <div className="divide-y divide-gray-200 dark:divide-gray-700">
                     {sortedTickets.map((ticket) => (
-                      <button
+                      <div 
                         key={ticket.id}
+                        className="flex items-center p-4 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer"
                         onClick={() => handleViewTicket(ticket)}
-                        className={`w-full text-left p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${
-                          selectedTicket?.id === ticket.id ? 'bg-gray-50 dark:bg-gray-700' : ''
-                        }`}
                       >
-                        <div className="flex items-start">
-                          <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          ticket.priority === 'critical' || ticket.priority === 'high'
+                            ? 'bg-red-100 dark:bg-red-900/30'
+                            : 'bg-blue-100 dark:bg-blue-900/30'
+                        }`}>
+                          <MessageCircle className={`${
                             ticket.priority === 'critical' || ticket.priority === 'high'
-                              ? 'bg-red-100 dark:bg-red-900/30'
-                              : 'bg-blue-100 dark:bg-blue-900/30'
-                          }`}>
-                            <MessageCircle className={`${
-                              ticket.priority === 'critical' || ticket.priority === 'high'
-                                ? 'text-red-500'
-                                : 'text-blue-500'
-                            }`} size={18} />
+                              ? 'text-red-500'
+                              : 'text-blue-500'
+                          }`} size={18} />
+                        </div>
+                        
+                        <div className="ml-3 flex-1 min-w-0">
+                          <div className="flex items-center justify-between mb-1">
+                            <h4 className="font-medium text-gray-900 dark:text-white text-sm truncate">
+                              {ticket.subject}
+                            </h4>
+                            <span className={`text-xs px-2 py-0.5 rounded-full ml-2 ${getPriorityBadgeColor(ticket.priority as TicketPriority)}`}>
+                              {ticket.priority.toUpperCase()}
+                            </span>
                           </div>
                           
-                          <div className="ml-3 flex-1 min-w-0">
-                            <div className="flex items-center justify-between mb-1">
-                              <h4 className="font-medium text-gray-900 dark:text-white text-sm truncate">
-                                {ticket.subject}
-                              </h4>
-                              <span className={`text-xs px-2 py-0.5 rounded-full ml-2 ${getPriorityBadgeColor(ticket.priority as TicketPriority)}`}>
-                                {ticket.priority.toUpperCase()}
-                              </span>
-                            </div>
-                            
-                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                              {ticket.profiles?.name || 'Unknown user'}
-                            </p>
-                            
-                            <div className="flex items-center justify-between mt-2">
-                              <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusBadgeColor(ticket.status as TicketStatus)}`}>
-                                {getStatusLabel(ticket.status as TicketStatus)}
-                              </span>
-                              <span className="text-xs text-gray-500 dark:text-gray-400">
-                                {format(new Date(ticket.last_message_at), 'MMM d, h:mm a')}
-                              </span>
-                            </div>
+                          <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                            {ticket.profiles?.name || 'Unknown user'}
+                          </p>
+                          
+                          <div className="flex items-center justify-between mt-2">
+                            <span className={`text-xs px-2 py-0.5 rounded-full ${getStatusBadgeColor(ticket.status as TicketStatus)}`}>
+                              {getStatusLabel(ticket.status as TicketStatus)}
+                            </span>
+                            <span className="text-xs text-gray-500 dark:text-gray-400">
+                              {format(new Date(ticket.last_message_at), 'MMM d, h:mm a')}
+                            </span>
                           </div>
                         </div>
-                      </button>
+                      </div>
                     ))}
                   </div>
                 ) : (
@@ -1000,7 +996,7 @@ const SupportTicketsManagement: React.FC = () => {
                       <button
                         onClick={handleSendMessage}
                         disabled={!newMessage.trim() || sendingMessage}
-                        className="px-4 py-2 bg-[#0F9D58] text-white rounded-lg hover:bg-[#0d8a4f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+                        className="px-4 py-2 bg-[#0F9D58] text-white rounded-lg hover:bg-[#0d8a4f] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center self-end"
                       >
                         {sendingMessage ? (
                           <>

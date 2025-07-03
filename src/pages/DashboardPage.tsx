@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useServiceConfigStore } from '../store/serviceConfigStore';
+import { useAppSettingsStore } from '../store/appSettingsStore';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import ProductSlideshow from '../components/home/ProductSlideshow';
@@ -33,6 +34,7 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { config: serviceConfig, fetchConfig } = useServiceConfigStore();
+  const { siteName } = useAppSettingsStore();
   const [showBalance, setShowBalance] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');

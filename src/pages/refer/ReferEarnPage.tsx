@@ -61,7 +61,7 @@ const ReferEarnPage: React.FC = () => {
   const itemsPerPage = 5;
   
   // Get referral code from user
-  const referralCode = user ? user.referralCode : 'HN-XXXXXXXX';
+  const referralCode = user ? user.referralCode : 'MD-XXXXXXXX';
   const referralLink = `${appBaseUrl}/signup?ref=${referralCode}`;
 
   useEffect(() => {

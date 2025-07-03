@@ -327,7 +327,7 @@ const TransactionsManagement: React.FC = () => {
       // Add title
       doc.setFontSize(18);
       doc.setTextColor(15, 157, 88); // Primary color #0F9D58
-      doc.text('Haaman Network - Transaction Report', 105, 15, { align: 'center' });
+      doc.text('Maigishiri Dynamic - Transaction Report', 105, 15, { align: 'center' });
       
       // Add filters info
       doc.setFontSize(10);
@@ -433,7 +433,7 @@ const TransactionsManagement: React.FC = () => {
       });
       
       // Save the PDF
-      doc.save(`haaman-transactions-${new Date().toISOString().split('T')[0]}.pdf`);
+      doc.save(`maigishiri-transactions-${new Date().toISOString().split('T')[0]}.pdf`);
     } catch (error) {
       console.error('Error generating PDF:', error);
       alert('Failed to generate PDF. Please try again.');
@@ -515,7 +515,7 @@ const TransactionsManagement: React.FC = () => {
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.setAttribute('href', url);
-      link.setAttribute('download', `haaman-transactions-${new Date().toISOString().split('T')[0]}.csv`);
+      link.setAttribute('download', `maigishiri-transactions-${new Date().toISOString().split('T')[0]}.csv`);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();

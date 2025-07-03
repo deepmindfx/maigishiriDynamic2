@@ -360,7 +360,7 @@ const AdminDashboard: React.FC = () => {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center">
               <div className="w-10 h-10 bg-[#0F9D58] rounded-lg flex items-center justify-center mr-3">
-                <span className="text-white font-bold text-lg">H</span>
+                <span className="text-white font-bold text-lg">M</span>
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>

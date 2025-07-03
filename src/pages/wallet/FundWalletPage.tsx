@@ -166,7 +166,7 @@ const FundWalletPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="w-12 h-12 bg-[#0F9D58] rounded-lg flex items-center justify-center">
-                    <span className="text-white font-bold text-lg">H</span>
+                    <span className="text-white font-bold text-lg">M</span>
                   </div>
                 </div>
 
