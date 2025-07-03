@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus } from 'lucide-react';
+import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -25,26 +25,36 @@ const networkProviders = [
     value: 'mtn', 
     label: 'MTN',
     color: 'bg-yellow-500',
-    imageUrl: 'https://i.ibb.co/350xQ0HH/mtn.png'
+    imageUrl: '/logos/mtn.png'
   },
   { 
     value: 'airtel', 
     label: 'Airtel',
     color: 'bg-red-500',
-    imageUrl: 'https://i.ibb.co/LzNyT4v4/airtel.png'
+    imageUrl: '/logos/airtel.png'
   },
   { 
     value: 'glo', 
     label: 'Glo',
     color: 'bg-green-500',
-    imageUrl: 'https://i.ibb.co/NnZLfCHC/glo.jpg'
+    imageUrl: '/logos/glo.png'
   },
   { 
     value: '9mobile', 
     label: '9mobile',
     color: 'bg-teal-500',
-    imageUrl: 'https://i.ibb.co/zW7WwvnL/9-mobile.webp'
+    imageUrl: '/logos/9-mobile.webp'
   },
+];
+
+// Predefined airtime amounts with cashback
+const predefinedAmounts = [
+  { amount: 50, cashback: 1 },
+  { amount: 100, cashback: 2 },
+  { amount: 200, cashback: 4 },
+  { amount: 500, cashback: 10 },
+  { amount: 1000, cashback: 20 },
+  { amount: 2000, cashback: 40 },
 ];
 
 const AirtimeServicePage: React.FC = () => {
@@ -255,201 +265,179 @@ const AirtimeServicePage: React.FC = () => {
     setShowBeneficiaries(false);
   };
 
+  const handleAmountSelect = (selectedAmount: number) => {
+    setAmount(selectedAmount.toString());
+    // If network and phone number are already set, proceed to next step
+    if (selectedNetwork && phoneNumber) {
+      handleContinue();
+    }
+  };
+
   const renderStepOne = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center">
+          <button
+            onClick={() => navigate('/')}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+          </button>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Airtime</h1>
+        </div>
         <button
-          onClick={() => navigate('/')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          onClick={() => navigate('/transactions')}
+          className="text-green-500 text-sm font-medium"
         >
-          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+          History
         </button>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Airtime</h1>
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Beneficiaries Section */}
-        {beneficiaries.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Beneficiaries
-              </h2>
-              <button
-                onClick={() => setShowBeneficiaries(!showBeneficiaries)}
-                className="text-[#0F9D58] text-sm font-medium"
+        {/* Network and Phone Number Display */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="relative">
+              <div 
+                className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600"
+                onClick={() => {
+                  // Show network selection modal or dropdown
+                  // For now, we'll just cycle through networks
+                  const currentIndex = networkProviders.findIndex(n => n.value === selectedNetwork);
+                  const nextIndex = (currentIndex + 1) % networkProviders.length;
+                  setSelectedNetwork(networkProviders[nextIndex].value);
+                }}
               >
-                {showBeneficiaries ? 'Hide' : 'View All'}
-              </button>
-            </div>
-            
-            {showBeneficiaries ? (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-4">
-                {loadingBeneficiaries ? (
-                  <div className="flex justify-center py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#0F9D58]"></div>
-                  </div>
+                {selectedNetwork ? (
+                  <img 
+                    src={networkProviders.find(n => n.value === selectedNetwork)?.imageUrl} 
+                    alt={selectedNetwork}
+                    className="w-8 h-8 object-contain"
+                  />
                 ) : (
-                  <div className="space-y-3">
-                    {beneficiaries.map((beneficiary) => (
-                      <button
-                        key={beneficiary.id}
-                        onClick={() => selectBeneficiary(beneficiary)}
-                        className="w-full flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          beneficiary.network === 'mtn' ? 'bg-yellow-100 text-yellow-600' :
-                          beneficiary.network === 'airtel' ? 'bg-red-100 text-red-600' :
-                          beneficiary.network === 'glo' ? 'bg-green-100 text-green-600' :
-                          beneficiary.network === '9mobile' ? 'bg-teal-100 text-teal-600' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>
-                          <User size={18} />
-                        </div>
-                        
-                        <div className="ml-3 text-left">
-                          <p className="font-medium text-gray-900 dark:text-white">{beneficiary.name}</p>
-                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <span>{beneficiary.phone_number}</span>
-                            <span className="mx-1">•</span>
-                            <span className="capitalize">{beneficiary.network}</span>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                  <span className="text-gray-400 text-xs">Network</span>
                 )}
               </div>
-            ) : (
-              <div className="overflow-x-auto scrollbar-hide">
-                <div className="flex space-x-3 pb-2 flex-nowrap">
-                  {beneficiaries.map((beneficiary) => (
-                    <button
-                      key={beneficiary.id}
-                      onClick={() => selectBeneficiary(beneficiary)}
-                      className="flex-shrink-0 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#0F9D58] transition-colors"
-                    >
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
-                        beneficiary.network === 'mtn' ? 'bg-yellow-100 text-yellow-600' :
-                        beneficiary.network === 'airtel' ? 'bg-red-100 text-red-600' :
-                        beneficiary.network === 'glo' ? 'bg-green-100 text-green-600' :
-                        beneficiary.network === '9mobile' ? 'bg-teal-100 text-teal-600' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        <User size={20} />
-                      </div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{beneficiary.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{beneficiary.phone_number}</p>
-                    </button>
-                  ))}
-                  
-                  {/* Add New Beneficiary Button */}
-                  <button
-                    onClick={() => {
-                      setSelectedNetwork('');
-                      setPhoneNumber('');
-                      setBeneficiaryName('');
-                      setSaveAsBeneficiary(true);
-                    }}
-                    className="flex-shrink-0 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 hover:border-[#0F9D58] transition-colors"
-                  >
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-gray-100 dark:bg-gray-700 text-[#0F9D58]">
-                      <Plus size={20} />
-                    </div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Add New</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Beneficiary</p>
-                  </button>
-                </div>
-              </div>
-            )}
+            </div>
+            
+            <div className="flex-1">
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter phone number"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
+            </div>
+            
+            <button 
+              className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center"
+              onClick={() => {
+                // Show beneficiaries or contacts
+                setShowBeneficiaries(!showBeneficiaries);
+              }}
+            >
+              <User size={20} className="text-white" />
+            </button>
           </div>
-        )}
+          
+          {/* Beneficiaries Dropdown */}
+          {showBeneficiaries && beneficiaries.length > 0 && (
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 mt-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 px-2">Recent Beneficiaries</h3>
+              <div className="max-h-48 overflow-y-auto">
+                {beneficiaries.map(beneficiary => (
+                  <div 
+                    key={beneficiary.id}
+                    className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg cursor-pointer"
+                    onClick={() => selectBeneficiary(beneficiary)}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mr-3">
+                      <User size={16} className="text-gray-500 dark:text-gray-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{beneficiary.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{beneficiary.phone_number}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
-        {/* Network Provider Selection */}
+        {/* USSD Info Banner */}
+        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+          <div className="flex items-start">
+            <Info className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" size={18} />
+            <div className="ml-3">
+              <h4 className="font-medium text-green-900 dark:text-green-100 text-sm">Low on Airtime?</h4>
+              <p className="text-sm text-green-800 dark:text-green-200">
+                Simply Dial <span className="font-bold bg-blue-900 text-white px-1 py-0.5 rounded">*955*3*</span><span className="font-bold">amount#</span>
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Up Section */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Select Service Provider
-          </h2>
-          <div className="grid grid-cols-4 gap-4">
-            {networkProviders.map((provider) => (
-              <button
-                key={provider.value}
-                onClick={() => setSelectedNetwork(provider.value)}
-                className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
-                  selectedNetwork === provider.value
-                    ? 'border-[#0F9D58] bg-[#0F9D58]/5'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                }`}
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top up</h2>
+          
+          <div className="grid grid-cols-3 gap-3">
+            {predefinedAmounts.map((item) => (
+              <div 
+                key={item.amount}
+                onClick={() => handleAmountSelect(item.amount)}
+                className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center cursor-pointer hover:shadow-md transition-shadow"
               >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 overflow-hidden bg-white">
-                  <img
-                    src={provider.imageUrl}
-                    alt={provider.label}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  {provider.label}
-                </span>
-              </button>
+                <p className="text-xs text-green-500 mb-1">₦{item.cashback} Cashback</p>
+                <p className="text-xl font-bold text-gray-900 dark:text-white">₦{item.amount}</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400">Pay ₦{item.amount}</p>
+              </div>
             ))}
           </div>
         </div>
 
-        {/* Phone Number Input */}
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-3">
-            Phone Number
-          </label>
-          <div className="relative">
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter phone number"
-              className="w-full px-4 py-4 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F9D58] focus:border-transparent"
-            />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <User size={20} className="text-[#0F9D58]" />
+        {/* Custom Amount Input */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center space-x-3">
+            <div className="flex-1 relative">
+              <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">
+                ₦
+              </span>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(e.target.value)}
+                placeholder="50-500,000"
+                min="50"
+                max="500000"
+                className="w-full pl-8 pr-4 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+              />
             </div>
+            
+            <Button
+              onClick={handleContinue}
+              disabled={!selectedNetwork || !phoneNumber || !amount || Number(amount) < 50}
+              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl"
+            >
+              Pay
+            </Button>
           </div>
-        </div>
-
-        {/* Amount Input */}
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-3">
-            Amount
-          </label>
-          <div className="relative">
-            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 dark:text-gray-400 font-medium">
-              ₦
-            </span>
-            <input
-              type="number"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              placeholder="0.00"
-              min="100"
-              max="50000"
-              className="w-full pl-8 pr-4 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F9D58] focus:border-transparent"
-            />
-          </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-            Minimum: ₦100, Maximum: ₦50,000
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            ₦50-500,000
           </p>
         </div>
 
-        {/* Save as Beneficiary Toggle */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">
-              Save as Beneficiary
-            </span>
+        {/* Save as Beneficiary */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Save as Beneficiary</span>
             <button
               onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                saveAsBeneficiary ? 'bg-[#0F9D58]' : 'bg-gray-300 dark:bg-gray-600'
+                saveAsBeneficiary ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
               }`}
             >
               <span
@@ -461,30 +449,36 @@ const AirtimeServicePage: React.FC = () => {
           </div>
           
           {saveAsBeneficiary && (
-            <div className="animate-fade-in">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Beneficiary Name
-              </label>
+            <div className="mt-3 animate-fade-in">
               <input
                 type="text"
                 value={beneficiaryName}
                 onChange={(e) => setBeneficiaryName(e.target.value)}
-                placeholder="Enter a name for this beneficiary"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F9D58] focus:border-transparent"
+                placeholder="Enter beneficiary name"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
               />
             </div>
           )}
         </div>
 
-        {/* Continue Button */}
-        <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
-          <Button
-            onClick={handleContinue}
-            disabled={!selectedNetwork || !phoneNumber || !amount || Number(amount) < 100 || (saveAsBeneficiary && !beneficiaryName)}
-            className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Continue
-          </Button>
+        {/* Airtime Service Section */}
+        <div>
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Airtime Service</h2>
+          
+          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mr-3">
+                  <Phone size={18} className="text-green-500" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900 dark:text-white">USSD enquiry</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">Check phone balance and more</p>
+                </div>
+              </div>
+              <ChevronRight size={20} className="text-gray-400" />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -550,7 +544,7 @@ const AirtimeServicePage: React.FC = () => {
             <Button
               onClick={handlePayment}
               isLoading={isLoading}
-              className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white py-3"
+              className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3"
             >
               Pay Now
             </Button>
@@ -565,8 +559,8 @@ const AirtimeServicePage: React.FC = () => {
       <Card className="w-full max-w-md p-6 text-center">
         {isSuccess ? (
           <>
-            <div className="w-16 h-16 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="text-[#0F9D58]" size={32} />
+            <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="text-green-500" size={32} />
             </div>
             
             <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Purchase Successful!</h2>
@@ -626,7 +620,7 @@ const AirtimeServicePage: React.FC = () => {
                   setTransaction(null);
                   setErrorMessage('');
                 }}
-                className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+                className="flex-1 bg-green-500 hover:bg-green-600 text-white"
               >
                 Buy Again
               </Button>
@@ -649,7 +643,7 @@ const AirtimeServicePage: React.FC = () => {
                 setIsSuccess(null);
                 setErrorMessage('');
               }}
-              className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+              className="w-full bg-green-500 hover:bg-green-600 text-white"
             >
               Try Again
             </Button>
