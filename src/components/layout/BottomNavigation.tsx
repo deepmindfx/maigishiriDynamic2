@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Wallet, BarChart2, Bell, Hexagon } from 'lucide-react';
+import { Home, ShoppingBag, TrendingUp, User } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { cn } from '../../lib/utils';
 
@@ -8,22 +8,22 @@ const navigationItems = [
   {
     name: 'Home',
     path: '/',
-    icon: Wallet, // Represents Home/Dashboard (wallet icon from image)
+    icon: Home,
   },
   {
     name: 'Shop',
     path: '/store',
-    icon: BarChart2, // Represents Shop (bar chart icon from image)
+    icon: ShoppingBag,
   },
   {
     name: 'Refer & Earn',
     path: '/refer',
-    icon: Bell, // Represents Refer & Earn (bell icon from image)
+    icon: TrendingUp,
   },
   {
     name: 'Profile',
     path: '/profile',
-    icon: Hexagon, // Represents Profile (hexagon icon from image)
+    icon: User,
   },
 ];
 
