@@ -405,7 +405,7 @@ const HomePage: React.FC = () => {
 
       {/* Services Section */}
       {filteredServices.length > 0 && (
-        <section className="py-12 sm:py-20 bg-gray-50 dark:bg-gray-800">
+        <section className="py-12 sm:py-20 bg-white dark:bg-gray-900">
           <div className="container-pad">
             <div className="text-center mb-12 sm:mb-16">
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">Our Services</h2>
@@ -462,7 +462,7 @@ const HomePage: React.FC = () => {
       )}
 
       {/* Why Choose Section */}
-      <section className="py-12 sm:py-20 bg-white dark:bg-gray-900">
+      <section className="py-12 sm:py-20 bg-gray-50 dark:bg-gray-900">
         <div className="container-pad">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -490,7 +490,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* Steps Section */}
-      <section className="py-12 sm:py-20 bg-gray-50 dark:bg-gray-800">
+      <section className="py-12 sm:py-20 bg-white dark:bg-gray-800">
         <div className="container-pad">
           <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 items-center">
             <div className="relative order-2 lg:order-1">
@@ -540,7 +540,7 @@ const HomePage: React.FC = () => {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-12 sm:py-20 bg-white dark:bg-gray-900">
+      <section className="py-12 sm:py-20 bg-gray-50 dark:bg-gray-900">
         <div className="container-pad">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -593,11 +593,11 @@ const HomePage: React.FC = () => {
             <div className="space-y-4">
               {faqs.map((faq, index) => (
                 <details key={index} className="group">
-                  <summary className="flex justify-between items-center p-4 bg-gray-50 dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <summary className="flex justify-between items-center p-4 bg-white dark:bg-gray-800 rounded-xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <span className="font-medium text-sm sm:text-base pr-4">{faq.question}</span>
                     <ChevronDown className="w-4 h-4 group-open:rotate-180 transition-transform" />
                   </summary>
-                  <div className="p-4 bg-gray-100 dark:bg-gray-700 rounded-b-xl">
+                  <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
                     <p className="text-gray-600 dark:text-gray-300 text-sm sm:text-base">{faq.answer}</p>
                   </div>
                 </details>
