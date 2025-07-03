@@ -18,14 +18,7 @@ import {
   Moon,
   Sun,
   Package,
-  MessageCircle,
-  ArrowUpRight,
-  Upload,
-  DollarSign,
-  Ban,
-  CreditCard,
-  Bell,
-  Shield
+  MessageCircle
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useServiceConfigStore } from '../store/serviceConfigStore';
@@ -33,8 +26,6 @@ import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import ProductSlideshow from '../components/home/ProductSlideshow';
 import { formatCurrency } from '../lib/utils';
-import RecentTransactions from '../components/home/RecentTransactions';
-import DashboardActionButton from '../components/dashboard/DashboardActionButton';
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -87,31 +78,68 @@ const DashboardPage: React.FC = () => {
     return serviceConfig[serviceId] || 'active';
   };
 
-  const quickActions = [
+  const mainServices = [
     {
-      icon: <Ban size={24} className="text-indigo-600" />,
-      label: 'Transfer',
-      path: '/coming-soon',
-      comingSoon: true
+      title: 'Airtime',
+      icon: <Phone size={20} />,
+      path: '/services/airtime',
+      color: 'bg-green-100 text-green-600',
+      id: 'airtime'
     },
     {
-      icon: <Upload size={24} className="text-indigo-600" />,
-      label: 'Payment',
+      title: 'Data',
+      icon: <Wifi size={20} />,
+      path: '/services/data',
+      color: 'bg-green-100 text-green-600',
+      id: 'data'
+    },
+    {
+      title: 'Electricity',
+      icon: <Zap size={20} />,
+      path: '/services/electricity',
+      color: 'bg-green-100 text-green-600',
+      id: 'electricity'
+    },
+    {
+      title: 'TV',
+      icon: <Tv size={20} />,
+      path: '/services/tv',
+      color: 'bg-green-100 text-green-600',
+      id: 'tv',
+      description: 'Pay for your TV subscriptions including DSTV, GOTV, and Startimes'
+    },
+  ];
+
+  const secondaryServices = [
+    {
+      title: 'Redeem Voucher',
+      icon: <Gift size={20} />,
+      path: '/voucher',
+      color: 'bg-green-100 text-green-600',
+      id: 'voucher',
+      description: 'Redeem your vouchers and gift cards for amazing rewards and discounts'
+    },
+    {
+      title: 'Support',
+      icon: <MessageCircle size={20} />,
+      path: '/support',
+      color: 'bg-green-100 text-green-600',
+      id: 'support'
+    },
+    {
+      title: 'Refer & Earn',
+      icon: <Users size={20} />,
+      path: '/refer',
+      color: 'bg-green-100 text-green-600',
+      id: 'refer'
+    },
+    {
+      title: 'More',
+      icon: <MoreHorizontal size={20} />,
       path: '/services',
-      comingSoon: false
+      color: 'bg-green-100 text-green-600',
+      id: 'more'
     },
-    {
-      icon: <ArrowUpRight size={24} className="text-indigo-600" />,
-      label: 'Payout',
-      path: '/coming-soon',
-      comingSoon: true
-    },
-    {
-      icon: <Plus size={24} className="text-indigo-600" />,
-      label: 'Top up',
-      path: '/wallet/fund',
-      comingSoon: false
-    }
   ];
 
   const promotionalBanners = [
@@ -125,100 +153,173 @@ const DashboardPage: React.FC = () => {
     },
   ];
 
-  return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Header */}
-      <div className="px-6 pt-8 pb-4">
-        <div className="flex justify-between items-start">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Wallet</h1>
-            <p className="text-gray-500 dark:text-gray-400 mt-1">Active</p>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={toggleTheme}
-              className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center"
-            >
-              {isDarkMode ? (
-                <Sun size={18} className="text-gray-600 dark:text-gray-400" />
-              ) : (
-                <Moon size={18} className="text-gray-600 dark:text-gray-400" />
-              )}
-            </button>
-            
-            <div className="w-12 h-12 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-green-400 to-green-600 text-white font-bold text-lg">
-                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
-              </div>
-            </div>
-          </div>
-        </div>
+  // Filter services based on their status
+  const filteredMainServices = mainServices.filter(service => {
+    const status = getServiceStatus(service.id);
+    return status !== 'disabled';
+  }).map(service => {
+    const status = getServiceStatus(service.id);
+    return {
+      ...service,
+      comingSoon: status === 'coming_soon'
+    };
+  });
 
-        {/* Wallet Balance Card */}
-        <div className="mt-6 bg-wallet-purple-500 text-white rounded-4xl p-6 shadow-lg">
-          <div className="flex justify-between">
-            <div>
-              <p className="text-white/80 text-sm mb-1">Balance</p>
-              <div className="flex items-center">
-                <p className="text-3xl font-bold">
-                  {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
-                </p>
-                <button 
-                  onClick={toggleBalanceVisibility}
-                  className="ml-2 opacity-75 hover:opacity-100 transition-opacity"
-                >
-                  {showBalance ? (
-                    <EyeOff size={16} />
-                  ) : (
-                    <Eye size={16} />
-                  )}
-                </button>
-              </div>
+  const filteredSecondaryServices = secondaryServices.filter(service => {
+    if (service.id === 'more') return true; // Always show "More" option
+    const status = getServiceStatus(service.id);
+    return status !== 'disabled';
+  }).map(service => {
+    if (service.id === 'more') return service; // Don't modify "More" option
+    const status = getServiceStatus(service.id);
+    return {
+      ...service,
+      comingSoon: status === 'coming_soon'
+    };
+  });
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 px-4 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+              <span className="text-white font-bold text-sm sm:text-lg">
+                {user?.name?.charAt(0)?.toUpperCase() || 'U'}
+              </span>
             </div>
-            
             <div>
-              <p className="text-white/80 text-sm mb-1">Card</p>
-              <p className="text-2xl font-bold">
-                {user?.virtualAccountBankName || 'Virtual Account'}
+              <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">
+                {getGreeting()}
+              </p>
+              <p className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                {user?.name?.split(' ')[0] || 'User'}
               </p>
             </div>
           </div>
+          
+          <button 
+            onClick={toggleTheme}
+            className="p-2 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center justify-center"
+          >
+            {isDarkMode ? (
+              <Sun size={18} className="text-gray-600 dark:text-gray-400" />
+            ) : (
+              <Moon size={18} className="text-gray-600 dark:text-gray-400" />
+            )}
+          </button>
         </div>
 
-        {/* Quick Actions */}
-        <div className="mt-8">
-          <div className="grid grid-cols-4 gap-4">
-            {quickActions.map((action, index) => (
-              <DashboardActionButton
-                key={index}
-                icon={action.icon}
-                label={action.label}
-                path={action.path}
-                comingSoon={action.comingSoon}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Recent Transactions */}
-        <div className="mt-8">
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Last Transaction</h2>
-            <a href="/transactions" className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">
-              View All
-            </a>
+        {/* Balance Card */}
+        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 sm:p-6 shadow-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="text-xs sm:text-sm opacity-90">Available Balance</span>
+              <button 
+                onClick={toggleBalanceVisibility}
+                className="opacity-75 hover:opacity-100 transition-opacity"
+              >
+                {showBalance ? (
+                  <Eye size={14} />
+                ) : (
+                  <EyeOff size={14} />
+                )}
+              </button>
+            </div>
+            <div className="flex items-center space-x-4">
+              <button 
+                onClick={() => navigate('/transactions')}
+                className="text-xs sm:text-sm opacity-90 hover:opacity-100 transition-opacity"
+              >
+                History →
+              </button>
+            </div>
           </div>
           
-          <RecentTransactions />
+          <div className="flex items-center justify-between mt-4">
+            <div>
+              <p className="text-xl sm:text-3xl font-bold">
+                {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
+              </p>
+            </div>
+            
+            <Button
+              onClick={() => navigate('/wallet/fund')}
+              className="bg-white text-green-600 hover:bg-gray-100 px-4 sm:px-6 py-2 rounded-full font-medium text-sm"
+            >
+              Add Money
+            </Button>
+          </div>
+        </Card>
+      </div>
+
+      {/* Services Grid */}
+      <div className="px-4 py-6">
+        {/* Main Services */}
+        <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          {filteredMainServices.map((service, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                if (service.comingSoon) {
+                  handleComingSoonNavigation(service.title, service.description || '');
+                } else {
+                  navigate(service.path);
+                }
+              }}
+              className="flex flex-col items-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow relative"
+            >
+              {service.comingSoon && (
+                <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                  Soon
+                </div>
+              )}
+              <div className={`w-10 sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center ${service.color}`}>
+                {service.icon}
+              </div>
+              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
+                {service.title}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        {/* Secondary Services */}
+        <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          {filteredSecondaryServices.map((service, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                if (service.comingSoon) {
+                  handleComingSoonNavigation(service.title, service.description || '');
+                } else {
+                  navigate(service.path);
+                }
+              }}
+              className="flex flex-col items-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow relative"
+            >
+              {service.comingSoon && (
+                <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                  Soon
+                </div>
+              )}
+              <div className={`w-10 sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center ${service.color}`}>
+                {service.icon}
+              </div>
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight px-1">
+                {service.title}
+              </span>
+            </button>
+          ))}
         </div>
 
         {/* Product Slideshow Section */}
         {getServiceStatus('store') !== 'disabled' && (
-          <div className="mt-8">
+          <div className="mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Latest Products</h2>
-              <a href="/store" className="text-indigo-600 dark:text-indigo-400 text-sm font-medium">View All</a>
+              <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Latest Products</h2>
+              <a href="/store" className="text-[#0F9D58] text-sm font-medium">View All</a>
             </div>
             
             <ProductSlideshow />
@@ -227,7 +328,7 @@ const DashboardPage: React.FC = () => {
 
         {/* Promotional Banners */}
         {getServiceStatus('store') !== 'disabled' && (
-          <div className="mt-8 space-y-4">
+          <div className="space-y-4 mb-6 sm:mb-8">
             {promotionalBanners.map((banner) => (
               <Card key={banner.id} className={`${banner.bgColor} text-white p-4 sm:p-6 overflow-hidden relative`}>
                 <div className="flex items-center justify-between">
@@ -259,30 +360,80 @@ const DashboardPage: React.FC = () => {
             ))}
           </div>
         )}
-      </div>
 
-      {/* Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 right-0 bg-wallet-purple-500 rounded-t-3xl p-4 flex justify-around items-center">
-        <button className="flex flex-col items-center">
-          <div className="w-8 h-8 flex items-center justify-center text-white">
-            <CreditCard size={20} />
-          </div>
-        </button>
-        <button className="flex flex-col items-center">
-          <div className="w-8 h-8 flex items-center justify-center text-white">
-            <DollarSign size={20} />
-          </div>
-        </button>
-        <button className="flex flex-col items-center">
-          <div className="w-8 h-8 flex items-center justify-center text-white">
-            <Bell size={20} />
-          </div>
-        </button>
-        <button className="flex flex-col items-center">
-          <div className="w-8 h-8 flex items-center justify-center text-white">
-            <Shield size={20} />
-          </div>
-        </button>
+        {/* Quick Actions */}
+        <div className="mt-8 grid grid-cols-4 gap-3 sm:gap-4">
+          {getServiceStatus('store') !== 'disabled' && (
+            <Card 
+              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/store')}
+            >
+              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <ShoppingBag size={16} className="text-green-600" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Shop</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Browse products</p>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {getServiceStatus('waec') === 'coming_soon' && (
+            <Card 
+              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow relative"
+              onClick={() => handleComingSoonNavigation('Education Services', 'Access educational services, course payments, and academic resources')}
+            >
+              <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                Soon
+              </div>
+              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                  <BookOpen size={16} className="text-purple-600" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Education</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">WAEC & more</p>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {getServiceStatus('store') !== 'disabled' && (
+            <Card 
+              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/store/orders')}
+            >
+              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                  <Package size={16} className="text-blue-600" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Orders</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Track orders</p>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {getServiceStatus('support') !== 'disabled' && (
+            <Card 
+              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
+              onClick={() => navigate('/support')}
+            >
+              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                  <MessageCircle size={16} className="text-orange-600" />
+                </div>
+                <div className="text-center">
+                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Support</p>
+                  <p className="text-xs text-gray-600 dark:text-gray-400">Get help</p>
+                </div>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </div>
   );

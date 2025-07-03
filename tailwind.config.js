@@ -40,11 +40,6 @@ export default {
         error: {
           500: '#ef4444',
         },
-        'wallet-purple': {
-          500: '#4A2A91', // Deep purple for wallet card
-          600: '#3D2277',
-          700: '#301A5E',
-        }
       },
       fontFamily: {
         sans: [
@@ -65,8 +60,6 @@ export default {
       borderRadius: {
         'xl': '1rem',
         '2xl': '1.5rem',
-        '3xl': '2rem',
-        '4xl': '3rem',
       },
       animation: {
         'slide-up': 'slideUp 0.3s ease-out',
