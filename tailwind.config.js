@@ -40,6 +40,10 @@ export default {
         error: {
           500: '#ef4444',
         },
+        bottomNav: { // New custom colors for the bottom navigation
+          bg: '#2C204D', // Dark purple from image
+          active: '#4A3B7A', // Lighter purple for active state
+        },
       },
       fontFamily: {
         sans: [
