@@ -88,7 +88,6 @@ const DataServicePage: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [saveAsBeneficiary, setSaveAsBeneficiary] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState('');
-  const [serviceType, setServiceType] = useState('local');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [transaction, setTransaction] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -236,6 +235,10 @@ const DataServicePage: React.FC = () => {
     } else if (selectedDurationTab === 'Monthly') {
       matchesDuration = plan.validity.toLowerCase().includes('30 day') || 
                         plan.validity.toLowerCase().includes('month');
+    } else if (selectedDurationTab === 'XtraValue') {
+      matchesDuration = plan.plan_type.toLowerCase().includes('xtravalue') || 
+                        plan.description.toLowerCase().includes('xtravalue') ||
+                        plan.description.toLowerCase().includes('xtra value');
     }
     
     return matchesNetwork && matchesCategory && matchesSearch && matchesDuration;
@@ -387,18 +390,18 @@ const DataServicePage: React.FC = () => {
     const lineHeight = 7;
     
     // Details grid
-    const details = [
-      ['Date:', new Date().toLocaleString()],
-      ['Reference:', transaction.reference],
-      ['Network:', networkProviders.find(n => n.value === selectedNetwork)?.label || selectedNetwork],
-      ['Data Plan:', selectedPlan.description],
-      ['Size:', `${selectedPlan.size} (${selectedPlan.validity})`],
-      ['Phone Number:', phoneNumber],
-      ['Amount:', formatCurrency(selectedPlan.selling_price)],
-      ['Status:', 'SUCCESSFUL'],
+    const tableColumn = ["Date:", new Date().toLocaleString()];
+    const tableRows = [
+      ["Reference:", transaction.reference],
+      ["Network:", networkProviders.find(n => n.value === selectedNetwork)?.label || selectedNetwork],
+      ["Data Plan:", selectedPlan.description],
+      ["Size:", `${selectedPlan.size} (${selectedPlan.validity})`],
+      ["Phone Number:", phoneNumber],
+      ["Amount:", formatCurrency(selectedPlan.selling_price)],
+      ["Status:", "SUCCESSFUL"],
     ];
     
-    details.forEach(([label, value], index) => {
+    tableRows.forEach(([label, value], index) => {
       doc.setFont('helvetica', 'bold');
       doc.text(label, 40, startY + (lineHeight * index));
       doc.setFont('helvetica', 'normal');
@@ -413,60 +416,6 @@ const DataServicePage: React.FC = () => {
     // Save the PDF
     doc.save(`data-receipt-${transaction.reference}.pdf`);
   };
-
-  const renderComingSoon = () => (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => navigate('/')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-        >
-          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
-        </button>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Data Bundle</h1>
-      </div>
-
-      <div className="p-4 space-y-6">
-        {/* Service Type Toggle */}
-        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
-          <button
-            onClick={() => setServiceType('local')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'local'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            Local
-          </button>
-          <button
-            onClick={() => setServiceType('international')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'international'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            International
-          </button>
-        </div>
-
-        {/* Coming Soon Message */}
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-24 h-24 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-12 h-12 text-[#0F9D58]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Coming Soon</h2>
-          <p className="text-gray-600 dark:text-gray-400 text-center max-w-sm">
-            International data bundle services will be available soon. Stay tuned for updates!
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 
   const renderStepOne = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -490,30 +439,6 @@ const DataServicePage: React.FC = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Service Type Toggle */}
-        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
-          <button
-            onClick={() => setServiceType('local')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'local'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            Local
-          </button>
-          <button
-            onClick={() => setServiceType('international')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'international'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            International
-          </button>
-        </div>
-
         {/* Phone Number Input with Network Selection */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
           <div className="flex items-center space-x-3 mb-4">
@@ -630,7 +555,7 @@ const DataServicePage: React.FC = () => {
           
           {/* Duration Tabs */}
           <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4">
-            {['HOT', 'Weekly', 'Monthly'].map((tab) => (
+            {['HOT', 'Daily', 'Weekly', 'Monthly', 'XtraValue'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setSelectedDurationTab(tab)}
@@ -975,11 +900,6 @@ const DataServicePage: React.FC = () => {
       </Card>
     </div>
   );
-
-  // Show coming soon for international service
-  if (serviceType === 'international') {
-    return renderComingSoon();
-  }
 
   return (
     <>
