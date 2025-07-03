@@ -316,6 +316,9 @@ const DashboardPage: React.FC = () => {
           ))}
         </div>
 
+        {/* Recent Transactions */}
+        <RecentTransactions />
+
         {/* Product Slideshow Section */}
         {getServiceStatus('store') !== 'disabled' && (
           <div className="mb-6 sm:mb-8">
@@ -327,9 +330,6 @@ const DashboardPage: React.FC = () => {
             <ProductSlideshow />
           </div>
         )}
-
-        {/* Recent Transactions */}
-        <RecentTransactions />
 
         {/* Quick Actions */}
         <div className="mt-8">
