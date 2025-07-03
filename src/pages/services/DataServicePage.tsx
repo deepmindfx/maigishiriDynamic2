@@ -370,7 +370,7 @@ const DataServicePage: React.FC = () => {
     // Add logo (using text as placeholder)
     doc.setFontSize(24);
     doc.setTextColor(15, 157, 88); // Primary color #0F9D58
-    doc.text('HAAMAN NETWORK', 105, 20, { align: 'center' });
+    doc.text('MAIGISHIRI DYNAMIC', 105, 20, { align: 'center' });
     
     doc.setFontSize(12);
     doc.setTextColor(100);
@@ -411,7 +411,7 @@ const DataServicePage: React.FC = () => {
     // Footer
     doc.setFontSize(10);
     doc.setTextColor(100);
-    doc.text('Thank you for choosing Haaman Network!', 105, 120, { align: 'center' });
+    doc.text('Thank you for choosing Maigishiri Dynamic!', 105, 120, { align: 'center' });
     
     // Save the PDF
     doc.save(`data-receipt-${transaction.reference}.pdf`);

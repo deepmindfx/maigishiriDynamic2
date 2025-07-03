@@ -43,14 +43,14 @@ serve(async (req) => {
       .eq('key', 'site_name')
       .single();
 
-    const siteName = siteNameSetting?.value || 'Haaman Network';
+    const siteName = siteNameSetting?.value || 'Maigishiri Dynamic';
 
     if (siteNameError) {
       console.log("Error fetching site name, using default:", siteNameError);
     }
 
     // Generate a unique transaction reference
-    const txRef = `haaman-va-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
+    const txRef = `maigishiri-va-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     // Determine if we're creating a permanent account (requires BVN)
     const isPermanent = !!bvn;
