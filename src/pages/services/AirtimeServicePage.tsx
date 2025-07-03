@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus, Info, ChevronRight } from 'lucide-react';
+import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus, Info } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -288,7 +288,7 @@ const AirtimeServicePage: React.FC = () => {
         </div>
         <button
           onClick={() => navigate('/transactions')}
-          className="text-green-500 text-sm font-medium"
+          className="text-primary-500 text-sm font-medium"
         >
           History
         </button>
@@ -327,19 +327,9 @@ const AirtimeServicePage: React.FC = () => {
                 value={phoneNumber}
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 placeholder="Enter phone number"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
-            
-            <button 
-              className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center"
-              onClick={() => {
-                // Show beneficiaries or contacts
-                setShowBeneficiaries(!showBeneficiaries);
-              }}
-            >
-              <User size={20} className="text-white" />
-            </button>
           </div>
           
           {/* Beneficiaries Dropdown */}
@@ -368,12 +358,12 @@ const AirtimeServicePage: React.FC = () => {
         </div>
 
         {/* USSD Info Banner */}
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-xl p-4 border border-green-200 dark:border-green-800">
+        <div className="bg-primary-500/10 dark:bg-primary-900/20 rounded-xl p-4 border border-primary-200 dark:border-primary-800">
           <div className="flex items-start">
-            <Info className="text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" size={18} />
+            <Info className="text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" size={18} />
             <div className="ml-3">
-              <h4 className="font-medium text-green-900 dark:text-green-100 text-sm">Low on Airtime?</h4>
-              <p className="text-sm text-green-800 dark:text-green-200">
+              <h4 className="font-medium text-primary-900 dark:text-primary-100 text-sm">Low on Airtime?</h4>
+              <p className="text-sm text-primary-800 dark:text-primary-200">
                 Simply Dial <span className="font-bold bg-blue-900 text-white px-1 py-0.5 rounded">*955*3*</span><span className="font-bold">amount#</span>
               </p>
             </div>
@@ -391,7 +381,7 @@ const AirtimeServicePage: React.FC = () => {
                 onClick={() => handleAmountSelect(item.amount)}
                 className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center cursor-pointer hover:shadow-md transition-shadow"
               >
-                <p className="text-xs text-green-500 mb-1">₦{item.cashback} Cashback</p>
+                <p className="text-xs text-primary-500 mb-1">₦{item.cashback} Cashback</p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">₦{item.amount}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Pay ₦{item.amount}</p>
               </div>
@@ -413,14 +403,14 @@ const AirtimeServicePage: React.FC = () => {
                 placeholder="50-500,000"
                 min="50"
                 max="500000"
-                className="w-full pl-8 pr-4 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full pl-8 pr-4 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
             
             <Button
               onClick={handleContinue}
               disabled={!selectedNetwork || !phoneNumber || !amount || Number(amount) < 50}
-              className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-xl"
+              className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 rounded-xl"
             >
               Pay
             </Button>
@@ -437,7 +427,7 @@ const AirtimeServicePage: React.FC = () => {
             <button
               onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
               className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                saveAsBeneficiary ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'
+                saveAsBeneficiary ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600'
               }`}
             >
               <span
@@ -455,30 +445,10 @@ const AirtimeServicePage: React.FC = () => {
                 value={beneficiaryName}
                 onChange={(e) => setBeneficiaryName(e.target.value)}
                 placeholder="Enter beneficiary name"
-                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500"
               />
             </div>
           )}
-        </div>
-
-        {/* Airtime Service Section */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Airtime Service</h2>
-          
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mr-3">
-                  <Phone size={18} className="text-green-500" />
-                </div>
-                <div>
-                  <p className="font-medium text-gray-900 dark:text-white">USSD enquiry</p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">Check phone balance and more</p>
-                </div>
-              </div>
-              <ChevronRight size={20} className="text-gray-400" />
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -544,7 +514,7 @@ const AirtimeServicePage: React.FC = () => {
             <Button
               onClick={handlePayment}
               isLoading={isLoading}
-              className="flex-1 bg-green-500 hover:bg-green-600 text-white py-3"
+              className="flex-1 bg-primary-500 hover:bg-primary-600 text-white py-3"
             >
               Pay Now
             </Button>
@@ -559,8 +529,8 @@ const AirtimeServicePage: React.FC = () => {
       <Card className="w-full max-w-md p-6 text-center">
         {isSuccess ? (
           <>
-            <div className="w-16 h-16 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="text-green-500" size={32} />
+            <div className="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="text-primary-500" size={32} />
             </div>
             
             <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Purchase Successful!</h2>
@@ -620,7 +590,7 @@ const AirtimeServicePage: React.FC = () => {
                   setTransaction(null);
                   setErrorMessage('');
                 }}
-                className="flex-1 bg-green-500 hover:bg-green-600 text-white"
+                className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
               >
                 Buy Again
               </Button>
@@ -643,7 +613,7 @@ const AirtimeServicePage: React.FC = () => {
                 setIsSuccess(null);
                 setErrorMessage('');
               }}
-              className="w-full bg-green-500 hover:bg-green-600 text-white"
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white"
             >
               Try Again
             </Button>
