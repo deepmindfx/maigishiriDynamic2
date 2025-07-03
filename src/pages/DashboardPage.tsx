@@ -120,8 +120,8 @@ const DashboardPage: React.FC = () => {
       id: 'voucher',
       description: 'Redeem your vouchers and gift cards for amazing rewards and discounts'
     },
-    {
-      title: 'TV',
+    { 
+      title: 'TV', 
       icon: <Tv size={20} />,
       path: '/services/tv',
       color: 'text-indigo-600',
@@ -157,11 +157,9 @@ const DashboardPage: React.FC = () => {
   });
 
   const filteredSecondaryServices = secondaryServices.filter(service => {
-    if (service.id === 'more') return true; // Always show "More" option
     const status = getServiceStatus(service.id);
     return status !== 'disabled';
   }).map(service => {
-    if (service.id === 'more') return service; // Don't modify "More" option
     const status = getServiceStatus(service.id);
     return {
       ...service,

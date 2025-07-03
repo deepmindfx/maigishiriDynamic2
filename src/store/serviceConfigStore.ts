@@ -63,7 +63,7 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
         const { error } = await supabase
           .from('admin_settings')
           .update({ value: status })
-          .eq('key', key);
+          .eq('id', existingSetting.id); // Use the actual ID from the database
           
         if (error) throw error;
       } else {
