@@ -102,12 +102,11 @@ const DashboardPage: React.FC = () => {
       id: 'electricity'
     },
     {
-      title: 'TV',
-      icon: <Tv size={20} />,
-      path: '/services/tv',
+      title: 'Support',
+      icon: <MessageCircle size={20} />,
+      path: '/support',
       color: 'text-indigo-600',
-      id: 'tv',
-      description: 'Pay for your TV subscriptions including DSTV, GOTV, and Startimes'
+      id: 'support'
     },
   ];
 
@@ -121,11 +120,12 @@ const DashboardPage: React.FC = () => {
       description: 'Redeem your vouchers and gift cards for amazing rewards and discounts'
     },
     {
-      title: 'Support',
-      icon: <MessageCircle size={20} />,
-      path: '/support',
+      title: 'TV',
+      icon: <Tv size={20} />,
+      path: '/services/tv',
       color: 'text-indigo-600',
-      id: 'support'
+      id: 'tv',
+      description: 'Pay for your TV subscriptions including DSTV, GOTV, and Startimes'
     },
     {
       title: 'Refer & Earn',
@@ -185,7 +185,7 @@ const DashboardPage: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-[#2C204D] rounded-full flex items-center justify-center">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary-500 rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm sm:text-lg">
                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </span>
@@ -331,7 +331,7 @@ const DashboardPage: React.FC = () => {
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Latest Products</h2>
-              <a href="/store" className="text-[#0F9D58] text-sm font-medium">View All</a>
+              <a href="/store" className="text-primary-500 text-sm font-medium">View All</a>
             </div>
             
             <ProductSlideshow />

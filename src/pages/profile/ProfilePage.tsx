@@ -189,7 +189,7 @@ const ProfilePage: React.FC = () => {
       <Card className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold flex items-center">
-            <Lock size={18} className="mr-2 text-[#0F9D58]" />
+            <Lock size={18} className="mr-2 text-primary-500" />
             Transaction PIN
           </h2>
         </div>
@@ -217,7 +217,7 @@ const ProfilePage: React.FC = () => {
         <Card className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold flex items-center">
-              <CreditCard size={18} className="mr-2 text-[#0F9D58]" />
+              <CreditCard size={18} className="mr-2 text-primary-500" />
               Virtual Account Setup
             </h2>
           </div>

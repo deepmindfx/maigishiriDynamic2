@@ -77,7 +77,7 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
 
             <button
               onClick={toggleDarkMode}
-              className="p-2 text-white hover:text-gray-200 bg-white/20 rounded-full flex items-center justify-center"
+              className="p-2 text-white hover:text-gray-200 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
             >
               {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
             </button>
@@ -152,11 +152,6 @@ const Header: React.FC<HeaderProps> = ({ toggleDarkMode, isDarkMode }) => {
         <div className="flex items-center space-x-4">
           {isAuthenticated ? (
             <>
-              <button className="relative p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-                <Bell size={20} />
-                <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-error-500"></span>
-              </button>
-              
               <div className="hidden sm:block">
                 <div className="text-sm text-gray-600 dark:text-gray-400">Balance</div>
                 <div className="font-medium">{formatCurrency(user?.walletBalance || 0)}</div>
