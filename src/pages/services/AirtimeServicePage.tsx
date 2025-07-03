@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus } from 'lucide-react';
+import { ArrowLeft, CheckCircle, XCircle, User, Plus, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
+import Select from '../../components/ui/Select';
 import { useAuthStore } from '../../store/authStore';
 import { serviceAPI } from '../../lib/serviceApi';
 import { formatCurrency } from '../../lib/utils';
@@ -25,25 +26,21 @@ const networkProviders = [
     value: 'mtn', 
     label: 'MTN',
     color: 'bg-yellow-500',
-    imageUrl: 'https://i.ibb.co/350xQ0HH/mtn.png'
   },
   { 
     value: 'airtel', 
     label: 'Airtel',
     color: 'bg-red-500',
-    imageUrl: 'https://i.ibb.co/LzNyT4v4/airtel.png'
   },
   { 
     value: 'glo', 
     label: 'Glo',
     color: 'bg-green-500',
-    imageUrl: 'https://i.ibb.co/NnZLfCHC/glo.jpg'
   },
   { 
     value: '9mobile', 
     label: '9mobile',
     color: 'bg-teal-500',
-    imageUrl: 'https://i.ibb.co/zW7WwvnL/9-mobile.webp'
   },
 ];
 
@@ -57,7 +54,6 @@ const AirtimeServicePage: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [saveAsBeneficiary, setSaveAsBeneficiary] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState('');
-  const [serviceType, setServiceType] = useState('local');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [transaction, setTransaction] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -377,33 +373,20 @@ const AirtimeServicePage: React.FC = () => {
 
         {/* Network Provider Selection */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-3">
             Select Service Provider
-          </h2>
-          <div className="grid grid-cols-4 gap-4">
-            {networkProviders.map((provider) => (
-              <button
-                key={provider.value}
-                onClick={() => setSelectedNetwork(provider.value)}
-                className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
-                  selectedNetwork === provider.value
-                    ? 'border-[#2C204D] bg-[#2C204D]/5'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                }`}
-              >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 overflow-hidden bg-white">
-                  <img
-                    src={provider.imageUrl}
-                    alt={provider.label}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  {provider.label}
-                </span>
-              </button>
-            ))}
-          </div>
+          </label>
+          <Select
+            name="network"
+            value={selectedNetwork}
+            onChange={(e) => setSelectedNetwork(e.target.value)}
+            options={networkProviders.map(provider => ({
+              value: provider.value,
+              label: provider.label
+            }))}
+            leftIcon={<Phone size={16} />}
+            placeholder="Select network provider"
+          />
         </div>
 
         {/* Phone Number Input */}

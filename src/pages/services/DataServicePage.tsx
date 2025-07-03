@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, ArrowLeft, CheckCircle, XCircle, Search, Filter, Star, Download, Info, Plus } from 'lucide-react';
+import { Zap, ArrowLeft, CheckCircle, XCircle, Search, Filter, Star, Download, Info, Plus, Wifi } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
+import Select from '../../components/ui/Select';
 import { useAuthStore } from '../../store/authStore';
 import { serviceAPI } from '../../lib/serviceApi';
 import { formatCurrency } from '../../lib/utils';
@@ -27,25 +28,21 @@ const networkProviders = [
     value: 'MTN', 
     label: 'MTN',
     color: 'bg-yellow-500',
-    imageUrl: 'https://i.ibb.co/350xQ0HH/mtn.png'
   },
   { 
     value: 'AIRTEL', 
     label: 'Airtel',
     color: 'bg-red-500',
-    imageUrl: 'https://i.ibb.co/LzNyT4v4/airtel.png'
   },
   { 
     value: 'GLO', 
     label: 'Glo',
     color: 'bg-green-500',
-    imageUrl: 'https://i.ibb.co/NnZLfCHC/glo.jpg'
   },
   { 
     value: '9MOBILE', 
     label: '9mobile',
     color: 'bg-teal-500',
-    imageUrl: 'https://i.ibb.co/zW7WwvnL/9-mobile.webp'
   },
 ];
 
@@ -537,37 +534,24 @@ const DataServicePage: React.FC = () => {
 
         {/* Network Provider Selection */}
         <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+          <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-3">
             Select Network Provider
-          </h2>
-          <div className="grid grid-cols-4 gap-4">
-            {networkProviders.map((provider) => (
-              <button
-                key={provider.value}
-                onClick={() => {
-                  setSelectedNetwork(provider.value);
-                  setSelectedCategory(''); // Reset category when network changes
-                  setSelectedPlan(null); // Reset plan when network changes
-                }}
-                className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
-                  selectedNetwork === provider.value
-                    ? 'border-[#2C204D] bg-[#2C204D]/5'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                }`}
-              >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 overflow-hidden bg-white">
-                  <img
-                    src={provider.imageUrl}
-                    alt={provider.label}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  {provider.label}
-                </span>
-              </button>
-            ))}
-          </div>
+          </label>
+          <Select
+            name="network"
+            value={selectedNetwork}
+            onChange={(e) => {
+              setSelectedNetwork(e.target.value);
+              setSelectedCategory(''); // Reset category when network changes
+              setSelectedPlan(null); // Reset plan when network changes
+            }}
+            options={networkProviders.map(provider => ({
+              value: provider.value,
+              label: provider.label
+            }))}
+            leftIcon={<Wifi size={16} />}
+            placeholder="Select network provider"
+          />
         </div>
 
         {/* Phone Number Input */}
