@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus, Info } from 'lucide-react';
+import { ArrowLeft, Phone, CheckCircle, XCircle, User, Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -357,19 +357,6 @@ const AirtimeServicePage: React.FC = () => {
           )}
         </div>
 
-        {/* USSD Info Banner */}
-        <div className="bg-primary-500/10 dark:bg-primary-900/20 rounded-xl p-4 border border-primary-200 dark:border-primary-800">
-          <div className="flex items-start">
-            <Info className="text-primary-600 dark:text-primary-400 flex-shrink-0 mt-0.5" size={18} />
-            <div className="ml-3">
-              <h4 className="font-medium text-primary-900 dark:text-primary-100 text-sm">Low on Airtime?</h4>
-              <p className="text-sm text-primary-800 dark:text-primary-200">
-                Simply Dial <span className="font-bold bg-blue-900 text-white px-1 py-0.5 rounded">*955*3*</span><span className="font-bold">amount#</span>
-              </p>
-            </div>
-          </div>
-        </div>
-
         {/* Top Up Section */}
         <div>
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top up</h2>
@@ -381,7 +368,6 @@ const AirtimeServicePage: React.FC = () => {
                 onClick={() => handleAmountSelect(item.amount)}
                 className="bg-white dark:bg-gray-800 rounded-xl p-4 text-center cursor-pointer hover:shadow-md transition-shadow"
               >
-                <p className="text-xs text-primary-500 mb-1">₦{item.cashback} Cashback</p>
                 <p className="text-xl font-bold text-gray-900 dark:text-white">₦{item.amount}</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">Pay ₦{item.amount}</p>
               </div>
