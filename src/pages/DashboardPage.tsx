@@ -18,7 +18,11 @@ import {
   Moon,
   Sun,
   Package,
-  MessageCircle
+  MessageCircle,
+  ArrowRightLeft,
+  CreditCard,
+  DollarSign,
+  PlusCircle
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useServiceConfigStore } from '../store/serviceConfigStore';
@@ -83,28 +87,28 @@ const DashboardPage: React.FC = () => {
       title: 'Airtime',
       icon: <Phone size={20} />,
       path: '/services/airtime',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'airtime'
     },
     {
       title: 'Data',
       icon: <Wifi size={20} />,
       path: '/services/data',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'data'
     },
     {
       title: 'Electricity',
       icon: <Zap size={20} />,
       path: '/services/electricity',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'electricity'
     },
     {
       title: 'TV',
       icon: <Tv size={20} />,
       path: '/services/tv',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'tv',
       description: 'Pay for your TV subscriptions including DSTV, GOTV, and Startimes'
     },
@@ -115,7 +119,7 @@ const DashboardPage: React.FC = () => {
       title: 'Redeem Voucher',
       icon: <Gift size={20} />,
       path: '/voucher',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'voucher',
       description: 'Redeem your vouchers and gift cards for amazing rewards and discounts'
     },
@@ -123,21 +127,21 @@ const DashboardPage: React.FC = () => {
       title: 'Support',
       icon: <MessageCircle size={20} />,
       path: '/support',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'support'
     },
     {
       title: 'Refer & Earn',
       icon: <Users size={20} />,
       path: '/refer',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'refer'
     },
     {
       title: 'More',
       icon: <MoreHorizontal size={20} />,
       path: '/services',
-      color: 'bg-green-100 text-green-600',
+      color: 'text-indigo-600',
       id: 'more'
     },
   ];
@@ -211,47 +215,92 @@ const DashboardPage: React.FC = () => {
           </button>
         </div>
 
-        {/* Balance Card */}
-        <Card className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 sm:p-6 shadow-lg">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span className="text-xs sm:text-sm opacity-90">Available Balance</span>
-              <button 
-                onClick={toggleBalanceVisibility}
-                className="opacity-75 hover:opacity-100 transition-opacity"
-              >
-                {showBalance ? (
-                  <Eye size={14} />
-                ) : (
-                  <EyeOff size={14} />
-                )}
-              </button>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => navigate('/transactions')}
-                className="text-xs sm:text-sm opacity-90 hover:opacity-100 transition-opacity"
-              >
-                History →
-              </button>
-            </div>
-          </div>
+        {/* Wallet Card */}
+        <div className="relative rounded-3xl overflow-hidden bg-wallet-bg text-white mb-6">
+          {/* Decorative circles */}
+          <div className="absolute top-0 left-0 w-24 h-24 rounded-full bg-wallet-accent opacity-20"></div>
+          <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-wallet-accent opacity-20"></div>
           
-          <div className="flex items-center justify-between mt-4">
-            <div>
-              <p className="text-xl sm:text-3xl font-bold">
-                {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
-              </p>
+          <div className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm opacity-80">Balance</p>
+                <p className="text-3xl font-bold mt-1">
+                  {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
+                </p>
+              </div>
+              
+              <div>
+                <p className="text-sm opacity-80">Card</p>
+                <p className="text-xl font-bold mt-1">Mabank</p>
+              </div>
             </div>
             
-            <Button
-              onClick={() => navigate('/wallet/fund')}
-              className="bg-white text-green-600 hover:bg-gray-100 px-4 sm:px-6 py-2 rounded-full font-medium text-sm"
-            >
-              Add Money
-            </Button>
+            <div className="flex items-center justify-between mt-4">
+              <div className="flex items-center space-x-2">
+                <button 
+                  onClick={toggleBalanceVisibility}
+                  className="opacity-75 hover:opacity-100 transition-opacity"
+                >
+                  {showBalance ? (
+                    <Eye size={14} />
+                  ) : (
+                    <EyeOff size={14} />
+                  )}
+                </button>
+                <button 
+                  onClick={() => navigate('/transactions')}
+                  className="text-xs sm:text-sm opacity-90 hover:opacity-100 transition-opacity"
+                >
+                  History →
+                </button>
+              </div>
+            </div>
           </div>
-        </Card>
+        </div>
+        
+        {/* Quick Actions */}
+        <div className="grid grid-cols-4 gap-4 mb-6">
+          <div className="flex flex-col items-center">
+            <button 
+              onClick={() => navigate('/wallet/fund')}
+              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+            >
+              <ArrowRightLeft size={24} className="text-indigo-600" />
+            </button>
+            <span className="text-xs text-indigo-600 font-medium">Transfer</span>
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <button 
+              onClick={() => navigate('/services')}
+              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+            >
+              <CreditCard size={24} className="text-indigo-600" />
+            </button>
+            <span className="text-xs text-indigo-600 font-medium">Payment</span>
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <button 
+              onClick={() => navigate('/services')}
+              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+            >
+              <DollarSign size={24} className="text-indigo-600" />
+            </button>
+            <span className="text-xs text-indigo-600 font-medium">Payout</span>
+          </div>
+          
+          <div className="flex flex-col items-center">
+            <button 
+              onClick={() => navigate('/wallet/fund')}
+              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+            >
+              <PlusCircle size={24} className="text-indigo-600" />
+            </button>
+            <span className="text-xs text-indigo-600 font-medium">Top up</span>
+          </div>
+        </div>
       </div>
 
       {/* Services Grid */}
@@ -268,17 +317,19 @@ const DashboardPage: React.FC = () => {
                   navigate(service.path);
                 }
               }}
-              className="flex flex-col items-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow relative"
+              className="flex flex-col items-center space-y-2 relative"
             >
               {service.comingSoon && (
                 <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
                   Soon
                 </div>
               )}
-              <div className={`w-10 sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center ${service.color}`}>
-                {service.icon}
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md border border-gray-100">
+                <div className={service.color}>
+                  {service.icon}
+                </div>
               </div>
-              <span className="text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
+              <span className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight">
                 {service.title}
               </span>
             </button>
@@ -297,15 +348,17 @@ const DashboardPage: React.FC = () => {
                   navigate(service.path);
                 }
               }}
-              className="flex flex-col items-center space-y-2 sm:space-y-3 p-3 sm:p-4 rounded-2xl bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow relative"
+              className="flex flex-col items-center space-y-2 relative"
             >
               {service.comingSoon && (
                 <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
                   Soon
                 </div>
               )}
-              <div className={`w-10 sm:w-12 h-10 sm:h-12 rounded-full flex items-center justify-center ${service.color}`}>
-                {service.icon}
+              <div className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md border border-gray-100">
+                <div className={service.color}>
+                  {service.icon}
+                </div>
               </div>
               <span className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center leading-tight px-1">
                 {service.title}

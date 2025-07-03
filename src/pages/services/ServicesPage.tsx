@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Phone, Wifi, Zap, BookOpen, ShoppingBag, Package, Tv, Gift, MessageCircle, Users } from 'lucide-react';
-import ServiceCard from '../../components/home/ServiceCard';
 import { useServiceConfigStore } from '../../store/serviceConfigStore';
 
 const ServicesPage: React.FC = () => {
@@ -14,94 +13,67 @@ const ServicesPage: React.FC = () => {
     return serviceConfig[serviceId] || 'active';
   };
 
-  const digitalServices = [
+  const services = [
     {
       title: 'Airtime Recharge',
       description: 'Buy airtime for any network instantly',
-      icon: <Phone size={24} />,
+      icon: <Phone size={24} className="text-indigo-600" />,
       path: '/services/airtime',
-      color: 'bg-blue-500',
       id: 'airtime'
     },
     {
       title: 'Data Bundles',
       description: 'Purchase data plans for any network',
-      icon: <Wifi size={24} />,
+      icon: <Wifi size={24} className="text-indigo-600" />,
       path: '/services/data',
-      color: 'bg-green-500',
       id: 'data'
     },
     {
       title: 'Electricity Bills',
       description: 'Pay electricity bills for any DISCO',
-      icon: <Zap size={24} />,
+      icon: <Zap size={24} className="text-indigo-600" />,
       path: '/services/electricity',
-      color: 'bg-amber-500',
       id: 'electricity'
     },
     {
       title: 'TV Subscriptions',
       description: 'Pay for DSTV, GOTV, and Startimes',
-      icon: <Tv size={24} />,
+      icon: <Tv size={24} className="text-indigo-600" />,
       path: '/services/tv',
-      color: 'bg-purple-500',
       id: 'tv'
     },
     {
       title: 'WAEC Scratch Cards',
       description: 'Purchase WAEC scratch cards instantly',
-      icon: <BookOpen size={24} />,
+      icon: <BookOpen size={24} className="text-indigo-600" />,
       path: '/services/waec',
-      color: 'bg-purple-500',
       id: 'waec'
     },
     {
-      title: 'Redeem Voucher',
-      description: 'Redeem vouchers and gift cards',
-      icon: <Gift size={24} />,
-      path: '/voucher',
-      color: 'bg-pink-500',
-      id: 'voucher'
+      title: 'E-commerce Store',
+      description: 'Shop from our wide range of electronics and gadgets',
+      icon: <ShoppingBag size={24} className="text-indigo-600" />,
+      path: '/store',
+      id: 'store'
     },
     {
       title: 'Support',
       description: 'Get help with any issues',
-      icon: <MessageCircle size={24} />,
+      icon: <MessageCircle size={24} className="text-indigo-600" />,
       path: '/support',
-      color: 'bg-red-500',
       id: 'support'
     },
     {
       title: 'Refer & Earn',
       description: 'Invite friends and earn rewards',
-      icon: <Users size={24} />,
+      icon: <Users size={24} className="text-indigo-600" />,
       path: '/refer',
-      color: 'bg-indigo-500',
       id: 'refer'
-    }
-  ];
-
-  const ecommerceServices = [
-    {
-      title: 'Online Store',
-      description: 'Shop from our wide range of electronics and gadgets',
-      icon: <ShoppingBag size={24} />,
-      path: '/store',
-      color: 'bg-[#0F9D58]',
-      id: 'store'
-    },
-    {
-      title: 'Product Delivery',
-      description: 'Fast and reliable delivery to your doorstep',
-      icon: <Package size={24} />,
-      path: '/store',
-      color: 'bg-orange-500',
-      id: 'store'
     },
   ];
 
   // Filter services based on their status
-  const filteredDigitalServices = digitalServices.filter(service => {
+  const filteredServices = services.filter(service => {
     const status = getServiceStatus(service.id);
     return status !== 'disabled';
   }).map(service => {
@@ -112,22 +84,8 @@ const ServicesPage: React.FC = () => {
       state: status === 'coming_soon' ? { 
         serviceName: service.title, 
         serviceDescription: service.description 
-      } : undefined
-    };
-  });
-
-  const filteredEcommerceServices = ecommerceServices.filter(service => {
-    const status = getServiceStatus(service.id);
-    return status !== 'disabled';
-  }).map(service => {
-    const status = getServiceStatus(service.id);
-    return {
-      ...service,
-      path: status === 'coming_soon' ? '/coming-soon' : service.path,
-      state: status === 'coming_soon' ? { 
-        serviceName: service.title, 
-        serviceDescription: service.description 
-      } : undefined
+      } : undefined,
+      comingSoon: status === 'coming_soon'
     };
   });
 
@@ -135,48 +93,28 @@ const ServicesPage: React.FC = () => {
     <div className="py-6 animate-fade-in">
       <h1 className="text-2xl font-semibold mb-6">Our Services</h1>
       
-      {/* Digital Services Section */}
-      {filteredDigitalServices.length > 0 && (
-        <div className="mb-12">
-          <h2 className="text-xl font-semibold mb-4 text-[#0F9D58]">Digital Services</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredDigitalServices.map((service) => (
-              <ServiceCard
-                key={service.title}
-                title={service.title}
-                description={service.description}
-                icon={service.icon}
-                path={service.path}
-                color={service.color}
-                className="h-full"
-                state={service.state}
-              />
-            ))}
+      {/* Services Grid */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        {filteredServices.map((service, index) => (
+          <div key={index} className="flex flex-col items-center relative">
+            {service.comingSoon && (
+              <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold z-10">
+                Soon
+              </div>
+            )}
+            <a 
+              href={service.path}
+              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+            >
+              {service.icon}
+            </a>
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-300 text-center">
+              {service.title}
+            </span>
           </div>
-        </div>
-      )}
+        ))}
+      </div>
 
-      {/* E-commerce Services Section */}
-      {filteredEcommerceServices.length > 0 && (
-        <div className="mb-12">
-          <h2 className="text-xl font-semibold mb-4 text-[#0F9D58]">E-commerce Services</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {filteredEcommerceServices.map((service) => (
-              <ServiceCard
-                key={service.title}
-                title={service.title}
-                description={service.description}
-                icon={service.icon}
-                path={service.path}
-                color={service.color}
-                className="h-full"
-                state={service.state}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-      
       <div className="mt-8">
         <h2 className="text-xl font-semibold mb-4">How It Works</h2>
         <div className="bg-white dark:bg-gray-800 rounded-xl shadow-card p-4">
