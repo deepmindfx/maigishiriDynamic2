@@ -73,7 +73,7 @@ const StorePage: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2C204D]"></div>
       </div>
     );
   }
@@ -112,7 +112,7 @@ const StorePage: React.FC = () => {
               placeholder="Search products..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
             />
           </div>
         </div>
@@ -123,7 +123,7 @@ const StorePage: React.FC = () => {
             <h2 className="text-base font-medium text-gray-900 dark:text-white">Categories</h2>
             <button 
               onClick={() => setShowAllCategories(!showAllCategories)}
-              className="text-sm text-primary-500 font-medium"
+              className="text-sm text-[#2C204D] font-medium"
             >
               {showAllCategories ? 'Show Less' : 'View All'}
             </button>
@@ -137,8 +137,8 @@ const StorePage: React.FC = () => {
                   onClick={() => setSelectedCategory(category.value)}
                   className={`flex-shrink-0 px-3 py-2 rounded-full text-xs font-medium whitespace-nowrap transition-all ${
                     selectedCategory === category.value
-                      ? 'bg-primary-500 text-white shadow-md'
-                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-primary-500'
+                      ? 'bg-[#2C204D] text-white shadow-md'
+                      : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 hover:border-[#2C204D]'
                   }`}
                 >
                   {category.label} ({category.count})
@@ -187,7 +187,7 @@ const StorePage: React.FC = () => {
                     <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
                       {product.name}
                     </h3>
-                    <p className="text-base font-bold text-primary-500">
+                    <p className="text-base font-bold text-[#2C204D]">
                       ${product.price.toFixed(2)}
                     </p>
                     <div className="flex justify-between items-center mt-1">
@@ -245,7 +245,7 @@ const StorePage: React.FC = () => {
                       <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
                         {product.name}
                       </h3>
-                      <p className="text-base font-bold text-primary-500">
+                      <p className="text-base font-bold text-[#2C204D]">
                         ${product.price.toFixed(2)}
                       </p>
                       <div className="flex justify-between items-center mt-1">

@@ -1,114 +1,121 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import Card from '../ui/Card';
 import Badge from '../ui/Badge';
-import { formatCurrency, getStatusColor } from '../../lib/utils';
+import { formatCurrency, getStatusColor, getTransactionLabel, isDebit } from '../../lib/utils';
+import { useAuthStore } from '../../store/authStore';
+import { supabase } from '../../lib/supabase';
 
-// Mock data for recent transactions
-const mockTransactions = [
-  {
-    id: '1',
-    type: 'airtime',
-    amount: 1000,
-    status: 'success',
-    details: { network: 'MTN', phone: '08012345678' },
-    createdAt: '2023-09-15T10:30:00Z',
-  },
-  {
-    id: '2',
-    type: 'data',
-    amount: 2500,
-    status: 'success',
-    details: { network: 'Airtel', plan: '5GB', phone: '09087654321' },
-    createdAt: '2023-09-14T16:45:00Z',
-  },
-  {
-    id: '3',
-    type: 'electricity',
-    amount: 5000,
-    status: 'pending',
-    details: { disco: 'Ikeja Electric', meterNumber: '54321678901' },
-    createdAt: '2023-09-14T09:15:00Z',
-  },
-  {
-    id: '4',
-    type: 'wallet_funding',
-    amount: 10000,
-    status: 'success',
-    details: { method: 'card', reference: 'TRX-9876543' },
-    createdAt: '2023-09-13T14:20:00Z',
-  },
-];
-
-const getTransactionLabel = (type: string, details: any) => {
-  switch (type) {
-    case 'airtime':
-      return `${details.network} Airtime - ${details.phone}`;
-    case 'data':
-      return `${details.network} ${details.plan} - ${details.phone}`;
-    case 'electricity':
-      return `${details.disco} - ${details.meterNumber}`;
-    case 'waec':
-      return 'WAEC Card';
-    case 'wallet_funding':
-      return `Wallet Funding (${details.method})`;
-    case 'product_purchase':
-      return 'Product Purchase';
-    default:
-      return 'Transaction';
-  }
-};
-
-const isDebit = (type: string) => {
-  return ['airtime', 'data', 'electricity', 'waec', 'product_purchase'].includes(type);
+type Transaction = {
+  id: string;
+  user_id: string;
+  type: string;
+  amount: number;
+  status: string;
+  reference: string;
+  details: any;
+  created_at: string;
 };
 
 const RecentTransactions: React.FC = () => {
+  const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (user) {
+      fetchTransactions();
+    }
+  }, [user]);
+
+  const fetchTransactions = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase
+        .from('transactions')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+      setTransactions(data || []);
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleViewAll = () => {
+    navigate('/transactions');
+  };
+
   return (
     <div className="my-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold">Recent Transactions</h2>
-        <a href="/transactions" className="text-primary-500 text-sm">View All</a>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Last Transactions</h2>
+        <button 
+          onClick={handleViewAll}
+          className="text-[#2C204D] text-sm font-medium"
+        >
+          View All
+        </button>
       </div>
       
-      <Card>
-        <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-          {mockTransactions.map((transaction) => (
-            <li key={transaction.id} className="py-3 first:pt-0 last:pb-0">
-              <div className="flex items-center">
-                <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
-                  isDebit(transaction.type) ? 'bg-error-500 bg-opacity-10' : 'bg-success-500 bg-opacity-10'
-                }`}>
-                  {isDebit(transaction.type) ? (
-                    <ArrowUpRight className={isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'} size={20} />
-                  ) : (
-                    <ArrowDownRight className="text-success-500" size={20} />
-                  )}
-                </div>
-                
-                <div className="ml-4 flex-1">
-                  <p className="text-sm font-medium">
-                    {getTransactionLabel(transaction.type, transaction.details)}
-                  </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {new Date(transaction.createdAt).toLocaleString()}
-                  </p>
-                </div>
-                
-                <div className="text-right">
-                  <p className={`text-sm font-medium ${
-                    isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'
-                  }`}>
-                    {isDebit(transaction.type) ? '-' : '+'}{formatCurrency(transaction.amount)}
-                  </p>
-                  <Badge variant={getStatusColor(transaction.status) as any}>
-                    {transaction.status}
-                  </Badge>
+      <Card className="p-0 overflow-hidden">
+        {loading ? (
+          <div className="flex justify-center items-center py-8">
+            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2C204D]"></div>
+          </div>
+        ) : transactions.length > 0 ? (
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {transactions.map((transaction) => (
+              <div key={transaction.id} className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      isDebit(transaction.type) ? 'bg-error-500 bg-opacity-10' : 'bg-success-500 bg-opacity-10'
+                    }`}>
+                      {isDebit(transaction.type) ? (
+                        <ArrowUpRight className={isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'} size={20} />
+                      ) : (
+                        <ArrowDownRight className="text-success-500" size={20} />
+                      )}
+                    </div>
+                    
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {getTransactionLabel(transaction.type, transaction.details)}
+                      </p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {new Date(transaction.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="text-right">
+                    <p className={`text-sm font-medium ${
+                      isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'
+                    }`}>
+                      {isDebit(transaction.type) ? '-' : '+'}{formatCurrency(transaction.amount)}
+                    </p>
+                    <Badge variant={getStatusColor(transaction.status) as any} className="text-xs">
+                      {transaction.status}
+                    </Badge>
+                  </div>
                 </div>
               </div>
-            </li>
-          ))}
-        </ul>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-8">
+            <p className="text-gray-500 dark:text-gray-400">No transactions yet</p>
+          </div>
+        )}
       </Card>
     </div>
   );

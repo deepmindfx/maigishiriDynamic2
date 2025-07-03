@@ -26,6 +26,7 @@ import { useServiceConfigStore } from '../store/serviceConfigStore';
 import Card from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import ProductSlideshow from '../components/home/ProductSlideshow';
+import RecentTransactions from '../components/home/RecentTransactions';
 import { formatCurrency } from '../lib/utils';
 
 const DashboardPage: React.FC = () => {
@@ -143,17 +144,6 @@ const DashboardPage: React.FC = () => {
     },
   ];
 
-  const promotionalBanners = [
-    {
-      id: 2,
-      title: 'Shop with Confidence',
-      subtitle: 'Discover amazing deals on electronics and gadgets',
-      image: 'https://images.pexels.com/photos/4386321/pexels-photo-4386321.jpeg',
-      buttonText: 'Shop Now',
-      bgColor: 'bg-gradient-to-r from-blue-500 to-purple-500',
-    },
-  ];
-
   // Filter services based on their status
   const filteredMainServices = mainServices.filter(service => {
     const status = getServiceStatus(service.id);
@@ -185,7 +175,7 @@ const DashboardPage: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-primary-500 rounded-full flex items-center justify-center">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-[#2C204D] rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm sm:text-lg">
                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </span>
@@ -331,120 +321,92 @@ const DashboardPage: React.FC = () => {
           <div className="mb-6 sm:mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Latest Products</h2>
-              <a href="/store" className="text-primary-500 text-sm font-medium">View All</a>
+              <a href="/store" className="text-[#2C204D] text-sm font-medium">View All</a>
             </div>
             
             <ProductSlideshow />
           </div>
         )}
 
-        {/* Promotional Banners */}
-        {getServiceStatus('store') !== 'disabled' && (
-          <div className="space-y-4 mb-6 sm:mb-8">
-            {promotionalBanners.map((banner) => (
-              <Card key={banner.id} className={`${banner.bgColor} text-white p-4 sm:p-6 overflow-hidden relative`}>
-                <div className="flex items-center justify-between">
-                  <div className="flex-1 pr-4">
-                    <h3 className="text-base sm:text-lg font-bold mb-2">{banner.title}</h3>
-                    <p className="text-sm opacity-90 mb-4 leading-relaxed">
-                      {banner.subtitle}
-                    </p>
-                    
-                    <div className="flex space-x-3">
-                      <button 
-                        onClick={() => navigate('/store')}
-                        className="bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium hover:bg-opacity-30 transition-all"
-                      >
-                        📱 {banner.buttonText}
-                      </button>
-                    </div>
-                  </div>
-                  
-                  <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-2xl overflow-hidden flex-shrink-0">
-                    <img
-                      src={banner.image}
-                      alt={banner.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        )}
+        {/* Recent Transactions */}
+        <RecentTransactions />
 
         {/* Quick Actions */}
-        <div className="mt-8 grid grid-cols-4 gap-3 sm:gap-4">
-          {getServiceStatus('store') !== 'disabled' && (
-            <Card 
-              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate('/store')}
-            >
-              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <ShoppingBag size={16} className="text-green-600" />
-                </div>
-                <div className="text-center">
-                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Shop</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Browse products</p>
-                </div>
-              </div>
-            </Card>
-          )}
+        <div className="mt-8">
+          <div className="flex justify-center">
+            <div className="grid grid-cols-4 gap-3 sm:gap-4 max-w-md mx-auto">
+              {getServiceStatus('store') !== 'disabled' && (
+                <Card 
+                  className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => navigate('/store')}
+                >
+                  <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 bg-green-100 rounded-full flex items-center justify-center">
+                      <ShoppingBag size={16} className="text-green-600" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Shop</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Browse products</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
 
-          {getServiceStatus('waec') === 'coming_soon' && (
-            <Card 
-              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow relative"
-              onClick={() => handleComingSoonNavigation('Education Services', 'Access educational services, course payments, and academic resources')}
-            >
-              <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
-                Soon
-              </div>
-              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                  <BookOpen size={16} className="text-purple-600" />
-                </div>
-                <div className="text-center">
-                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Education</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">WAEC & more</p>
-                </div>
-              </div>
-            </Card>
-          )}
+              {getServiceStatus('waec') === 'coming_soon' && (
+                <Card 
+                  className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow relative"
+                  onClick={() => handleComingSoonNavigation('Education Services', 'Access educational services, course payments, and academic resources')}
+                >
+                  <div className="absolute -top-1 -right-1 bg-yellow-500 text-white text-xs px-1.5 py-0.5 rounded-full font-bold">
+                    Soon
+                  </div>
+                  <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                      <BookOpen size={16} className="text-purple-600" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Education</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">WAEC & more</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
 
-          {getServiceStatus('store') !== 'disabled' && (
-            <Card 
-              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate('/store/orders')}
-            >
-              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Package size={16} className="text-blue-600" />
-                </div>
-                <div className="text-center">
-                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Orders</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Track orders</p>
-                </div>
-              </div>
-            </Card>
-          )}
+              {getServiceStatus('store') !== 'disabled' && (
+                <Card 
+                  className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => navigate('/store/orders')}
+                >
+                  <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <Package size={16} className="text-blue-600" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Orders</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Track orders</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
 
-          {getServiceStatus('support') !== 'disabled' && (
-            <Card 
-              className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
-              onClick={() => navigate('/support')}
-            >
-              <div className="flex flex-col items-center space-y-2 sm:space-y-3">
-                <div className="w-8 sm:w-10 h-8 sm:h-10 bg-orange-100 rounded-full flex items-center justify-center">
-                  <MessageCircle size={16} className="text-orange-600" />
-                </div>
-                <div className="text-center">
-                  <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Support</p>
-                  <p className="text-xs text-gray-600 dark:text-gray-400">Get help</p>
-                </div>
-              </div>
-            </Card>
-          )}
+              {getServiceStatus('support') !== 'disabled' && (
+                <Card 
+                  className="p-3 sm:p-4 bg-white dark:bg-gray-800 cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => navigate('/support')}
+                >
+                  <div className="flex flex-col items-center space-y-2 sm:space-y-3">
+                    <div className="w-8 sm:w-10 h-8 sm:h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                      <MessageCircle size={16} className="text-orange-600" />
+                    </div>
+                    <div className="text-center">
+                      <p className="font-medium text-gray-900 dark:text-white text-xs sm:text-sm">Support</p>
+                      <p className="text-xs text-gray-600 dark:text-gray-400">Get help</p>
+                    </div>
+                  </div>
+                </Card>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </div>

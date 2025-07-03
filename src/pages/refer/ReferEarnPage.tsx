@@ -9,6 +9,16 @@ import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import SuccessModal from '../../components/ui/SuccessModal';
 
+type Beneficiary = {
+  id: string;
+  user_id: string;
+  name: string;
+  phone_number: string;
+  network: string;
+  type: 'airtime' | 'data';
+  created_at: string;
+};
+
 type Referral = {
   id: string;
   name: string;
@@ -381,13 +391,13 @@ const ReferEarnPage: React.FC = () => {
   const getRewardIcon = () => {
     switch (referralStats.rewardType) {
       case 'data_bundle':
-        return <Wifi size={16} className="text-primary-500" />;
+        return <Wifi size={16} className="text-[#2C204D]" />;
       case 'airtime':
-        return <Phone size={16} className="text-primary-500" />;
+        return <Phone size={16} className="text-[#2C204D]" />;
       case 'wallet_credit':
-        return <CreditCard size={16} className="text-primary-500" />;
+        return <CreditCard size={16} className="text-[#2C204D]" />;
       default:
-        return <Gift size={16} className="text-primary-500" />;
+        return <Gift size={16} className="text-[#2C204D]" />;
     }
   };
 
@@ -470,7 +480,7 @@ const ReferEarnPage: React.FC = () => {
 
       <div className="p-4 space-y-6 w-full max-w-md mx-auto">
         {/* Hero Section */}
-        <div className="bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl p-6 text-white relative overflow-hidden w-full">
+        <div className="bg-gradient-to-br from-[#2C204D] to-[#3A2B61] rounded-2xl p-6 text-white relative overflow-hidden w-full">
           {/* Background Pattern */}
           <div className="absolute inset-0 opacity-10">
             <div className="absolute top-4 right-4 w-16 h-16 border-2 border-white rounded-full"></div>
@@ -491,7 +501,7 @@ const ReferEarnPage: React.FC = () => {
             </p>
             
             {/* Bonus Badge */}
-            <div className="inline-block bg-white text-primary-500 px-6 py-3 rounded-2xl font-bold text-xl">
+            <div className="inline-block bg-white text-[#2C204D] px-6 py-3 rounded-2xl font-bold text-xl">
               {referralStats.bonusPercentage}% Bonus
             </div>
           </div>
@@ -500,19 +510,19 @@ const ReferEarnPage: React.FC = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 gap-4">
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center border border-gray-200 dark:border-gray-700">
-            <div className="w-12 h-12 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Users size={24} className="text-primary-500" />
+            <div className="w-12 h-12 bg-[#2C204D]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Users size={24} className="text-[#2C204D]" />
             </div>
             <div className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1">{user?.totalReferrals || 0}</div>
-            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Referrals</div>
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Referrals</div>
           </div>
           
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 text-center border border-gray-200 dark:border-gray-700">
-            <div className="w-12 h-12 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-3">
-              <Award size={24} className="text-primary-500" />
+            <div className="w-12 h-12 bg-[#2C204D]/10 rounded-full flex items-center justify-center mx-auto mb-3">
+              <Award size={24} className="text-[#2C204D]" />
             </div>
-            <div className="text-lg sm:text-2xl font-bold text-primary-500 mb-1">{formatCurrency(user?.referralEarnings || 0)}</div>
-            <div className="text-xs sm:text-sm text-gray-600 dark:text-gray-400">Total Earned</div>
+            <div className="text-lg sm:text-2xl font-bold text-[#2C204D] mb-1">{formatCurrency(user?.referralEarnings || 0)}</div>
+            <div className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total Earned</div>
           </div>
         </div>
 
@@ -521,15 +531,15 @@ const ReferEarnPage: React.FC = () => {
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 border border-gray-200 dark:border-gray-700">
             {loadingRewardStats ? (
               <div className="flex justify-center items-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2C204D]"></div>
               </div>
             ) : (
               <>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center">
-                    {referralStats.rewardType === 'data_bundle' && <Wifi className="text-primary-500 mr-2" size={20} />}
-                    {referralStats.rewardType === 'airtime' && <Phone className="text-primary-500 mr-2" size={20} />}
-                    {referralStats.rewardType === 'wallet_credit' && <CreditCard className="text-primary-500 mr-2" size={20} />}
+                    {referralStats.rewardType === 'data_bundle' && <Wifi className="text-[#2C204D] mr-2" size={20} />}
+                    {referralStats.rewardType === 'airtime' && <Phone className="text-[#2C204D] mr-2" size={20} />}
+                    {referralStats.rewardType === 'wallet_credit' && <CreditCard className="text-[#2C204D] mr-2" size={20} />}
                     {referralStats.rewardType === 'data_bundle' ? 'Data Reward' : 
                      referralStats.rewardType === 'airtime' ? 'Airtime Reward' : 'Cash Reward'}
                   </h3>
@@ -553,20 +563,20 @@ const ReferEarnPage: React.FC = () => {
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Refer {referralStats.requiredReferrals} friends
                     </span>
-                    <span className="text-sm font-bold text-primary-500">
+                    <span className="text-sm font-bold text-[#2C204D]">
                       {user?.totalReferrals || 0}/{referralStats.requiredReferrals} completed
                     </span>
                   </div>
                   
                   <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5 mb-3">
                     <div 
-                      className="h-2.5 rounded-full bg-primary-500"
+                      className="h-2.5 rounded-full bg-[#2C204D]"
                       style={{ width: `${Math.min(100, ((user?.totalReferrals || 0) / referralStats.requiredReferrals) * 100)}%` }}
                     ></div>
                   </div>
                   
                   <div className="flex items-center">
-                    <div className="w-8 h-8 bg-primary-500/10 rounded-full flex items-center justify-center mr-3">
+                    <div className="w-8 h-8 bg-[#2C204D]/10 rounded-full flex items-center justify-center mr-3">
                       {getRewardIcon()}
                     </div>
                     <div>
@@ -585,7 +595,7 @@ const ReferEarnPage: React.FC = () => {
                   disabled={!referralStats.dataRewardEligible || referralStats.dataRewardClaimed || claimingReward}
                   className={`w-full ${
                     referralStats.dataRewardEligible && !referralStats.dataRewardClaimed
-                      ? 'bg-primary-500 hover:bg-primary-600 text-white'
+                      ? 'bg-[#2C204D] hover:bg-[#3A2B61] text-white'
                       : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                   }`}
                   isLoading={claimingReward}
@@ -600,13 +610,13 @@ const ReferEarnPage: React.FC = () => {
         {/* How it Works */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 border border-gray-200 dark:border-gray-700">
           <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-            <TrendingUp className="text-primary-500 mr-2" size={20} />
+            <TrendingUp className="text-[#2C204D] mr-2" size={20} />
             How it Works
           </h3>
           
           <div className="space-y-4">
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+              <div className="w-8 h-8 bg-[#2C204D] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                 1
               </div>
               <div className="flex-1 min-w-0">
@@ -618,7 +628,7 @@ const ReferEarnPage: React.FC = () => {
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+              <div className="w-8 h-8 bg-[#2C204D] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                 2
               </div>
               <div className="flex-1 min-w-0">
@@ -630,7 +640,7 @@ const ReferEarnPage: React.FC = () => {
             </div>
             
             <div className="flex items-start space-x-3">
-              <div className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+              <div className="w-8 h-8 bg-[#2C204D] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                 3
               </div>
               <div className="flex-1 min-w-0">
@@ -643,7 +653,7 @@ const ReferEarnPage: React.FC = () => {
             
             {referralStats.rewardEnabled && (
               <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
+                <div className="w-8 h-8 bg-[#2C204D] text-white rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0">
                   4
                 </div>
                 <div className="flex-1 min-w-0">
@@ -667,7 +677,7 @@ const ReferEarnPage: React.FC = () => {
           {/* Share Button */}
           <button
             onClick={shareReferralCode}
-            className="w-full bg-primary-500 hover:bg-primary-600 text-white py-4 rounded-2xl font-semibold text-base sm:text-lg transition-colors flex items-center justify-center space-x-2"
+            className="w-full bg-[#2C204D] hover:bg-[#3A2B61] text-white py-4 rounded-2xl font-semibold text-base sm:text-lg transition-colors flex items-center justify-center space-x-2"
           >
             <Share2 size={20} />
             <span>Refer a Friend</span>
@@ -680,8 +690,8 @@ const ReferEarnPage: React.FC = () => {
             </h3>
             
             <div className="flex items-center space-x-3">
-              <div className="flex-1 bg-primary-500/10 rounded-xl px-3 sm:px-4 py-3 border border-primary-500/20 min-w-0">
-                <span className="text-primary-500 font-bold text-sm sm:text-lg break-all">
+              <div className="flex-1 bg-[#2C204D]/10 rounded-xl px-3 sm:px-4 py-3 border border-[#2C204D]/20 min-w-0">
+                <span className="text-[#2C204D] font-bold text-sm sm:text-lg break-all">
                   {referralCode}
                 </span>
               </div>
@@ -691,7 +701,7 @@ const ReferEarnPage: React.FC = () => {
                 className={`px-4 sm:px-6 py-3 rounded-xl font-medium transition-all flex items-center space-x-2 flex-shrink-0 ${
                   copied 
                     ? 'bg-green-500 hover:bg-green-600 text-white' 
-                    : 'bg-primary-500 hover:bg-primary-600 text-white'
+                    : 'bg-[#2C204D] hover:bg-[#3A2B61] text-white'
                 }`}
               >
                 <Copy size={16} />
@@ -745,7 +755,7 @@ const ReferEarnPage: React.FC = () => {
                   setVerificationResult(null);
                   setReferralCodeError(null);
                 }}
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
               />
             </div>
             
@@ -770,7 +780,7 @@ const ReferEarnPage: React.FC = () => {
             <button
               onClick={verifyReferralCode}
               disabled={isVerifying || !verifyCodeInput.trim()}
-              className="w-full bg-primary-500 hover:bg-primary-600 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-[#2C204D] hover:bg-[#3A2B61] text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isVerifying ? 'Verifying...' : 'Verify Code'}
             </button>
@@ -785,15 +795,15 @@ const ReferEarnPage: React.FC = () => {
           
           {loading ? (
             <div className="flex justify-center py-6">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2C204D]"></div>
             </div>
           ) : referrals.length > 0 ? (
             <div className="space-y-3">
               {referrals.map((referral) => (
                 <Card key={referral.id} className="p-3">
                   <div className="flex items-center">
-                    <div className="w-10 h-10 bg-primary-500/10 rounded-full flex items-center justify-center mr-3">
-                      <User size={18} className="text-primary-500" />
+                    <div className="w-10 h-10 bg-[#2C204D]/10 rounded-full flex items-center justify-center mr-3">
+                      <User size={18} className="text-[#2C204D]" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900 dark:text-white text-sm truncate">{referral.name}</p>
@@ -829,10 +839,10 @@ const ReferEarnPage: React.FC = () => {
                         if (totalPages <= 3) {
                           // If 3 or fewer pages, show all
                           pageToShow = i + 1;
-                        } else if (currentPage === 1 || currentPage === 2) {
+                        } else if (currentPage <= 3) {
                           // If on first or second page, show 1, 2, 3
                           pageToShow = i + 1;
-                        } else if (currentPage === totalPages || currentPage === totalPages - 1) {
+                        } else if (currentPage >= totalPages - 2) {
                           // If on last or second-to-last page, show last 3 pages
                           pageToShow = totalPages - 2 + i;
                         } else {
@@ -846,7 +856,7 @@ const ReferEarnPage: React.FC = () => {
                             onClick={() => handlePageChange(pageToShow)}
                             className={`w-8 h-8 flex items-center justify-center rounded-lg ${
                               currentPage === pageToShow
-                                ? 'bg-primary-500 text-white'
+                                ? 'bg-[#2C204D] text-white'
                                 : 'border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300'
                             }`}
                           >

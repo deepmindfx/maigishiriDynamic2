@@ -77,7 +77,7 @@ function SuccessModal({
           {/* Close button */}
           <button
             onClick={onClose}
-            className="px-6 py-2 bg-primary-500 text-white rounded-full font-medium hover:bg-primary-600 transition-colors"
+            className="px-6 py-2 bg-[#2C204D] text-white rounded-full font-medium hover:bg-[#3A2B61] transition-colors"
           >
             Got it!
           </button>

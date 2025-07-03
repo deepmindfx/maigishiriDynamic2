@@ -150,7 +150,7 @@ const ProfilePage: React.FC = () => {
             <Button
               type="submit"
               variant="primary"
-              className="mt-6"
+              className="mt-6 bg-[#2C204D] hover:bg-[#3A2B61]"
               fullWidth
             >
               Save Changes
@@ -189,7 +189,7 @@ const ProfilePage: React.FC = () => {
       <Card className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold flex items-center">
-            <Lock size={18} className="mr-2 text-primary-500" />
+            <Lock size={18} className="mr-2 text-[#2C204D]" />
             Transaction PIN
           </h2>
         </div>
@@ -204,7 +204,7 @@ const ProfilePage: React.FC = () => {
           <Button
             variant="primary"
             onClick={handleSetPin}
-            className="flex-1"
+            className="flex-1 bg-[#2C204D] hover:bg-[#3A2B61]"
             icon={<Key size={16} />}
           >
             {user.hasPin ? 'Change PIN' : 'Set PIN'}
@@ -217,7 +217,7 @@ const ProfilePage: React.FC = () => {
         <Card className="mb-6">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-semibold flex items-center">
-              <CreditCard size={18} className="mr-2 text-primary-500" />
+              <CreditCard size={18} className="mr-2 text-[#2C204D]" />
               Virtual Account Setup
             </h2>
           </div>
@@ -257,6 +257,7 @@ const ProfilePage: React.FC = () => {
             onClick={handleCreateVirtualAccount}
             isLoading={isCreatingVirtualAccount}
             disabled={!formData.bvn || formData.bvn.length !== 11 || isCreatingVirtualAccount}
+            className="bg-[#2C204D] hover:bg-[#3A2B61]"
             fullWidth
           >
             Create Virtual Account

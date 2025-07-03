@@ -91,7 +91,7 @@ const ProductSlideshow: React.FC = () => {
               <div className="text-white max-w-md">
                 {/* New Badge */}
                 {product.is_new && (
-                  <span className="inline-block bg-primary-500 text-white text-xs px-3 py-1 rounded-full font-bold mb-3">
+                  <span className="inline-block bg-[#2C204D] text-white text-xs px-3 py-1 rounded-full font-bold mb-3">
                     NEW ARRIVAL
                   </span>
                 )}
@@ -115,7 +115,7 @@ const ProductSlideshow: React.FC = () => {
                 
                 {/* Price */}
                 <div className="flex items-center space-x-3 mb-4">
-                  <span className="text-2xl md:text-3xl font-bold text-primary-500">
+                  <span className="text-2xl md:text-3xl font-bold text-[#2C204D]">
                     {formatCurrency(product.price)}
                   </span>
                   {product.original_price && product.original_price > product.price && (
@@ -142,7 +142,7 @@ const ProductSlideshow: React.FC = () => {
                 <button 
                   className={`px-6 py-3 rounded-full font-semibold transition-colors duration-200 shadow-lg ${
                     product.in_stock 
-                      ? 'bg-primary-500 hover:bg-primary-600 text-white' 
+                      ? 'bg-[#2C204D] hover:bg-[#3A2B61] text-white' 
                       : 'bg-gray-500 text-gray-300 cursor-not-allowed'
                   }`}
                   disabled={!product.in_stock}
@@ -160,28 +160,28 @@ const ProductSlideshow: React.FC = () => {
         <>
           <button
             onClick={prevSlide}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-200"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-1.5 rounded-full transition-all duration-200"
           >
-            <ChevronLeft size={24} />
+            <ChevronLeft size={18} />
           </button>
           
           <button
             onClick={nextSlide}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-2 rounded-full transition-all duration-200"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/20 backdrop-blur-sm hover:bg-white/30 text-white p-1.5 rounded-full transition-all duration-200"
           >
-            <ChevronRight size={24} />
+            <ChevronRight size={18} />
           </button>
         </>
       )}
 
       {/* Dots Indicator - Only show if more than 1 product */}
       {latestProducts.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2">
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 flex space-x-1.5">
           {latestProducts.map((_, index) => (
             <button
               key={index}
               onClick={() => goToSlide(index)}
-              className={`w-3 h-1 rounded-full transition-all duration-200 ${
+              className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentSlide 
                   ? 'bg-white scale-110' 
                   : 'bg-white/50 hover:bg-white/70'
@@ -193,14 +193,14 @@ const ProductSlideshow: React.FC = () => {
 
       {/* Product Counter - Only show if more than 1 product */}
       {latestProducts.length > 1 && (
-        <div className="absolute top-4 right-4 bg-black/30 backdrop-blur-sm text-white px-3 py-1 rounded-full text-sm">
+        <div className="absolute top-3 right-3 bg-black/30 backdrop-blur-sm text-white px-2 py-0.5 rounded-full text-xs">
           {currentSlide + 1} / {latestProducts.length}
         </div>
       )}
 
       {/* Single Product Indicator */}
       {latestProducts.length === 1 && (
-        <div className="absolute top-4 right-4 bg-primary-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+        <div className="absolute top-4 right-4 bg-[#2C204D] text-white px-3 py-1 rounded-full text-sm font-bold">
           Latest Product
         </div>
       )}
