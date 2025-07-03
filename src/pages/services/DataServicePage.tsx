@@ -27,25 +27,25 @@ const networkProviders = [
     value: 'MTN', 
     label: 'MTN',
     color: 'bg-yellow-500',
-    imageUrl: 'https://i.ibb.co/350xQ0HH/mtn.png'
+    imageUrl: '/logos/mtn.png'
   },
   { 
     value: 'AIRTEL', 
     label: 'Airtel',
     color: 'bg-red-500',
-    imageUrl: 'https://i.ibb.co/LzNyT4v4/airtel.png'
+    imageUrl: '/logos/airtel.gif'
   },
   { 
     value: 'GLO', 
     label: 'Glo',
     color: 'bg-green-500',
-    imageUrl: 'https://i.ibb.co/NnZLfCHC/glo.jpg'
+    imageUrl: '/logos/glo.jpeg'
   },
   { 
     value: '9MOBILE', 
     label: '9mobile',
     color: 'bg-teal-500',
-    imageUrl: 'https://i.ibb.co/zW7WwvnL/9-mobile.webp'
+    imageUrl: '/logos/9-mobile.webp'
   },
 ];
 
@@ -88,13 +88,11 @@ const DataServicePage: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [saveAsBeneficiary, setSaveAsBeneficiary] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState('');
-  const [serviceType, setServiceType] = useState('local');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [transaction, setTransaction] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSetPinModal, setShowSetPinModal] = useState(false);
-  const [showNetworkSelector, setShowNetworkSelector] = useState(false);
   
   // Data plans state
   const [dataPlans, setDataPlans] = useState<DataPlan[]>([]);
@@ -228,17 +226,12 @@ const DataServicePage: React.FC = () => {
     let matchesDuration = true;
     if (selectedDurationTab === 'HOT') {
       matchesDuration = plan.is_popular;
-    } else if (selectedDurationTab === 'Daily') {
-      matchesDuration = plan.validity.toLowerCase().includes('day') && !plan.validity.toLowerCase().includes('days');
     } else if (selectedDurationTab === 'Weekly') {
       matchesDuration = plan.validity.toLowerCase().includes('7 day') || 
                         plan.validity.toLowerCase().includes('week');
     } else if (selectedDurationTab === 'Monthly') {
       matchesDuration = plan.validity.toLowerCase().includes('30 day') || 
                         plan.validity.toLowerCase().includes('month');
-    } else if (selectedDurationTab === 'XtraValue') {
-      matchesDuration = plan.plan_type.toLowerCase().includes('xtra') || 
-                        plan.description.toLowerCase().includes('xtra');
     }
     
     return matchesNetwork && matchesCategory && matchesSearch && matchesDuration;
@@ -369,7 +362,7 @@ const DataServicePage: React.FC = () => {
     
     // Add logo (using text as placeholder)
     doc.setFontSize(24);
-    doc.setTextColor(15, 157, 88); // Primary color #0F9D58
+    doc.setTextColor(44, 32, 77); // Primary color #2C204D
     doc.text('HAAMAN NETWORK', 105, 20, { align: 'center' });
     
     doc.setFontSize(12);
@@ -417,60 +410,6 @@ const DataServicePage: React.FC = () => {
     doc.save(`data-receipt-${transaction.reference}.pdf`);
   };
 
-  const renderComingSoon = () => (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => navigate('/')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-        >
-          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
-        </button>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Data Bundle</h1>
-      </div>
-
-      <div className="p-4 space-y-6">
-        {/* Service Type Toggle */}
-        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
-          <button
-            onClick={() => setServiceType('local')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'local'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            Local
-          </button>
-          <button
-            onClick={() => setServiceType('international')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'international'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            International
-          </button>
-        </div>
-
-        {/* Coming Soon Message */}
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-24 h-24 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-12 h-12 text-[#0F9D58]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Coming Soon</h2>
-          <p className="text-gray-600 dark:text-gray-400 text-center max-w-sm">
-            International data bundle services will be available soon. Stay tuned for updates!
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-
   const renderStepOne = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -493,38 +432,14 @@ const DataServicePage: React.FC = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Service Type Toggle */}
-        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
-          <button
-            onClick={() => setServiceType('local')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'local'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            Local
-          </button>
-          <button
-            onClick={() => setServiceType('international')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'international'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            International
-          </button>
-        </div>
-
         {/* Phone Number Input with Network Selection */}
         <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
           <div className="flex items-center space-x-3 mb-4">
-            <div 
-              className="relative"
-              onClick={() => setShowNetworkSelector(!showNetworkSelector)}
-            >
-              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600">
+            <div className="relative">
+              <div 
+                className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600"
+                onClick={() => setShowBeneficiaries(!showBeneficiaries)}
+              >
                 {selectedNetwork ? (
                   <img 
                     src={networkProviders.find(n => n.value === selectedNetwork)?.imageUrl} 
@@ -537,7 +452,7 @@ const DataServicePage: React.FC = () => {
               </div>
               
               {/* Network Selector Dropdown */}
-              {showNetworkSelector && (
+              {showBeneficiaries && (
                 <div className="absolute top-14 left-0 z-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-2 w-48">
                   {networkProviders.map(provider => (
                     <div 
@@ -545,7 +460,7 @@ const DataServicePage: React.FC = () => {
                       className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
                       onClick={() => {
                         setSelectedNetwork(provider.value);
-                        setShowNetworkSelector(false);
+                        setShowBeneficiaries(false);
                       }}
                     >
                       <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
@@ -646,7 +561,7 @@ const DataServicePage: React.FC = () => {
           
           {/* Duration Tabs */}
           <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4">
-            {['HOT', 'Daily', 'Weekly', 'Monthly', 'XtraValue'].map((tab) => (
+            {['HOT', 'Weekly', 'Monthly'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setSelectedDurationTab(tab)}
@@ -803,9 +718,16 @@ const DataServicePage: React.FC = () => {
           <div className="space-y-4 mb-6">
             <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-700">
               <span className="text-gray-600 dark:text-gray-400">Network</span>
-              <span className="font-medium text-gray-900 dark:text-white">
-                {networkProviders.find(n => n.value === selectedNetwork)?.label}
-              </span>
+              <div className="flex items-center">
+                <img 
+                  src={networkProviders.find(n => n.value === selectedNetwork)?.imageUrl} 
+                  alt={selectedNetwork}
+                  className="w-6 h-6 object-contain mr-2"
+                />
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {networkProviders.find(n => n.value === selectedNetwork)?.label}
+                </span>
+              </div>
             </div>
             
             <div className="flex justify-between py-3 border-b border-gray-200 dark:border-gray-700">
@@ -991,11 +913,6 @@ const DataServicePage: React.FC = () => {
       </Card>
     </div>
   );
-
-  // Show coming soon for international service
-  if (serviceType === 'international') {
-    return renderComingSoon();
-  }
 
   return (
     <>
