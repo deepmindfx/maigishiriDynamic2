@@ -22,7 +22,10 @@ import {
   ArrowUpRight,
   Upload,
   DollarSign,
-  Ban
+  Ban,
+  CreditCard,
+  Bell,
+  Shield
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { useServiceConfigStore } from '../store/serviceConfigStore';
