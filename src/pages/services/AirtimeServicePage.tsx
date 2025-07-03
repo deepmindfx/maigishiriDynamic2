@@ -57,7 +57,6 @@ const AirtimeServicePage: React.FC = () => {
   const [amount, setAmount] = useState('');
   const [saveAsBeneficiary, setSaveAsBeneficiary] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState('');
-  const [serviceType, setServiceType] = useState('local');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [transaction, setTransaction] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -256,60 +255,6 @@ const AirtimeServicePage: React.FC = () => {
     setShowBeneficiaries(false);
   };
 
-  const renderComingSoon = () => (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => navigate('/')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
-        >
-          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
-        </button>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Airtime</h1>
-      </div>
-
-      <div className="p-4 space-y-6">
-        {/* Service Type Toggle */}
-        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
-          <button
-            onClick={() => setServiceType('local')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'local'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            Local
-          </button>
-          <button
-            onClick={() => setServiceType('international')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'international'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            International
-          </button>
-        </div>
-
-        {/* Coming Soon Message */}
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-24 h-24 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-12 h-12 text-[#0F9D58]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-          </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Coming Soon</h2>
-          <p className="text-gray-600 dark:text-gray-400 text-center max-w-sm">
-            International airtime services will be available soon. Stay tuned for updates!
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-
   const renderStepOne = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -324,30 +269,6 @@ const AirtimeServicePage: React.FC = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Service Type Toggle */}
-        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
-          <button
-            onClick={() => setServiceType('local')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'local'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            Local
-          </button>
-          <button
-            onClick={() => setServiceType('international')}
-            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
-              serviceType === 'international'
-                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
-                : 'text-gray-600 dark:text-gray-400'
-            }`}
-          >
-            International
-          </button>
-        </div>
-        
         {/* Beneficiaries Section */}
         {beneficiaries.length > 0 && (
           <div>
@@ -527,13 +448,13 @@ const AirtimeServicePage: React.FC = () => {
             </span>
             <button
               onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
-              className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
                 saveAsBeneficiary ? 'bg-[#0F9D58]' : 'bg-gray-300 dark:bg-gray-600'
               }`}
             >
               <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                  saveAsBeneficiary ? 'translate-x-7' : 'translate-x-1'
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  saveAsBeneficiary ? 'translate-x-6' : 'translate-x-1'
                 }`}
               />
             </button>
@@ -737,11 +658,6 @@ const AirtimeServicePage: React.FC = () => {
       </Card>
     </div>
   );
-
-  // Show coming soon for international service
-  if (serviceType === 'international') {
-    return renderComingSoon();
-  }
 
   return (
     <>
