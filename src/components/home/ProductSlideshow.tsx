@@ -91,7 +91,7 @@ const ProductSlideshow: React.FC = () => {
               <div className="text-white max-w-md">
                 {/* New Badge */}
                 {product.is_new && (
-                  <span className="inline-block bg-[#0F9D58] text-white text-xs px-3 py-1 rounded-full font-bold mb-3">
+                  <span className="inline-block bg-primary-500 text-white text-xs px-3 py-1 rounded-full font-bold mb-3">
                     NEW ARRIVAL
                   </span>
                 )}
@@ -115,7 +115,7 @@ const ProductSlideshow: React.FC = () => {
                 
                 {/* Price */}
                 <div className="flex items-center space-x-3 mb-4">
-                  <span className="text-2xl md:text-3xl font-bold text-[#0F9D58]">
+                  <span className="text-2xl md:text-3xl font-bold text-primary-500">
                     {formatCurrency(product.price)}
                   </span>
                   {product.original_price && product.original_price > product.price && (
@@ -142,7 +142,7 @@ const ProductSlideshow: React.FC = () => {
                 <button 
                   className={`px-6 py-3 rounded-full font-semibold transition-colors duration-200 shadow-lg ${
                     product.in_stock 
-                      ? 'bg-[#0F9D58] hover:bg-[#0d8a4f] text-white' 
+                      ? 'bg-primary-500 hover:bg-primary-600 text-white' 
                       : 'bg-gray-500 text-gray-300 cursor-not-allowed'
                   }`}
                   disabled={!product.in_stock}
@@ -200,7 +200,7 @@ const ProductSlideshow: React.FC = () => {
 
       {/* Single Product Indicator */}
       {latestProducts.length === 1 && (
-        <div className="absolute top-4 right-4 bg-[#0F9D58] text-white px-3 py-1 rounded-full text-sm font-bold">
+        <div className="absolute top-4 right-4 bg-primary-500 text-white px-3 py-1 rounded-full text-sm font-bold">
           Latest Product
         </div>
       )}

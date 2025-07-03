@@ -169,7 +169,7 @@ const PinInput: React.FC<PinInputProps> = ({
             onPaste={handlePaste}
             disabled={disabled}
             className={cn(
-              "w-12 h-14 text-center text-2xl font-bold border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0F9D58] transition-all",
+              "w-12 h-14 text-center text-2xl font-bold border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all",
               error
                 ? "border-red-500 focus:border-red-500 focus:ring-red-500"
                 : "border-gray-300 dark:border-gray-600",

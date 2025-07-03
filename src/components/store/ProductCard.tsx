@@ -40,10 +40,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   // Background colors for product cards
   const bgColors = [
-    'bg-purple-50',
-    'bg-yellow-50',
-    'bg-green-50',
-    'bg-blue-50',
+    'bg-shop-purple',
+    'bg-shop-yellow',
+    'bg-shop-green',
+    'bg-shop-blue',
   ];
   
   // Randomly select a background color
@@ -78,8 +78,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
             {product.name}
           </h3>
-          <p className="text-base font-bold text-[#0F9D58]">
-            ${product.price.toFixed(2)}
+          <p className="text-base font-bold text-primary-500">
+            {formatCurrency(product.price)}
           </p>
           <div className="flex justify-between items-center mt-1">
             <span className="text-xs text-gray-500">

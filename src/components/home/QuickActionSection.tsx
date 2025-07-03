@@ -37,7 +37,7 @@ const QuickActionSection: React.FC = () => {
       description: 'Browse our online store',
       icon: <ShoppingBag size={20} />,
       path: '/store',
-      color: 'bg-[#0F9D58]',
+      color: 'bg-primary-500',
     },
     {
       title: 'Fund Wallet',

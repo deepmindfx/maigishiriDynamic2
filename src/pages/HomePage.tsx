@@ -299,7 +299,7 @@ const HomePage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-8 h-8 border-4 border-[#0F9D58] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
         </div>
       </div>
@@ -320,7 +320,7 @@ const HomePage: React.FC = () => {
       )}
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-br from-[#0F9D58] via-[#0d8a4f] to-[#0b7746] py-20 sm:py-32 overflow-hidden">
+      <section className="relative bg-gradient-to-br from-primary-500 via-primary-600 to-primary-700 py-20 sm:py-32 overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <svg className="w-full h-full" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
@@ -344,7 +344,7 @@ const HomePage: React.FC = () => {
             <div className="space-y-6 sm:space-y-8">
               {/* New Badge */}
               <div className="inline-flex items-center bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-4 py-2 text-white">
-                <span className="bg-white text-[#0F9D58] px-2 py-1 rounded-full text-xs font-bold mr-3">New</span>
+                <span className="bg-white text-primary-500 px-2 py-1 rounded-full text-xs font-bold mr-3">New</span>
                 <span className="text-sm">Delivering Excellence Across Nigeria</span>
               </div>
 
@@ -362,7 +362,7 @@ const HomePage: React.FC = () => {
                 <div className="flex flex-col sm:flex-row flex-wrap gap-4">
                   <Button
                     variant="outline"
-                    className="bg-white text-[#0F9D58] border-white hover:bg-gray-100 px-6 py-3 rounded-lg"
+                    className="bg-white text-primary-500 border-white hover:bg-gray-100 px-6 py-3 rounded-lg"
                     onClick={() => navigate('/signup')}
                   >
                     Get Started
@@ -372,7 +372,7 @@ const HomePage: React.FC = () => {
                   {bannerSettings.download_app_enabled === 'true' && (
                     <Button
                       variant="outline"
-                      className="bg-transparent border-white text-white hover:bg-white hover:text-[#0F9D58] px-6 py-3 rounded-lg"
+                      className="bg-transparent border-white text-white hover:bg-white hover:text-primary-500 px-6 py-3 rounded-lg"
                       icon={<Download size={20} />}
                       onClick={() => window.open(bannerSettings.download_app_url, '_blank')}
                     >
@@ -425,7 +425,7 @@ const HomePage: React.FC = () => {
             <div className="text-center mt-6 sm:mt-8">
               <Button
                 onClick={() => navigate('/store')}
-                className="bg-[#0F9D58] hover:bg-[#0d8a4f] text-white px-6 sm:px-8 py-3 rounded-full font-semibold"
+                className="bg-primary-500 hover:bg-primary-600 text-white px-6 sm:px-8 py-3 rounded-full font-semibold"
               >
                 View All Products
               </Button>
@@ -466,8 +466,8 @@ const HomePage: React.FC = () => {
                     }
                   }}
                 >
-                  <div className="w-12 sm:w-16 h-12 sm:h-16 bg-[#0F9D58] bg-opacity-10 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:bg-[#0F9D58] transition-colors duration-300 relative">
-                    <div className="text-[#0F9D58] group-hover:text-white transition-colors duration-300">
+                  <div className="w-12 sm:w-16 h-12 sm:h-16 bg-primary-500 bg-opacity-10 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 group-hover:bg-primary-500 transition-colors duration-300 relative">
+                    <div className="text-primary-500 group-hover:text-white transition-colors duration-300">
                       {service.icon}
                     </div>
                     {service.comingSoon && (
@@ -481,7 +481,7 @@ const HomePage: React.FC = () => {
                     {service.description}
                   </p>
                   {service.id !== 'store' && !service.comingSoon && !isAuthenticated && (
-                    <div className="mt-3 text-sm text-[#0F9D58] font-medium">
+                    <div className="mt-3 text-sm text-primary-500 font-medium">
                       Login required to use this service
                     </div>
                   )}
@@ -497,7 +497,7 @@ const HomePage: React.FC = () => {
         <div className="container-pad">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Why choose <span className="text-[#0F9D58]">{siteName}</span>
+              Why choose <span className="text-primary-500">{siteName}</span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Experience seamless digital services and e-commerce with our comprehensive platform designed for your convenience.
@@ -507,8 +507,8 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
             {features.map((feature, index) => (
               <Card key={index} className="p-6 sm:p-8 bg-white dark:bg-gray-800">
-                <div className="w-12 sm:w-16 h-12 sm:h-16 bg-[#0F9D58] bg-opacity-10 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
-                  <div className="text-[#0F9D58]">{feature.icon}</div>
+                <div className="w-12 sm:w-16 h-12 sm:h-16 bg-primary-500 bg-opacity-10 rounded-2xl flex items-center justify-center mb-4 sm:mb-6">
+                  <div className="text-primary-500">{feature.icon}</div>
                 </div>
                 <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">{feature.title}</h3>
                 <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base">
@@ -525,7 +525,7 @@ const HomePage: React.FC = () => {
         <div className="container-pad">
           <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 items-center">
             <div className="relative order-2 lg:order-1">
-              <div className="absolute inset-0 bg-[#0F9D58] bg-opacity-5 rounded-full"></div>
+              <div className="absolute inset-0 bg-primary-500 bg-opacity-5 rounded-full"></div>
               <div className="relative z-10 flex justify-center">
                 <img
                   src={bannerSettings.steps_banner_image}
@@ -545,7 +545,7 @@ const HomePage: React.FC = () => {
               <div className="space-y-6 sm:space-y-8">
                 {steps.map((step, index) => (
                   <div key={index} className="flex gap-4 sm:gap-6">
-                    <div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-[#0F9D58] text-white rounded-full flex items-center justify-center font-bold text-lg">
+                    <div className="flex-shrink-0 w-10 sm:w-12 h-10 sm:h-12 bg-primary-500 text-white rounded-full flex items-center justify-center font-bold text-lg">
                       {step.number}
                     </div>
                     <div>
@@ -560,7 +560,7 @@ const HomePage: React.FC = () => {
 
               <Button
                 variant="primary"
-                className="bg-[#0F9D58] hover:bg-[#0d8a4f] px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full"
+                className="bg-primary-500 hover:bg-primary-600 px-6 sm:px-8 py-3 sm:py-4 text-base sm:text-lg rounded-full"
                 onClick={() => navigate('/signup')}
               >
                 Get Started
@@ -575,7 +575,7 @@ const HomePage: React.FC = () => {
         <div className="container-pad">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-              Checkout our <span className="text-[#0F9D58]">FAQs</span>
+              Checkout our <span className="text-primary-500">FAQs</span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Have a question about our services? Our FAQ section has got you covered with helpful information on all of our offerings.
@@ -583,7 +583,7 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12">
-            <div className="bg-[#0F9D58] rounded-3xl p-6 sm:p-8 text-white">
+            <div className="bg-primary-500 rounded-3xl p-6 sm:p-8 text-white">
               <div className="space-y-4 sm:space-y-6">
                 <div className="bg-white bg-opacity-20 rounded-2xl p-4 flex items-center gap-3">
                   <div className="w-8 h-8 bg-white bg-opacity-30 rounded-full flex items-center justify-center">
@@ -614,7 +614,7 @@ const HomePage: React.FC = () => {
 
                 <Button
                   variant="outline"
-                  className="w-full bg-transparent border-white text-white hover:bg-white hover:text-[#0F9D58] mt-6 sm:mt-8 text-sm sm:text-base"
+                  className="w-full bg-transparent border-white text-white hover:bg-white hover:text-primary-500 mt-6 sm:mt-8 text-sm sm:text-base"
                 >
                   Still have questions? Contact us →
                 </Button>
@@ -644,7 +644,7 @@ const HomePage: React.FC = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
             <div className="lg:col-span-2">
               <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 bg-[#0F9D58] rounded-lg flex items-center justify-center">
+                <div className="w-10 h-10 bg-primary-500 rounded-lg flex items-center justify-center">
                   {siteLogoUrl ? (
                     <img src={siteLogoUrl} alt={siteName} className="w-6 h-6 object-contain" />
                   ) : (

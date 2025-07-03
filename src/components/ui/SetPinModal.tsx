@@ -125,7 +125,7 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
             </p>
             <Button
               onClick={handleClose}
-              className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white"
             >
               Done
             </Button>
@@ -133,8 +133,8 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
         ) : (
           <>
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Lock className="text-[#0F9D58]" size={28} />
+              <div className="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Lock className="text-primary-500" size={28} />
               </div>
               <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                 {isChangingPin 
@@ -212,7 +212,7 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
                   onClick={() => handleCurrentPinComplete(currentPin)}
                   disabled={currentPin.length !== 4 || isProcessing}
                   isLoading={isProcessing}
-                  className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+                  className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
                 >
                   Next
                 </Button>
@@ -221,7 +221,7 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
                   onClick={() => handleNewPinComplete(newPin)}
                   disabled={newPin.length !== 4 || isProcessing}
                   isLoading={isProcessing}
-                  className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+                  className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
                 >
                   Next
                 </Button>
@@ -230,7 +230,7 @@ const SetPinModal: React.FC<SetPinModalProps> = ({
                   onClick={handleSetPin}
                   disabled={confirmPin.length !== 4 || isProcessing}
                   isLoading={isProcessing}
-                  className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+                  className="flex-1 bg-primary-500 hover:bg-primary-600 text-white"
                 >
                   {isChangingPin ? 'Change PIN' : 'Set PIN'}
                 </Button>

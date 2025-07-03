@@ -101,8 +101,8 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
         </button>
         
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Lock className="text-[#0F9D58]" size={28} />
+          <div className="w-16 h-16 bg-primary-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Lock className="text-primary-500" size={28} />
           </div>
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{title}</h2>
           <p className="text-gray-600 dark:text-gray-400">{message}</p>
@@ -138,7 +138,7 @@ const TransactionPinModal: React.FC<TransactionPinModalProps> = ({
               onClick={() => handleVerifyPin(pin)}
               isLoading={isVerifying}
               disabled={pin.length !== 4 || isVerifying}
-              className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+              className="w-full bg-primary-500 hover:bg-primary-600 text-white"
             >
               Verify
             </Button>
