@@ -429,9 +429,9 @@ const AirtimeServicePage: React.FC = () => {
             <Button
               onClick={handleContinue}
               disabled={!selectedNetwork || !phoneNumber || !amount || Number(amount) < 50}
-              className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 rounded-xl"
+              className="bg-primary-500 hover:bg-primary-600 text-white px-8 py-4 rounded-xl text-center"
             >
-              Pay
+              {amount ? `Pay ₦${amount}` : 'Pay'}
             </Button>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
