@@ -44,6 +44,10 @@ export default {
           bg: '#2C204D', // Dark purple from image
           active: '#4A3B7A', // Lighter purple for active state
         },
+        wallet: {
+          bg: '#2C204D', // Dark purple for wallet card
+          accent: '#4A3B7A', // Accent color for wallet card
+        },
       },
       fontFamily: {
         sans: [

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PlusCircle, ArrowUpRight, ArrowDownRight, History, RefreshCw } from 'lucide-react';
+import { ArrowUpRight, ArrowDownRight, History, RefreshCw, ArrowRightLeft, CreditCard, DollarSign, PlusCircle } from 'lucide-react';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
@@ -112,55 +112,82 @@ const WalletPage: React.FC = () => {
   return (
     <div className="py-6 animate-fade-in">
       {/* Wallet Balance Card */}
-      <Card className="mb-6 p-6">
-        <div className="flex justify-between items-start mb-4">
-          <div>
-            <h2 className="text-sm text-gray-600 dark:text-gray-400">Wallet Balance</h2>
-            <p className="text-3xl font-bold text-primary-500">
-              {formatCurrency(user?.walletBalance || 0)}
-            </p>
+      <div className="relative mb-6 rounded-3xl overflow-hidden bg-wallet-bg text-white">
+        {/* Decorative circles */}
+        <div className="absolute top-0 left-0 w-24 h-24 rounded-full bg-wallet-accent opacity-20"></div>
+        <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-wallet-accent opacity-20"></div>
+        
+        <div className="p-6">
+          <div className="flex justify-between items-start mb-4">
+            <div>
+              <h2 className="text-sm opacity-80">Balance</h2>
+              <p className="text-3xl font-bold mt-1">
+                {formatCurrency(user?.walletBalance || 0)}
+              </p>
+            </div>
+            
+            <div>
+              <h2 className="text-sm opacity-80">Card</h2>
+              <p className="text-xl font-bold mt-1">Mabank</p>
+            </div>
           </div>
           
-          <div className="flex space-x-2">
+          <div className="flex justify-end">
             <Button
               variant="outline"
               icon={<RefreshCw size={16} className={refreshing ? "animate-spin" : ""} />}
               onClick={handleRefresh}
               disabled={refreshing}
+              className="bg-transparent border-white/20 text-white hover:bg-white/10"
             >
               {refreshing ? "Refreshing..." : "Refresh"}
             </Button>
-            
-            <Button
-              variant="primary"
-              icon={<PlusCircle size={16} />}
-              onClick={() => navigate('/wallet/fund')}
-            >
-              Fund Wallet
-            </Button>
           </div>
         </div>
-        
-        <div className="grid grid-cols-2 gap-4 mt-6">
-          <Button
-            variant="outline"
-            icon={<ArrowUpRight size={16} />}
-            onClick={() => navigate('/services')}
-            fullWidth
+      </div>
+      
+      {/* Quick Actions */}
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        <div className="flex flex-col items-center">
+          <button 
+            onClick={() => navigate('/wallet/fund')}
+            className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
           >
-            Pay Bills
-          </Button>
-          
-          <Button
-            variant="outline"
-            icon={<History size={16} />}
-            onClick={() => navigate('/transactions')}
-            fullWidth
-          >
-            History
-          </Button>
+            <ArrowRightLeft size={24} className="text-indigo-600" />
+          </button>
+          <span className="text-xs text-indigo-600 font-medium">Transfer</span>
         </div>
-      </Card>
+        
+        <div className="flex flex-col items-center">
+          <button 
+            onClick={() => navigate('/services')}
+            className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+          >
+            <CreditCard size={24} className="text-indigo-600" />
+          </button>
+          <span className="text-xs text-indigo-600 font-medium">Payment</span>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <button 
+            onClick={() => navigate('/services')}
+            className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+          >
+            <DollarSign size={24} className="text-indigo-600" />
+          </button>
+          <span className="text-xs text-indigo-600 font-medium">Payout</span>
+        </div>
+        
+        <div className="flex flex-col items-center">
+          <button 
+            onClick={() => navigate('/wallet/fund')}
+            className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
+          >
+            <PlusCircle size={24} className="text-indigo-600" />
+          </button>
+          <span className="text-xs text-indigo-600 font-medium">Top up</span>
+        </div>
+      </div>
       
       {/* Recent Transactions */}
       <div className="mb-4 flex justify-between items-center">
