@@ -395,9 +395,9 @@ const AirtimeServicePage: React.FC = () => {
                 }`}
               >
                 <div className="flex flex-col h-full">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">₦{item.amount}</h3>
-                  <div className="flex justify-end mt-auto">
-                    <span className="text-lg text-[#2C204D]">Pay ₦{item.amount}</span>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 text-center">₦{item.amount}</h3>
+                  <div className="flex justify-center mt-auto">
+                    <span className="text-sm text-[#2C204D]">Pay ₦{item.amount}</span>
                   </div>
                 </div>
               </div>
