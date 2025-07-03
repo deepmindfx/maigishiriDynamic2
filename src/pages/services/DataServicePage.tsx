@@ -88,6 +88,7 @@ const DataServicePage: React.FC = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [saveAsBeneficiary, setSaveAsBeneficiary] = useState(false);
   const [beneficiaryName, setBeneficiaryName] = useState('');
+  const [serviceType, setServiceType] = useState('local');
   const [isSuccess, setIsSuccess] = useState<boolean | null>(null);
   const [transaction, setTransaction] = useState<any>(null);
   const [errorMessage, setErrorMessage] = useState('');
@@ -235,9 +236,6 @@ const DataServicePage: React.FC = () => {
     } else if (selectedDurationTab === 'Monthly') {
       matchesDuration = plan.validity.toLowerCase().includes('30 day') || 
                         plan.validity.toLowerCase().includes('month');
-    } else if (selectedDurationTab === 'XtraValue') {
-      matchesDuration = plan.plan_type.toLowerCase().includes('xtravalue') || 
-                        plan.description.toLowerCase().includes('xtravalue');
     }
     
     return matchesNetwork && matchesCategory && matchesSearch && matchesDuration;
@@ -416,6 +414,60 @@ const DataServicePage: React.FC = () => {
     doc.save(`data-receipt-${transaction.reference}.pdf`);
   };
 
+  const renderComingSoon = () => (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Header */}
+      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
+        <button
+          onClick={() => navigate('/')}
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+        >
+          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+        </button>
+        <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Data Bundle</h1>
+      </div>
+
+      <div className="p-4 space-y-6">
+        {/* Service Type Toggle */}
+        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
+          <button
+            onClick={() => setServiceType('local')}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+              serviceType === 'local'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400'
+            }`}
+          >
+            Local
+          </button>
+          <button
+            onClick={() => setServiceType('international')}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+              serviceType === 'international'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400'
+            }`}
+          >
+            International
+          </button>
+        </div>
+
+        {/* Coming Soon Message */}
+        <div className="flex flex-col items-center justify-center py-20">
+          <div className="w-24 h-24 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mb-6">
+            <svg className="w-12 h-12 text-[#0F9D58]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Coming Soon</h2>
+          <p className="text-gray-600 dark:text-gray-400 text-center max-w-sm">
+            International data bundle services will be available soon. Stay tuned for updates!
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderStepOne = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
@@ -438,152 +490,138 @@ const DataServicePage: React.FC = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Beneficiaries Section */}
-        {beneficiaries.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Beneficiaries
-              </h2>
-              <button
-                onClick={() => setShowBeneficiaries(!showBeneficiaries)}
-                className="text-[#2C204D] text-sm font-medium"
-              >
-                {showBeneficiaries ? 'Hide' : 'View All'}
-              </button>
-            </div>
-            
-            {showBeneficiaries ? (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-4">
-                {loadingBeneficiaries ? (
-                  <div className="flex justify-center py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#2C204D]"></div>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {beneficiaries.map((beneficiary) => (
-                      <button
-                        key={beneficiary.id}
-                        onClick={() => selectBeneficiary(beneficiary)}
-                        className="w-full flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          beneficiary.network === 'MTN' ? 'bg-yellow-100 text-yellow-600' :
-                          beneficiary.network === 'AIRTEL' ? 'bg-red-100 text-red-600' :
-                          beneficiary.network === 'GLO' ? 'bg-green-100 text-green-600' :
-                          beneficiary.network === '9MOBILE' ? 'bg-teal-100 text-teal-600' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>
-                          <User size={18} />
-                        </div>
-                        
-                        <div className="ml-3 text-left">
-                          <p className="font-medium text-gray-900 dark:text-white">{beneficiary.name}</p>
-                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <span>{beneficiary.phone_number}</span>
-                            <span className="mx-1">•</span>
-                            <span className="capitalize">{beneficiary.network}</span>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="overflow-x-auto scrollbar-hide">
-                <div className="flex space-x-3 pb-2 flex-nowrap">
-                  {beneficiaries.map((beneficiary) => (
-                    <button
-                      key={beneficiary.id}
-                      onClick={() => selectBeneficiary(beneficiary)}
-                      className="flex-shrink-0 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#2C204D] transition-colors"
-                    >
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
-                        beneficiary.network === 'MTN' ? 'bg-yellow-100 text-yellow-600' :
-                        beneficiary.network === 'AIRTEL' ? 'bg-red-100 text-red-600' :
-                        beneficiary.network === 'GLO' ? 'bg-green-100 text-green-600' :
-                        beneficiary.network === '9MOBILE' ? 'bg-teal-100 text-teal-600' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        <User size={20} />
-                      </div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{beneficiary.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{beneficiary.phone_number}</p>
-                    </button>
-                  ))}
-                  
-                  {/* Add New Beneficiary Button */}
-                  <button
-                    onClick={() => {
-                      setSelectedNetwork('');
-                      setPhoneNumber('');
-                      setBeneficiaryName('');
-                      setSaveAsBeneficiary(true);
-                    }}
-                    className="flex-shrink-0 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 hover:border-[#2C204D] transition-colors"
-                  >
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-gray-100 dark:bg-gray-700 text-[#2C204D]">
-                      <Plus size={20} />
-                    </div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Add New</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Beneficiary</p>
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Network Provider Selection */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Select Network Provider
-          </h2>
-          <div className="grid grid-cols-4 gap-4">
-            {networkProviders.map((provider) => (
-              <button
-                key={provider.value}
-                onClick={() => {
-                  setSelectedNetwork(provider.value);
-                  setSelectedCategory(''); // Reset category when network changes
-                  setSelectedPlan(null); // Reset plan when network changes
-                }}
-                className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
-                  selectedNetwork === provider.value
-                    ? 'border-[#2C204D] bg-[#2C204D]/5'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                }`}
-              >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 overflow-hidden bg-white">
-                  <img
-                    src={provider.imageUrl}
-                    alt={provider.label}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  {provider.label}
-                </span>
-              </button>
-            ))}
-          </div>
+        {/* Service Type Toggle */}
+        <div className="flex bg-gray-200 dark:bg-gray-700 rounded-xl p-1">
+          <button
+            onClick={() => setServiceType('local')}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+              serviceType === 'local'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400'
+            }`}
+          >
+            Local
+          </button>
+          <button
+            onClick={() => setServiceType('international')}
+            className={`flex-1 py-3 px-4 rounded-lg font-medium transition-all ${
+              serviceType === 'international'
+                ? 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm'
+                : 'text-gray-600 dark:text-gray-400'
+            }`}
+          >
+            International
+          </button>
         </div>
 
-        {/* Phone Number Input */}
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-3">
-            Phone Number
-          </label>
-          <div className="relative">
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter phone number"
-              className="w-full px-4 py-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D] focus:border-transparent"
-            />
+        {/* Phone Number Input with Network Selection */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center space-x-3 mb-4">
+            <div 
+              className="relative"
+              onClick={() => setShowNetworkSelector(!showNetworkSelector)}
+            >
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600">
+                {selectedNetwork ? (
+                  <img 
+                    src={networkProviders.find(n => n.value === selectedNetwork)?.imageUrl} 
+                    alt={selectedNetwork}
+                    className="w-8 h-8 object-contain"
+                  />
+                ) : (
+                  <span className="text-gray-400 text-xs">Network</span>
+                )}
+              </div>
+              
+              {/* Network Selector Dropdown */}
+              {showNetworkSelector && (
+                <div className="absolute top-14 left-0 z-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-2 w-48">
+                  {networkProviders.map(provider => (
+                    <div 
+                      key={provider.value}
+                      className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        setSelectedNetwork(provider.value);
+                        setShowNetworkSelector(false);
+                      }}
+                    >
+                      <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                        <img 
+                          src={provider.imageUrl} 
+                          alt={provider.label}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <span className="font-medium">{provider.label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            
+            <div className="flex-1">
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter phone number"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
+              />
+            </div>
           </div>
+          
+          {/* Beneficiaries Dropdown */}
+          {showBeneficiaries && beneficiaries.length > 0 && (
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 mb-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 px-2">Recent Beneficiaries</h3>
+              <div className="max-h-48 overflow-y-auto">
+                {beneficiaries.map(beneficiary => (
+                  <div 
+                    key={beneficiary.id}
+                    className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg cursor-pointer"
+                    onClick={() => selectBeneficiary(beneficiary)}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mr-3">
+                      <User size={16} className="text-gray-500 dark:text-gray-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{beneficiary.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{beneficiary.phone_number}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Save as Beneficiary */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Save as Beneficiary</span>
+            <button
+              onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                saveAsBeneficiary ? 'bg-[#2C204D]' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  saveAsBeneficiary ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          
+          {saveAsBeneficiary && (
+            <div className="mt-3 animate-fade-in">
+              <input
+                type="text"
+                value={beneficiaryName}
+                onChange={(e) => setBeneficiaryName(e.target.value)}
+                placeholder="Enter beneficiary name"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
+              />
+            </div>
+          )}
         </div>
 
         {/* Data Plan Categories Tabs */}
@@ -592,7 +630,7 @@ const DataServicePage: React.FC = () => {
           
           {/* Duration Tabs */}
           <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4">
-            {['HOT', 'Daily', 'Weekly', 'Monthly', 'XtraValue'].map((tab) => (
+            {['HOT', 'Weekly', 'Monthly'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setSelectedDurationTab(tab)}
@@ -714,42 +752,6 @@ const DataServicePage: React.FC = () => {
             </div>
           </div>
         )}
-
-        {/* Save as Beneficiary Toggle */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">
-              Save as Beneficiary
-            </span>
-            <button
-              onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                saveAsBeneficiary ? 'bg-[#2C204D]' : 'bg-gray-300 dark:bg-gray-600'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  saveAsBeneficiary ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-          
-          {saveAsBeneficiary && (
-            <div className="animate-fade-in">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Beneficiary Name
-              </label>
-              <input
-                type="text"
-                value={beneficiaryName}
-                onChange={(e) => setBeneficiaryName(e.target.value)}
-                placeholder="Enter a name for this beneficiary"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D] focus:border-transparent"
-              />
-            </div>
-          )}
-        </div>
 
         {/* Continue Button */}
         <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
@@ -973,6 +975,11 @@ const DataServicePage: React.FC = () => {
       </Card>
     </div>
   );
+
+  // Show coming soon for international service
+  if (serviceType === 'international') {
+    return renderComingSoon();
+  }
 
   return (
     <>
