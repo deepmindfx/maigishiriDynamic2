@@ -62,7 +62,7 @@ const AirtimeServicePage: React.FC = () => {
   const { user, updateWalletBalance } = useAuthStore();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedNetwork, setSelectedNetwork] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState('MTN');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [amount, setAmount] = useState('');
   const [selectedAmountValue, setSelectedAmountValue] = useState<number | null>(null);
@@ -394,8 +394,11 @@ const AirtimeServicePage: React.FC = () => {
                     : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
                 }`}
               >
-                <div className="mb-2">
-                  <h3 className="text-lg font-bold text-gray-900 dark:text-white">₦{item.amount}</h3>
+                <div className="flex flex-col h-full">
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">₦{item.amount}</h3>
+                  <div className="flex justify-end mt-auto">
+                    <span className="font-bold text-[#2C204D]">₦{item.amount}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -597,7 +600,7 @@ const AirtimeServicePage: React.FC = () => {
               <Button
                 onClick={() => {
                   setStep(1);
-                  setSelectedNetwork('');
+                  setSelectedNetwork('MTN');
                   setPhoneNumber('');
                   setAmount('');
                   setSelectedAmountValue(null);
