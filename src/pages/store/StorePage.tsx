@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, ShoppingBag, Filter, Star, Heart } from 'lucide-react';
+import { Search, ShoppingBag, Heart, Bell, Grid2X2 } from 'lucide-react';
 import ProductCard from '../../components/store/ProductCard';
 import Card from '../../components/ui/Card';
-import Input from '../../components/ui/Input';
-import Button from '../../components/ui/Button';
 import { useCartStore } from '../../store/cartStore';
 import { useProductStore } from '../../store/productStore';
 
@@ -45,7 +43,7 @@ const StorePage: React.FC = () => {
       }
     });
 
-  const featuredProducts = products.filter(p => p.is_featured || p.is_new).slice(0, 4);
+  const featuredProducts = products.filter(p => p.is_featured || p.is_new).slice(0, 6);
 
   const categories = [
     { value: 'all', label: 'All Products', count: products.length },
@@ -64,6 +62,14 @@ const StorePage: React.FC = () => {
     { value: 'newest', label: 'Newest First' },
   ];
 
+  // Background colors for product cards
+  const bgColors = [
+    'bg-purple-50',
+    'bg-yellow-50',
+    'bg-green-50',
+    'bg-blue-50',
+  ];
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
@@ -73,29 +79,35 @@ const StorePage: React.FC = () => {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="bg-white dark:bg-gray-900 min-h-screen">
       {/* Header */}
       <div className="bg-white dark:bg-gray-800 px-4 py-4 border-b border-gray-200 dark:border-gray-700 w-full">
-        <div className="flex justify-between items-center mb-4 max-w-[350px] mx-auto">
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Shop</h1>
+        <div className="flex justify-between items-center mb-4">
+          <h1 className="text-xl font-bold text-gray-900 dark:text-white">Online Shop</h1>
           
-          <div className="relative">
+          <div className="flex items-center space-x-3">
+            <button className="p-2">
+              <Search size={20} className="text-gray-700 dark:text-gray-300" />
+            </button>
             <button 
               onClick={() => navigate('/store/cart')}
-              className="relative p-2 bg-[#0F9D58] text-white rounded-full hover:bg-[#0d8a4f] transition-colors flex items-center justify-center"
+              className="relative p-2"
             >
-              <ShoppingBag size={20} />
+              <ShoppingBag size={20} className="text-gray-700 dark:text-gray-300" />
               {getTotalItems() > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold">
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">
                   {getTotalItems()}
                 </span>
               )}
+            </button>
+            <button className="p-2">
+              <Bell size={20} className="text-gray-700 dark:text-gray-300" />
             </button>
           </div>
         </div>
         
         {/* Search Bar */}
-        <div className="relative mb-4 max-w-[350px] mx-auto">
+        <div className="relative mb-4">
           <div className="relative w-full">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
             <input
@@ -105,43 +117,13 @@ const StorePage: React.FC = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-12 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0F9D58]"
             />
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded"
-            >
-              <Filter size={16} className="text-gray-500" />
-            </button>
           </div>
         </div>
 
-        {/* Filters */}
-        {showFilters && (
-          <div className="space-y-4 mb-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-xl max-w-[350px] mx-auto">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Sort by
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
-              >
-                {sortOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        )}
-      </div>
-
-      <div className="max-w-[350px] mx-auto p-4 space-y-6">
         {/* Categories */}
-        <div className="mb-2">
+        <div className="mb-4">
           <div className="flex justify-between items-center mb-2">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Categories</h2>
+            <h2 className="text-base font-medium text-gray-900 dark:text-white">Categories</h2>
             <button 
               onClick={() => setShowAllCategories(!showAllCategories)}
               className="text-sm text-[#0F9D58] font-medium"
@@ -168,105 +150,134 @@ const StorePage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Featured Products Section */}
-        {selectedCategory === 'all' && featuredProducts.length > 0 && (
+      <div className="p-4 space-y-6">
+        {/* Recommendation Section */}
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Recommendation</h2>
+            <button className="p-1">
+              <Grid2X2 size={18} className="text-gray-500" />
+            </button>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            {featuredProducts.map((product, index) => (
+              <div 
+                key={product.id} 
+                className={`rounded-2xl overflow-hidden ${bgColors[index % bgColors.length]}`}
+                onClick={() => navigate(`/store/product/${product.id}`)}
+              >
+                <div className="p-3 relative">
+                  <button className="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center rounded-full border border-red-500 bg-white">
+                    <Heart size={14} className="text-red-500" />
+                  </button>
+                  
+                  <div className="aspect-square rounded-xl overflow-hidden bg-white mb-2">
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg';
+                      }}
+                    />
+                  </div>
+                  
+                  <div className="flex flex-col">
+                    <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                      {product.name}
+                    </h3>
+                    <p className="text-base font-bold text-[#0F9D58]">
+                      ${product.price.toFixed(2)}
+                    </p>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-xs text-gray-500">
+                        {product.in_stock ? 'In Stock' : 'Out of Stock'}
+                      </span>
+                      <button className="bg-gray-900 text-white text-xs px-3 py-1 rounded-full">
+                        Buy
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* All Products Section */}
+        {filteredProducts.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Featured</h2>
-              <span className="text-sm text-[#0F9D58] font-medium">Limited Time</span>
+              <h2 className="text-lg font-medium text-gray-900 dark:text-white">
+                {selectedCategory === 'all' ? 'All Products' : categories.find(c => c.value === selectedCategory)?.label}
+              </h2>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {filteredProducts.length} found
+              </span>
             </div>
             
-            <div className="grid grid-cols-1 gap-4 mb-8">
-              {featuredProducts.map((product) => (
-                <div key={product.id} className="relative w-full">
-                  <ProductCard product={product} />
-                  {product.is_new && (
-                    <div className="absolute top-2 left-2 bg-[#0F9D58] text-white text-xs px-2 py-1 rounded-full font-bold">
-                      NEW
+            <div className="grid grid-cols-2 gap-4">
+              {filteredProducts.map((product, index) => (
+                <div 
+                  key={product.id} 
+                  className={`rounded-2xl overflow-hidden ${bgColors[index % bgColors.length]}`}
+                  onClick={() => navigate(`/store/product/${product.id}`)}
+                >
+                  <div className="p-3 relative">
+                    <button className="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center rounded-full border border-red-500 bg-white">
+                      <Heart size={14} className="text-red-500" />
+                    </button>
+                    
+                    <div className="aspect-square rounded-xl overflow-hidden bg-white mb-2">
+                      <img
+                        src={product.image_url}
+                        alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg';
+                        }}
+                      />
                     </div>
-                  )}
-                  {product.discount > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                      -{product.discount}%
+                    
+                    <div className="flex flex-col">
+                      <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                        {product.name}
+                      </h3>
+                      <p className="text-base font-bold text-[#0F9D58]">
+                        ${product.price.toFixed(2)}
+                      </p>
+                      <div className="flex justify-between items-center mt-1">
+                        <span className="text-xs text-gray-500">
+                          {product.in_stock ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                        <button className="bg-gray-900 text-white text-xs px-3 py-1 rounded-full">
+                          Buy
+                        </button>
+                      </div>
                     </div>
-                  )}
+                  </div>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* All Products Section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-              {selectedCategory === 'all' ? 'All Products' : categories.find(c => c.value === selectedCategory)?.label}
-            </h2>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              {filteredProducts.length} found
-            </span>
-          </div>
-          
-          {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4">
-              {filteredProducts.map((product) => (
-                <div key={product.id} className="relative w-full">
-                  <ProductCard product={product} />
-                  
-                  {/* Badges */}
-                  <div className="absolute top-2 left-2 flex flex-col space-y-1">
-                    {product.is_new && (
-                      <div className="bg-[#0F9D58] text-white text-xs px-2 py-1 rounded-full font-bold">
-                        NEW
-                      </div>
-                    )}
-                    {product.is_featured && (
-                      <div className="bg-purple-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                        FEATURED
-                      </div>
-                    )}
-                  </div>
-                  
-                  {product.discount > 0 && (
-                    <div className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-bold">
-                      -{product.discount}%
-                    </div>
-                  )}
-                  
-                  {!product.in_stock && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-xl">
-                      <span className="bg-gray-800 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        Out of Stock
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ))}
+        {filteredProducts.length === 0 && (
+          <Card className="p-8 text-center w-full">
+            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Search size={24} className="text-gray-400" />
             </div>
-          ) : (
-            <Card className="p-8 text-center w-full">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search size={24} className="text-gray-400" />
-              </div>
-              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No products found</h3>
-              <p className="text-gray-500 dark:text-gray-400">
-                Try adjusting your search or filter criteria
-              </p>
-            </Card>
-          )}
-        </div>
-
-        {/* Promotional Banner */}
-        <div className="bg-gradient-to-r from-[#0F9D58] to-[#0d8a4f] rounded-2xl p-6 text-white w-full">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-xl font-bold mb-2">Free Delivery</h3>
-              <p className="text-sm opacity-90">On orders above ₦20,000</p>
-            </div>
-            <div className="text-4xl">🚚</div>
-          </div>
-        </div>
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No products found</h3>
+            <p className="text-gray-500 dark:text-gray-400">
+              Try adjusting your search or filter criteria
+            </p>
+          </Card>
+        )}
       </div>
     </div>
   );

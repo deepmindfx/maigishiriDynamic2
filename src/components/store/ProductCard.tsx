@@ -1,9 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Star, Heart, ShoppingCart } from 'lucide-react';
-import Card from '../ui/Card';
-import Badge from '../ui/Badge';
-import Button from '../ui/Button';
+import { Heart } from 'lucide-react';
 import { formatCurrency } from '../../lib/utils';
 import { useCartStore } from '../../store/cartStore';
 
@@ -41,95 +38,66 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     navigate(`/store/product/${product.id}`);
   };
 
+  // Background colors for product cards
+  const bgColors = [
+    'bg-purple-50',
+    'bg-yellow-50',
+    'bg-green-50',
+    'bg-blue-50',
+  ];
+  
+  // Randomly select a background color
+  const bgColor = bgColors[Math.floor(Math.random() * bgColors.length)];
+
   return (
-    <Card
-      className="h-full flex flex-col group cursor-pointer overflow-hidden w-full"
-      hoverEffect
+    <div 
+      className={`rounded-2xl overflow-hidden ${bgColor} cursor-pointer`}
       onClick={handleProductClick}
     >
-      {/* Product Image */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-lg mb-3">
-        <img
-          src={product.image_url}
-          alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.src = 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg';
-          }}
-        />
-        
-        {/* Wishlist Button */}
-        <button
+      <div className="p-3 relative">
+        <button 
           onClick={(e) => e.stopPropagation()}
-          className="absolute top-2 right-2 w-8 h-8 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors flex items-center justify-center"
+          className="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center rounded-full border border-red-500 bg-white"
         >
-          <Heart size={14} className="text-gray-600 hover:text-red-500" />
+          <Heart size={14} className="text-red-500" />
         </button>
         
-        {/* Quick Add to Cart */}
-        {product.in_stock && (
-          <button
-            onClick={handleAddToCart}
-            className="absolute bottom-2 right-2 w-8 h-8 bg-[#0F9D58] text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#0d8a4f] flex items-center justify-center"
-          >
-            <ShoppingCart size={14} />
-          </button>
-        )}
-      </div>
-      
-      <div className="flex-1 flex flex-col">
-        {/* Category Badge */}
-        <div className="mb-2">
-          <Badge variant="default" className="text-xs">
-            {product.category}
-          </Badge>
+        <div className="aspect-square rounded-xl overflow-hidden bg-white mb-2">
+          <img
+            src={product.image_url}
+            alt={product.name}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              target.src = 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg';
+            }}
+          />
         </div>
         
-        {/* Product Name */}
-        <h3 className="text-sm font-medium line-clamp-2 mb-2 text-gray-900 dark:text-white">
-          {product.name}
-        </h3>
-        
-        {/* Rating */}
-        {product.rating > 0 && (
-          <div className="flex items-center mb-2">
-            <div className="flex items-center">
-              <Star size={12} className="text-yellow-400 fill-current" />
-              <span className="text-xs text-gray-600 dark:text-gray-400 ml-1">
-                {product.rating}
-              </span>
-            </div>
-            {product.reviews > 0 && (
-              <span className="text-xs text-gray-500 dark:text-gray-500 ml-1">
-                ({product.reviews})
-              </span>
-            )}
-          </div>
-        )}
-        
-        {/* Price */}
-        <div className="mt-auto">
-          <div className="flex items-center space-x-2">
-            <span className="font-bold text-[#0F9D58] text-lg">
-              {formatCurrency(product.price)}
+        <div className="flex flex-col">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+            {product.name}
+          </h3>
+          <p className="text-base font-bold text-[#0F9D58]">
+            ${product.price.toFixed(2)}
+          </p>
+          <div className="flex justify-between items-center mt-1">
+            <span className="text-xs text-gray-500">
+              {product.in_stock ? 'In Stock' : 'Out of Stock'}
             </span>
-            {product.original_price && product.original_price > product.price && (
-              <span className="text-xs text-gray-500 line-through">
-                {formatCurrency(product.original_price)}
-              </span>
-            )}
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                handleAddToCart(e);
+              }}
+              className="bg-gray-900 text-white text-xs px-3 py-1 rounded-full"
+            >
+              Buy
+            </button>
           </div>
-          
-          {/* Stock Status */}
-          {!product.in_stock && (
-            <Badge variant="error" className="mt-1 text-xs">
-              Out of Stock
-            </Badge>
-          )}
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

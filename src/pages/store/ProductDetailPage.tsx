@@ -2,24 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
   ArrowLeft, 
-  Star, 
   Heart, 
-  ShoppingCart, 
-  Truck, 
-  Shield, 
-  RotateCcw,
-  Plus,
-  Minus,
-  CreditCard,
-  Wallet,
+  ShoppingBag, 
   LogIn
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuthStore } from '../../store/authStore';
 import { useCartStore } from '../../store/cartStore';
-import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
-import Badge from '../../components/ui/Badge';
 import { formatCurrency } from '../../lib/utils';
 import TransactionPinModal from '../../components/ui/TransactionPinModal';
 import SetPinModal from '../../components/ui/SetPinModal';
@@ -45,7 +35,7 @@ const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user, isAuthenticated, updateWalletBalance } = useAuthStore();
-  const { addItem } = useCartStore();
+  const { addItem, getTotalItems } = useCartStore();
   
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -62,6 +52,7 @@ const ProductDetailPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSetPinModal, setShowSetPinModal] = useState(false);
+  const [selectedSize, setSelectedSize] = useState('M');
 
   useEffect(() => {
     if (id) {
@@ -175,7 +166,7 @@ const ProductDetailPage: React.FC = () => {
         reference: `ORD-${order.id.slice(0, 8)}`,
         details: {
           order_id: order.id,
-          product_name: product.name, // Ensure product name is included
+          product_name: product.name,
           quantity: quantity,
           payment_method: paymentMethod,
         },
@@ -230,207 +221,146 @@ const ProductDetailPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => navigate('/store')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center">
+          <button
+            onClick={() => navigate('/store')}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-white ml-4">Details</h1>
+        </div>
+        
+        <button 
+          onClick={() => navigate('/store/cart')}
+          className="relative p-2"
         >
-          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+          <ShoppingBag size={20} className="text-gray-700 dark:text-gray-300" />
+          {getTotalItems() > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-xs font-bold">
+              {getTotalItems()}
+            </span>
+          )}
         </button>
-        <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white ml-4 truncate">Product Details</h1>
       </div>
 
-      <div className="p-4 space-y-4 sm:space-y-6 pb-32">
+      <div className="p-4 space-y-4 pb-32">
         {/* Product Image */}
-        <div className="relative">
+        <div className="bg-yellow-50 rounded-3xl p-6 relative">
+          <button className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full border border-red-500 bg-white">
+            <Heart size={16} className="text-red-500" />
+          </button>
+          
           <img
             src={product.image_url}
             alt={product.name}
-            className="w-full h-64 sm:h-80 object-cover rounded-2xl"
+            className="w-full h-64 object-contain mx-auto"
           />
           
-          {/* Badges */}
+          {/* Color options */}
           <div className="absolute top-4 left-4 flex flex-col space-y-2">
-            {product.is_new && (
-              <Badge className="bg-[#0F9D58] text-white text-xs">NEW</Badge>
-            )}
-            {product.is_featured && (
-              <Badge className="bg-purple-500 text-white text-xs">FEATURED</Badge>
-            )}
-            {product.discount > 0 && (
-              <Badge className="bg-red-500 text-white text-xs">-{product.discount}%</Badge>
-            )}
+            <div className="w-6 h-6 rounded-full bg-green-500 border-2 border-white"></div>
+            <div className="w-6 h-6 rounded-full bg-orange-500 border-2 border-white"></div>
+            <div className="w-6 h-6 rounded-full bg-gray-200 border-2 border-white"></div>
           </div>
-
-          {/* Wishlist Button */}
-          <button className="absolute top-4 right-4 p-3 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors">
-            <Heart size={20} className="text-gray-600" />
-          </button>
+          
+          {/* Pagination dots */}
+          <div className="flex justify-center mt-4 space-x-1">
+            <div className="w-6 h-1 bg-black rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+            <div className="w-1 h-1 bg-gray-300 rounded-full"></div>
+          </div>
         </div>
 
         {/* Product Info */}
-        <Card className="p-4 sm:p-6">
-          <div className="space-y-4">
-            {/* Category */}
-            <Badge variant="default" className="text-xs">{product.category}</Badge>
-
-            {/* Name */}
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white leading-tight">
+        <div className="space-y-4">
+          {/* Name and Availability */}
+          <div>
+            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
               {product.name}
             </h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Available {product.in_stock ? 'in Stock' : 'for Pre-order'}
+            </p>
+          </div>
 
-            {/* Rating */}
-            <div className="flex items-center space-x-2">
+          {/* Price */}
+          <div>
+            <p className="text-2xl font-bold text-[#0F9D58]">
+              ${product.price.toFixed(2)}
+            </p>
+          </div>
+
+          {/* Description */}
+          <div>
+            <p className="text-gray-600 dark:text-gray-400 text-sm">
+              {product.description}
+            </p>
+          </div>
+
+          {/* Size Selection */}
+          <div>
+            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Select Size
+            </p>
+            <div className="flex space-x-3">
+              {['XL', 'L', 'M', 'S'].map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`w-10 h-10 flex items-center justify-center rounded-lg border ${
+                    selectedSize === size 
+                      ? 'bg-gray-900 text-white border-gray-900' 
+                      : 'bg-white text-gray-900 border-gray-300'
+                  }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Authentication Notice */}
+          {!isAuthenticated && (
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
               <div className="flex items-center">
-                {[...Array(5)].map((_, i) => (
-                  <Star
-                    key={i}
-                    size={14}
-                    className={`${
-                      i < Math.floor(product.rating)
-                        ? 'text-yellow-400 fill-current'
-                        : 'text-gray-300'
-                    }`}
-                  />
-                ))}
-              </div>
-              <span className="text-sm text-gray-600 dark:text-gray-400">
-                {product.rating} ({product.reviews} reviews)
-              </span>
-            </div>
-
-            {/* Price */}
-            <div className="flex items-center space-x-3 flex-wrap">
-              <span className="text-2xl sm:text-3xl font-bold text-[#0F9D58]">
-                {formatCurrency(product.price)}
-              </span>
-              {product.original_price && (
-                <span className="text-lg text-gray-500 line-through">
-                  {formatCurrency(product.original_price)}
-                </span>
-              )}
-            </div>
-
-            {/* Stock Status */}
-            <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${product.in_stock ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              <span className={`text-sm font-medium ${product.in_stock ? 'text-green-600' : 'text-red-600'}`}>
-                {product.in_stock ? 'In Stock' : 'Out of Stock'}
-              </span>
-            </div>
-
-            {/* Description */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Description</h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base">
-                {product.description}
-              </p>
-            </div>
-          </div>
-        </Card>
-
-        {/* Features */}
-        <Card className="p-4 sm:p-6">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Why Choose This Product?</h3>
-          <div className="grid grid-cols-1 gap-4">
-            <div className="flex items-center space-x-3">
-              <Truck className="text-[#0F9D58] flex-shrink-0" size={20} />
-              <div>
-                <p className="font-medium text-gray-900 dark:text-white text-sm">Fast Delivery</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">2-3 business days</p>
+                <LogIn className="text-yellow-600 dark:text-yellow-400 mr-2 flex-shrink-0" size={20} />
+                <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                  Please <a href="/login" className="font-medium underline">login</a> to add items to cart or make purchases
+                </p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
-              <Shield className="text-[#0F9D58] flex-shrink-0" size={20} />
-              <div>
-                <p className="font-medium text-gray-900 dark:text-white text-sm">Warranty</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">1 year warranty</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-3">
-              <RotateCcw className="text-[#0F9D58] flex-shrink-0" size={20} />
-              <div>
-                <p className="font-medium text-gray-900 dark:text-white text-sm">Returns</p>
-                <p className="text-xs text-gray-600 dark:text-gray-400">7-day return policy</p>
-              </div>
-            </div>
-          </div>
-        </Card>
-
-        {/* Quantity and Actions */}
-        {product.in_stock && (
-          <Card className="p-4 sm:p-6">
-            <div className="space-y-4">
-              {/* Quantity Selector */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Quantity
-                </label>
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-                  >
-                    <Minus size={16} />
-                  </button>
-                  <span className="text-lg font-semibold px-4 min-w-[3rem] text-center">{quantity}</span>
-                  <button
-                    onClick={() => setQuantity(quantity + 1)}
-                    className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
-                  >
-                    <Plus size={16} />
-                  </button>
-                </div>
-              </div>
-
-              {/* Total Price */}
-              <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-medium text-gray-900 dark:text-white">Total:</span>
-                  <span className="text-xl sm:text-2xl font-bold text-[#0F9D58]">
-                    {formatCurrency(product.price * quantity)}
-                  </span>
-                </div>
-              </div>
-
-              {/* Authentication Notice */}
-              {!isAuthenticated && (
-                <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg border border-yellow-200 dark:border-yellow-800">
-                  <div className="flex items-center">
-                    <LogIn className="text-yellow-600 dark:text-yellow-400 mr-2 flex-shrink-0" size={20} />
-                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
-                      Please <a href="/login" className="font-medium underline">login</a> to add items to cart or make purchases
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  variant="outline"
-                  onClick={handleAddToCart}
-                  icon={<ShoppingCart size={16} />}
-                  className="py-3 text-sm"
-                  disabled={!isAuthenticated}
-                >
-                  {isAuthenticated ? 'Add to Cart' : 'Login to Add'}
-                </Button>
-                <Button
-                  variant="primary"
-                  onClick={handleBuyNow}
-                  className="py-3 text-sm"
-                  disabled={!isAuthenticated}
-                >
-                  {isAuthenticated ? 'Buy Now' : 'Login to Buy'}
-                </Button>
-              </div>
-            </div>
-          </Card>
-        )}
+          )}
+        </div>
       </div>
+
+      {/* Fixed Add to Cart Button */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <button
+          onClick={handleAddToCart}
+          disabled={!isAuthenticated || !product.in_stock}
+          className="w-full py-3 bg-red-500 text-white rounded-full font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          Add to Cart
+        </button>
+      </div>
+
+      {/* Transaction PIN Modal */}
+      <TransactionPinModal
+        isOpen={showPinModal}
+        onClose={() => setShowPinModal(false)}
+        onSuccess={processCheckout}
+      />
+
+      {/* Set PIN Modal */}
+      <SetPinModal
+        isOpen={showSetPinModal}
+        onClose={() => setShowSetPinModal(false)}
+        onSuccess={() => setShowCheckoutModal(true)}
+      />
 
       {/* Checkout Modal */}
       {showCheckoutModal && (
@@ -468,10 +398,9 @@ const ProductDetailPage: React.FC = () => {
                       name="paymentMethod"
                       value="wallet"
                       checked={paymentMethod === 'wallet'}
-                      onChange={(e) => setPaymentMethod(e.target.value as 'wallet')}
+                      onChange={() => setPaymentMethod('wallet')}
                       className="mr-3 flex-shrink-0"
                     />
-                    <Wallet size={20} className="mr-3 text-[#0F9D58] flex-shrink-0" />
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-sm">Wallet</p>
                       <p className="text-xs text-gray-600 dark:text-gray-400 truncate">
@@ -486,10 +415,9 @@ const ProductDetailPage: React.FC = () => {
                       name="paymentMethod"
                       value="pay_on_delivery"
                       checked={paymentMethod === 'pay_on_delivery'}
-                      onChange={(e) => setPaymentMethod(e.target.value as 'pay_on_delivery')}
+                      onChange={() => setPaymentMethod('pay_on_delivery')}
                       className="mr-3 flex-shrink-0"
                     />
-                    <CreditCard size={20} className="mr-3 text-[#0F9D58] flex-shrink-0" />
                     <div className="min-w-0">
                       <p className="font-medium text-sm">Pay on Delivery</p>
                       <p className="text-xs text-gray-600 dark:text-gray-400">Pay when you receive your order</p>
@@ -570,20 +498,6 @@ const ProductDetailPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      {/* Transaction PIN Modal */}
-      <TransactionPinModal
-        isOpen={showPinModal}
-        onClose={() => setShowPinModal(false)}
-        onSuccess={processCheckout}
-      />
-
-      {/* Set PIN Modal */}
-      <SetPinModal
-        isOpen={showSetPinModal}
-        onClose={() => setShowSetPinModal(false)}
-        onSuccess={() => setShowCheckoutModal(true)}
-      />
     </div>
   );
 };

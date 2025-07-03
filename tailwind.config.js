@@ -48,6 +48,12 @@ export default {
           bg: '#2C204D', // Dark purple for wallet card
           accent: '#4A3B7A', // Accent color for wallet card
         },
+        shop: {
+          yellow: '#FFF8E1', // Light yellow background for product cards
+          green: '#F1F8E9', // Light green background for product cards
+          purple: '#F3E5F5', // Light purple background for product cards
+          blue: '#E3F2FD', // Light blue background for product cards
+        }
       },
       fontFamily: {
         sans: [
