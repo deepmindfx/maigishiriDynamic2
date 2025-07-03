@@ -185,7 +185,7 @@ const DashboardPage: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 px-4 py-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
-            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center">
+            <div className="w-10 sm:w-12 h-10 sm:h-12 bg-[#2C204D] rounded-full flex items-center justify-center">
               <span className="text-white font-bold text-sm sm:text-lg">
                 {user?.name?.charAt(0)?.toUpperCase() || 'U'}
               </span>
@@ -213,7 +213,7 @@ const DashboardPage: React.FC = () => {
         </div>
 
         {/* Wallet Card */}
-        <div className="relative rounded-3xl overflow-hidden bg-wallet-bg text-white mb-6">
+        <div className="relative mb-6 rounded-3xl overflow-hidden bg-wallet-bg text-white">
           {/* Decorative circles */}
           <div className="absolute top-0 left-0 w-24 h-24 rounded-full bg-wallet-accent opacity-20"></div>
           <div className="absolute bottom-0 right-0 w-32 h-32 rounded-full bg-wallet-accent opacity-20"></div>
@@ -234,8 +234,14 @@ const DashboardPage: React.FC = () => {
                 </button>
               </div>
               
-              <div>
-                <p className="text-sm opacity-80">History</p>
+              <div className="flex items-center">
+                <History size={14} className="mr-2 opacity-80" />
+                <button 
+                  onClick={() => navigate('/transactions')}
+                  className="text-xs sm:text-sm opacity-90 hover:opacity-100 transition-opacity"
+                >
+                  History
+                </button>
               </div>
             </div>
             
@@ -243,20 +249,15 @@ const DashboardPage: React.FC = () => {
               <p className="text-3xl font-bold">
                 {showBalance ? formatCurrency(user?.walletBalance || 0) : '****'}
               </p>
+              
+              <button 
+                onClick={() => navigate('/wallet/fund')}
+                className="flex items-center bg-white/20 backdrop-blur-sm px-3 py-1.5 rounded-full text-sm font-medium hover:bg-white/30 transition-all"
+              >
+                <PlusCircle size={14} className="mr-1" />
+                Top up
+              </button>
             </div>
-          </div>
-        </div>
-        
-        {/* Quick Actions */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="flex flex-col items-center">
-            <button 
-              onClick={() => navigate('/wallet/fund')}
-              className="w-16 h-16 rounded-full bg-white flex items-center justify-center shadow-md mb-2 border border-gray-100"
-            >
-              <PlusCircle size={24} className="text-indigo-600" />
-            </button>
-            <span className="text-xs text-indigo-600 font-medium">Top up</span>
           </div>
         </div>
       </div>
