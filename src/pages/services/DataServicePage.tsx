@@ -94,6 +94,7 @@ const DataServicePage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSetPinModal, setShowSetPinModal] = useState(false);
+  const [showNetworkSelector, setShowNetworkSelector] = useState(false);
   
   // Data plans state
   const [dataPlans, setDataPlans] = useState<DataPlan[]>([]);
@@ -106,6 +107,9 @@ const DataServicePage: React.FC = () => {
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [showBeneficiaries, setShowBeneficiaries] = useState(false);
   const [loadingBeneficiaries, setLoadingBeneficiaries] = useState(false);
+
+  // Duration tabs
+  const [selectedDurationTab, setSelectedDurationTab] = useState('HOT');
 
   useEffect(() => {
     fetchDataPlans();
@@ -211,6 +215,7 @@ const DataServicePage: React.FC = () => {
     }
   };
 
+  // Filter plans based on selected network, category, search query, and duration tab
   const filteredPlans = dataPlans.filter(plan => {
     const matchesNetwork = !selectedNetwork || plan.network === selectedNetwork;
     const matchesCategory = !selectedCategory || plan.plan_type === selectedCategory;
@@ -219,7 +224,24 @@ const DataServicePage: React.FC = () => {
       plan.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
       plan.validity.toLowerCase().includes(searchQuery.toLowerCase());
     
-    return matchesNetwork && matchesCategory && matchesSearch;
+    // Filter by duration tab
+    let matchesDuration = true;
+    if (selectedDurationTab === 'HOT') {
+      matchesDuration = plan.is_popular;
+    } else if (selectedDurationTab === 'Daily') {
+      matchesDuration = plan.validity.toLowerCase().includes('day') && !plan.validity.toLowerCase().includes('days');
+    } else if (selectedDurationTab === 'Weekly') {
+      matchesDuration = plan.validity.toLowerCase().includes('7 day') || 
+                        plan.validity.toLowerCase().includes('week');
+    } else if (selectedDurationTab === 'Monthly') {
+      matchesDuration = plan.validity.toLowerCase().includes('30 day') || 
+                        plan.validity.toLowerCase().includes('month');
+    } else if (selectedDurationTab === 'XtraValue') {
+      matchesDuration = plan.plan_type.toLowerCase().includes('xtra') || 
+                        plan.description.toLowerCase().includes('xtra');
+    }
+    
+    return matchesNetwork && matchesCategory && matchesSearch && matchesDuration;
   });
 
   const availableCategories = categories.filter(cat => 
@@ -452,14 +474,22 @@ const DataServicePage: React.FC = () => {
   const renderStepOne = () => (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center border-b border-gray-200 dark:border-gray-700">
+      <div className="bg-white dark:bg-gray-800 px-4 py-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center">
+          <button
+            onClick={() => navigate('/')}
+            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          >
+            <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+          </button>
+          <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Mobile Data</h1>
+        </div>
         <button
-          onClick={() => navigate('/')}
-          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          onClick={() => navigate('/transactions')}
+          className="text-[#2C204D] text-sm font-medium"
         >
-          <ArrowLeft size={24} className="text-gray-700 dark:text-gray-300" />
+          History
         </button>
-        <h1 className="text-xl font-semibold text-gray-900 dark:text-white ml-4">Data Bundle</h1>
       </div>
 
       <div className="p-4 space-y-6">
@@ -487,316 +517,209 @@ const DataServicePage: React.FC = () => {
           </button>
         </div>
 
-        {/* Beneficiaries Section */}
-        {beneficiaries.length > 0 && (
-          <div>
-            <div className="flex justify-between items-center mb-3">
-              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Beneficiaries
-              </h2>
-              <button
-                onClick={() => setShowBeneficiaries(!showBeneficiaries)}
-                className="text-[#0F9D58] text-sm font-medium"
-              >
-                {showBeneficiaries ? 'Hide' : 'View All'}
-              </button>
-            </div>
-            
-            {showBeneficiaries ? (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700 mb-4">
-                {loadingBeneficiaries ? (
-                  <div className="flex justify-center py-4">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#0F9D58]"></div>
-                  </div>
+        {/* Phone Number Input with Network Selection */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+          <div className="flex items-center space-x-3 mb-4">
+            <div 
+              className="relative"
+              onClick={() => setShowNetworkSelector(!showNetworkSelector)}
+            >
+              <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer border-2 border-gray-200 dark:border-gray-600">
+                {selectedNetwork ? (
+                  <img 
+                    src={networkProviders.find(n => n.value === selectedNetwork)?.imageUrl} 
+                    alt={selectedNetwork}
+                    className="w-8 h-8 object-contain"
+                  />
                 ) : (
-                  <div className="space-y-3">
-                    {beneficiaries.map((beneficiary) => (
-                      <button
-                        key={beneficiary.id}
-                        onClick={() => selectBeneficiary(beneficiary)}
-                        className="w-full flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                      >
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          beneficiary.network === 'MTN' ? 'bg-yellow-100 text-yellow-600' :
-                          beneficiary.network === 'AIRTEL' ? 'bg-red-100 text-red-600' :
-                          beneficiary.network === 'GLO' ? 'bg-green-100 text-green-600' :
-                          beneficiary.network === '9MOBILE' ? 'bg-teal-100 text-teal-600' :
-                          'bg-gray-100 text-gray-600'
-                        }`}>
-                          <User size={18} />
-                        </div>
-                        
-                        <div className="ml-3 text-left">
-                          <p className="font-medium text-gray-900 dark:text-white">{beneficiary.name}</p>
-                          <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <span>{beneficiary.phone_number}</span>
-                            <span className="mx-1">•</span>
-                            <span className="capitalize">{beneficiary.network}</span>
-                          </div>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                  <span className="text-gray-400 text-xs">Network</span>
                 )}
               </div>
-            ) : (
-              <div className="overflow-x-auto scrollbar-hide">
-                <div className="flex space-x-3 pb-2 flex-nowrap">
-                  {beneficiaries.map((beneficiary) => (
-                    <button
-                      key={beneficiary.id}
-                      onClick={() => selectBeneficiary(beneficiary)}
-                      className="flex-shrink-0 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-[#0F9D58] transition-colors"
+              
+              {/* Network Selector Dropdown */}
+              {showNetworkSelector && (
+                <div className="absolute top-14 left-0 z-10 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-2 w-48">
+                  {networkProviders.map(provider => (
+                    <div 
+                      key={provider.value}
+                      className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg cursor-pointer"
+                      onClick={() => {
+                        setSelectedNetwork(provider.value);
+                        setShowNetworkSelector(false);
+                      }}
                     >
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2 ${
-                        beneficiary.network === 'MTN' ? 'bg-yellow-100 text-yellow-600' :
-                        beneficiary.network === 'AIRTEL' ? 'bg-red-100 text-red-600' :
-                        beneficiary.network === 'GLO' ? 'bg-green-100 text-green-600' :
-                        beneficiary.network === '9MOBILE' ? 'bg-teal-100 text-teal-600' :
-                        'bg-gray-100 text-gray-600'
-                      }`}>
-                        <User size={20} />
+                      <div className="w-8 h-8 rounded-full overflow-hidden mr-3">
+                        <img 
+                          src={provider.imageUrl} 
+                          alt={provider.label}
+                          className="w-full h-full object-contain"
+                        />
                       </div>
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{beneficiary.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{beneficiary.phone_number}</p>
-                    </button>
-                  ))}
-                  
-                  {/* Add New Beneficiary Button */}
-                  <button
-                    onClick={() => {
-                      setSelectedNetwork('');
-                      setPhoneNumber('');
-                      setBeneficiaryName('');
-                      setSaveAsBeneficiary(true);
-                    }}
-                    className="flex-shrink-0 flex flex-col items-center p-3 bg-white dark:bg-gray-800 rounded-xl border border-dashed border-gray-300 dark:border-gray-600 hover:border-[#0F9D58] transition-colors"
-                  >
-                    <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 bg-gray-100 dark:bg-gray-700 text-[#0F9D58]">
-                      <Plus size={20} />
+                      <span className="font-medium">{provider.label}</span>
                     </div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">Add New</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">Beneficiary</p>
-                  </button>
+                  ))}
                 </div>
-              </div>
-            )}
+              )}
+            </div>
+            
+            <div className="flex-1">
+              <input
+                type="tel"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="Enter phone number"
+                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
+              />
+            </div>
+            
+            <button 
+              className="w-10 h-10 bg-[#2C204D] rounded-full flex items-center justify-center"
+              onClick={() => {
+                // This would typically open contacts or similar functionality
+                // For now, just show beneficiaries if available
+                if (beneficiaries.length > 0) {
+                  setShowBeneficiaries(!showBeneficiaries);
+                }
+              }}
+            >
+              <User size={18} className="text-white" />
+            </button>
           </div>
-        )}
+          
+          {/* Beneficiaries Dropdown */}
+          {showBeneficiaries && beneficiaries.length > 0 && (
+            <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-2 mb-3">
+              <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2 px-2">Recent Beneficiaries</h3>
+              <div className="max-h-48 overflow-y-auto">
+                {beneficiaries.map(beneficiary => (
+                  <div 
+                    key={beneficiary.id}
+                    className="flex items-center p-2 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-lg cursor-pointer"
+                    onClick={() => selectBeneficiary(beneficiary)}
+                  >
+                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center mr-3">
+                      <User size={16} className="text-gray-500 dark:text-gray-400" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white text-sm">{beneficiary.name}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">{beneficiary.phone_number}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Save as Beneficiary */}
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-700 dark:text-gray-300">Save as Beneficiary</span>
+            <button
+              onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                saveAsBeneficiary ? 'bg-[#2C204D]' : 'bg-gray-300 dark:bg-gray-600'
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                  saveAsBeneficiary ? 'translate-x-6' : 'translate-x-1'
+                }`}
+              />
+            </button>
+          </div>
+          
+          {saveAsBeneficiary && (
+            <div className="mt-3 animate-fade-in">
+              <input
+                type="text"
+                value={beneficiaryName}
+                onChange={(e) => setBeneficiaryName(e.target.value)}
+                placeholder="Enter beneficiary name"
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
+              />
+            </div>
+          )}
+        </div>
 
-        {/* Network Provider Selection */}
-        <div>
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            Select Network Provider
-          </h2>
-          <div className="grid grid-cols-4 gap-4">
-            {networkProviders.map((provider) => (
+        {/* Data Plan Categories Tabs */}
+        <div className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Data Plans</h2>
+          
+          {/* Duration Tabs */}
+          <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4">
+            {['HOT', 'Daily', 'Weekly', 'Monthly', 'XtraValue'].map((tab) => (
               <button
-                key={provider.value}
-                onClick={() => {
-                  setSelectedNetwork(provider.value);
-                  setSelectedCategory(''); // Reset category when network changes
-                  setSelectedPlan(null); // Reset plan when network changes
-                }}
-                className={`flex flex-col items-center p-4 rounded-2xl border-2 transition-all ${
-                  selectedNetwork === provider.value
-                    ? 'border-[#0F9D58] bg-[#0F9D58]/5'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                key={tab}
+                onClick={() => setSelectedDurationTab(tab)}
+                className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${
+                  selectedDurationTab === tab 
+                    ? 'text-[#2C204D] border-b-2 border-[#2C204D]' 
+                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
                 }`}
               >
-                <div className="w-12 h-12 rounded-full flex items-center justify-center mb-2 overflow-hidden bg-white">
-                  <img
-                    src={provider.imageUrl}
-                    alt={provider.label}
-                    className="w-full h-full object-contain"
-                  />
-                </div>
-                <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                  {provider.label}
-                </span>
+                {tab}
               </button>
             ))}
           </div>
-        </div>
-
-        {/* Search and Filters */}
-        {selectedNetwork && (
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <div className="flex-1 relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
-                <input
-                  type="text"
-                  placeholder="Search data plans..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F9D58] focus:border-transparent"
-                />
-              </div>
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-              >
-                <Filter size={16} className="text-gray-500" />
-              </button>
+          
+          {/* Data Plan Grid */}
+          {loadingPlans ? (
+            <div className="flex justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2C204D]"></div>
             </div>
-
-            {/* Category Filter */}
-            {showFilters && availableCategories.length > 0 && (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-4 border border-gray-200 dark:border-gray-700">
-                <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Plan Type</h3>
-                <div className="flex flex-wrap gap-2">
-                  <button
-                    onClick={() => setSelectedCategory('')}
-                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                      !selectedCategory
-                        ? 'bg-[#0F9D58] text-white'
-                        : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                    }`}
-                  >
-                    All Plans
-                  </button>
-                  {availableCategories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setSelectedCategory(category.plan_type)}
-                      className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                        selectedCategory === category.plan_type
-                          ? 'bg-[#0F9D58] text-white'
-                          : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
-                      }`}
-                    >
-                      {category.display_name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Popular Plans */}
-        {selectedNetwork && popularPlans.length > 0 && (
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Popular Plans</h3>
-            <div className="space-y-3">
-              {popularPlans.map((plan) => (
-                <button
-                  key={plan.id}
-                  onClick={() => setSelectedPlan(plan)}
-                  className={`w-full flex items-center justify-between p-4 rounded-xl border-2 transition-all ${
-                    selectedPlan?.id === plan.id
-                      ? 'border-[#0F9D58] bg-[#0F9D58]/5'
-                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
-                  }`}
-                >
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 rounded-full bg-[#0F9D58]/10 flex items-center justify-center mr-3">
-                      <Zap size={16} className="text-[#0F9D58]" />
-                    </div>
-                    <div className="text-left">
-                      <p className="font-medium text-gray-900 dark:text-white">{plan.size}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{plan.validity}</p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex flex-col items-end">
-                      {plan.show_discount_badge && plan.discount_percentage > 0 && (
-                        <span className="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-red-500 text-white mb-1">
-                          -{plan.discount_percentage}% OFF
-                        </span>
-                      )}
-                      <p className="font-bold text-[#0F9D58]">{formatCurrency(plan.selling_price)}</p>
-                    </div>
-                    <div className="flex items-center mt-1">
-                      <Star size={12} className="text-yellow-400 fill-current" />
-                      <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">Popular</span>
-                    </div>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* All Data Plans */}
-        {selectedNetwork && (
-          <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
-              {selectedCategory ? 
-                categories.find(c => c.plan_type === selectedCategory)?.display_name || 'Data Plans' : 
-                'All Data Plans'}
-            </h3>
-            
-            {loadingPlans ? (
-              <div className="flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0F9D58]"></div>
-              </div>
-            ) : filteredPlans.length > 0 ? (
-              <div className="space-y-3 max-h-60 overflow-y-auto pr-1">
+          ) : selectedNetwork ? (
+            filteredPlans.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
                 {filteredPlans.map((plan) => (
-                  <button
+                  <div
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`w-full flex items-center justify-between p-4 rounded-xl border transition-all ${
+                    className={`rounded-xl p-4 cursor-pointer transition-all ${
                       selectedPlan?.id === plan.id
-                        ? 'border-[#0F9D58] bg-[#0F9D58]/5'
-                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                        ? 'bg-[#2C204D]/10 border-2 border-[#2C204D]'
+                        : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
                     }`}
                   >
-                    <div className="flex-1 text-left">
-                      <div className="flex items-center">
-                        <p className="font-medium text-gray-900 dark:text-white">{plan.size}</p>
-                        {plan.is_popular && (
-                          <Badge className="ml-2 bg-yellow-100 text-yellow-800 text-xs">Popular</Badge>
-                        )}
-                        {plan.show_discount_badge && plan.discount_percentage > 0 && (
-                          <Badge className="ml-2 bg-red-500 text-white text-xs font-bold">
-                            -{plan.discount_percentage}% OFF
-                          </Badge>
-                        )}
-                      </div>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">{plan.validity}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">{plan.description}</p>
+                    <div className="mb-2">
+                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{plan.size}</h3>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {plan.description || `Valid for ${plan.validity}`}
+                      </p>
                     </div>
-                    <div className="text-right ml-4">
-                      <div className="flex flex-col items-end">
-                        {plan.show_discount_badge && plan.discount_percentage > 0 && (
-                          <span className="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-red-500 text-white mb-1">
-                            -{plan.discount_percentage}% OFF
-                          </span>
-                        )}
-                        <p className="font-bold text-[#0F9D58]">{formatCurrency(plan.selling_price)}</p>
+                    
+                    <div className="flex justify-between items-center">
+                      <div className="bg-[#2C204D]/10 px-2 py-1 rounded text-xs">
+                        <span className="text-[#2C204D] font-medium">{plan.validity}</span>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-lg font-bold text-[#2C204D]">
+                          ₦{plan.selling_price}
+                        </p>
                       </div>
                     </div>
-                  </button>
+                    
+                    {plan.is_popular && (
+                      <div className="mt-2 flex items-center">
+                        <Star size={12} className="text-yellow-500 fill-current mr-1" />
+                        <span className="text-xs text-gray-500 dark:text-gray-400">Popular</span>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             ) : (
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 text-center border border-gray-200 dark:border-gray-700">
-                <p className="text-gray-500 dark:text-gray-400">No data plans found matching your criteria.</p>
+              <div className="text-center py-6">
+                <p className="text-gray-500 dark:text-gray-400">
+                  {selectedNetwork 
+                    ? "No data plans found for this category" 
+                    : "Please select a network provider"}
+                </p>
               </div>
-            )}
-          </div>
-        )}
-
-        {/* Phone Number Input */}
-        <div>
-          <label className="block text-lg font-semibold text-gray-900 dark:text-white mb-3">
-            Phone Number
-          </label>
-          <div className="relative">
-            <input
-              type="tel"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              placeholder="Enter phone number"
-              className="w-full px-4 py-4 pr-12 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F9D58] focus:border-transparent"
-            />
-            <div className="absolute right-4 top-1/2 transform -translate-y-1/2">
-              <User size={20} className="text-[#0F9D58]" />
+            )
+          ) : (
+            <div className="text-center py-6">
+              <p className="text-gray-500 dark:text-gray-400">Please select a network provider</p>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Data Balance Check Codes */}
@@ -804,7 +727,7 @@ const DataServicePage: React.FC = () => {
           <details className="group">
             <summary className="flex items-center justify-between cursor-pointer list-none">
               <div className="flex items-center">
-                <Info size={16} className="text-[#0F9D58] mr-2" />
+                <Info size={16} className="text-[#2C204D] mr-2" />
                 <span className="font-medium text-gray-900 dark:text-white">Codes for Data Balance Check</span>
               </div>
               <div className="transition-transform group-open:rotate-180">
@@ -827,7 +750,7 @@ const DataServicePage: React.FC = () => {
 
         {/* Selected Plan Summary */}
         {selectedPlan && (
-          <div className="bg-[#0F9D58]/10 rounded-xl p-4 border border-[#0F9D58]/20">
+          <div className="bg-[#2C204D]/10 rounded-xl p-4 border border-[#2C204D]/20">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Selected Plan</h3>
             <div className="flex justify-between items-center">
               <div>
@@ -840,54 +763,18 @@ const DataServicePage: React.FC = () => {
                     -{selectedPlan.discount_percentage}% OFF
                   </span>
                 )}
-                <p className="font-bold text-[#0F9D58] text-lg">{formatCurrency(selectedPlan.selling_price)}</p>
+                <p className="font-bold text-[#2C204D] text-lg">{formatCurrency(selectedPlan.selling_price)}</p>
               </div>
             </div>
           </div>
         )}
-
-        {/* Save as Beneficiary Toggle */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-2">
-            <span className="text-lg font-semibold text-gray-900 dark:text-white">
-              Save as Beneficiary
-            </span>
-            <button
-              onClick={() => setSaveAsBeneficiary(!saveAsBeneficiary)}
-              className={`relative inline-flex h-8 w-14 items-center rounded-full transition-colors ${
-                saveAsBeneficiary ? 'bg-[#0F9D58]' : 'bg-gray-300 dark:bg-gray-600'
-              }`}
-            >
-              <span
-                className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
-                  saveAsBeneficiary ? 'translate-x-7' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-          
-          {saveAsBeneficiary && (
-            <div className="animate-fade-in">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Beneficiary Name
-              </label>
-              <input
-                type="text"
-                value={beneficiaryName}
-                onChange={(e) => setBeneficiaryName(e.target.value)}
-                placeholder="Enter a name for this beneficiary"
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F9D58] focus:border-transparent"
-              />
-            </div>
-          )}
-        </div>
 
         {/* Continue Button */}
         <div className="p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
           <Button
             onClick={handleContinue}
             disabled={!selectedNetwork || !selectedPlan || !phoneNumber || (saveAsBeneficiary && !beneficiaryName)}
-            className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-[#2C204D] hover:bg-[#3A2B61] text-white py-4 rounded-xl font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Continue
           </Button>
@@ -979,7 +866,7 @@ const DataServicePage: React.FC = () => {
             <Button
               onClick={handlePayment}
               isLoading={isLoading}
-              className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white py-3"
+              className="flex-1 bg-[#2C204D] hover:bg-[#3A2B61] text-white py-3"
             >
               Pay Now
             </Button>
@@ -994,8 +881,8 @@ const DataServicePage: React.FC = () => {
       <Card className="w-full max-w-md p-6 text-center">
         {isSuccess ? (
           <>
-            <div className="w-16 h-16 bg-[#0F9D58]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CheckCircle className="text-[#0F9D58]" size={32} />
+            <div className="w-16 h-16 bg-[#2C204D]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <CheckCircle className="text-[#2C204D]" size={32} />
             </div>
             
             <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">Purchase Successful!</h2>
@@ -1063,7 +950,7 @@ const DataServicePage: React.FC = () => {
                   setTransaction(null);
                   setErrorMessage('');
                 }}
-                className="flex-1 bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+                className="flex-1 bg-[#2C204D] hover:bg-[#3A2B61] text-white"
               >
                 Buy Again
               </Button>
@@ -1095,7 +982,7 @@ const DataServicePage: React.FC = () => {
                 setIsSuccess(null);
                 setErrorMessage('');
               }}
-              className="w-full bg-[#0F9D58] hover:bg-[#0d8a4f] text-white"
+              className="w-full bg-[#2C204D] hover:bg-[#3A2B61] text-white"
             >
               Try Again
             </Button>
