@@ -10,13 +10,13 @@ type SuccessModalProps = {
   className?: string;
 };
 
-const SuccessModal: React.FC<SuccessModalProps> = ({
+function SuccessModal({
   show,
   title,
   message,
   onClose,
   className,
-}) => {
+}: SuccessModalProps) {
   // Close modal when Escape key is pressed
   useEffect(() => {
     const handleEscKey = (event: KeyboardEvent) => {
@@ -85,6 +85,6 @@ const SuccessModal: React.FC<SuccessModalProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default SuccessModal;
