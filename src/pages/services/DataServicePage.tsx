@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, ArrowLeft, CheckCircle, XCircle, User, Search, Filter, Star, Download, Info, Plus } from 'lucide-react';
+import { Zap, ArrowLeft, CheckCircle, XCircle, Search, Filter, Star, Download, Info, Plus } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import Card from '../../components/ui/Card';
 import Button from '../../components/ui/Button';
@@ -82,7 +82,7 @@ const DataServicePage: React.FC = () => {
   const { user, updateWalletBalance } = useAuthStore();
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedNetwork, setSelectedNetwork] = useState('');
+  const [selectedNetwork, setSelectedNetwork] = useState('MTN');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [selectedPlan, setSelectedPlan] = useState<DataPlan | null>(null);
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -236,9 +236,6 @@ const DataServicePage: React.FC = () => {
     } else if (selectedDurationTab === 'Monthly') {
       matchesDuration = plan.validity.toLowerCase().includes('30 day') || 
                         plan.validity.toLowerCase().includes('month');
-    } else if (selectedDurationTab === 'XtraValue') {
-      matchesDuration = plan.plan_type.toLowerCase().includes('xtra') || 
-                        plan.description.toLowerCase().includes('xtra');
     }
     
     return matchesNetwork && matchesCategory && matchesSearch && matchesDuration;
@@ -571,19 +568,6 @@ const DataServicePage: React.FC = () => {
                 className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#2C204D]"
               />
             </div>
-            
-            <button 
-              className="w-10 h-10 bg-[#2C204D] rounded-full flex items-center justify-center"
-              onClick={() => {
-                // This would typically open contacts or similar functionality
-                // For now, just show beneficiaries if available
-                if (beneficiaries.length > 0) {
-                  setShowBeneficiaries(!showBeneficiaries);
-                }
-              }}
-            >
-              <User size={18} className="text-white" />
-            </button>
           </div>
           
           {/* Beneficiaries Dropdown */}
@@ -646,7 +630,7 @@ const DataServicePage: React.FC = () => {
           
           {/* Duration Tabs */}
           <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4">
-            {['HOT', 'Daily', 'Weekly', 'Monthly', 'XtraValue'].map((tab) => (
+            {['HOT', 'Weekly', 'Monthly'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setSelectedDurationTab(tab)}
