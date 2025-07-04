@@ -1,15 +1,8 @@
 import React from 'react';
 import { Phone, Wifi, Zap, BookOpen, DollarSign, ShoppingBag } from 'lucide-react';
-import { useServiceConfigStore } from '../../store/serviceConfigStore';
 import ServiceCard from './ServiceCard';
 
 const QuickActionSection: React.FC = () => {
-  const { config: serviceConfig } = useServiceConfigStore();
-  
-  const getServiceStatus = (serviceId: string) => {
-    return serviceConfig[serviceId] || 'active';
-  };
-  
   const services = [
     {
       title: 'Airtime',
@@ -55,21 +48,11 @@ const QuickActionSection: React.FC = () => {
     },
   ];
 
-  // Filter services based on their status
-  const filteredServices = services.filter(service => {
-    const status = getServiceStatus(service.path.split('/').pop() || '');
-    return status !== 'disabled';
-  });
-
-  // Check if "More" button should be shown
-  const showMoreButton = getServiceStatus('more') !== 'disabled';
-
   return (
     <div className="my-6">
       <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
-      
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {filteredServices.map((service) => (
+        {services.map((service) => (
           <ServiceCard
             key={service.title}
             title={service.title}
@@ -80,18 +63,6 @@ const QuickActionSection: React.FC = () => {
           />
         ))}
       </div>
-      
-      {/* Only show the "More" button if it's not disabled */}
-      {showMoreButton && filteredServices.length > 0 && (
-        <div className="text-center mt-4">
-          <a 
-            href="/services" 
-            className="inline-block text-primary-500 hover:text-primary-600 font-medium"
-          >
-            View More Services →
-          </a>
-        </div>
-      )}
     </div>
   );
 };
