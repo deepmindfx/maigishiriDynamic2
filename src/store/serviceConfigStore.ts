@@ -48,9 +48,7 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
   updateServiceStatus: async (service: string, status: ServiceStatus) => {
     try {
       const key = `service_${service}_status`;
-      
-      console.log(`Updating service status: ${service} to ${status}`);
-      
+            
       // Check if the setting already exists
       const { data: existingSetting, error: checkError } = await supabase
         .from('admin_settings')
@@ -63,9 +61,12 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
       if (existingSetting) {
         // Update existing setting
         const { error } = await supabase
-          .from('admin_settings')
-          .update({ value: status })
-          .eq('id', existingSetting.id); // Use the actual ID from the database
+          .from("admin_settings")
+          .update({ 
+            value: status,
+            updated_at: new Date().toISOString() 
+          })
+          .eq("id", existingSetting.id);
           
         if (error) throw error;
       } else {
@@ -82,12 +83,14 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
       }
       
       // Update local state
-      set(state => ({
+      set((state) => ({
         config: {
           ...state.config,
           [service]: status
         }
       }));
+      
+      return true;
     } catch (error) {
       console.error(`Error updating ${service} status:`, error);
       throw error;
