@@ -177,9 +177,9 @@ const DashboardPage: React.FC = () => {
   //const { config: serviceConfig, fetchConfig } = useServiceConfigStore();
   //const { siteName } = useAppSettingsStore();
   //const [showBalance, setShowBalance] = useState(true);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return document.documentElement.classList.contains('dark');
-  });
+  //const [isDarkMode, setIsDarkMode] = useState(() => {
+    //return document.documentElement.classList.contains('dark');
+  //});
 
   useEffect(() => {
     fetchConfig();
