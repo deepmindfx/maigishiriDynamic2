@@ -38,6 +38,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useServiceConfigStore } from '../../store/serviceConfigStore';
 import { useAuthStore } from '../../store/authStore';
 import { useServiceConfigStore, ServiceStatus } from '../../store/serviceConfigStore';
 
@@ -52,6 +53,7 @@ const AdminSettings: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const { config: serviceConfig, fetchConfig, updateServiceStatus } = useServiceConfigStore();
+  const { fetchConfig } = useServiceConfigStore();
   const [settings, setSettings] = useState<AdminSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -326,6 +328,9 @@ const AdminSettings: React.FC = () => {
     setSavingService(service);
     try {
       await updateServiceStatus(service, status);
+      
+      // Refresh service config to update UI
+      fetchConfig();
       
       // Log admin action
       await supabase.from('admin_logs').insert([{

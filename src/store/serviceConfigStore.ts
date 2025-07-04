@@ -27,7 +27,7 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
       const { data, error } = await supabase
         .from('admin_settings')
         .select('key, value')
-        .like('key', 'service_%_status');
+        .or('key.like.service_%_status,key.eq.service_more_status');
 
       if (error) throw error;
 
@@ -48,6 +48,8 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
   updateServiceStatus: async (service: string, status: ServiceStatus) => {
     try {
       const key = `service_${service}_status`;
+      
+      console.log(`Updating service status: ${service} to ${status}`);
       
       // Check if the setting already exists
       const { data: existingSetting, error: checkError } = await supabase
