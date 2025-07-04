@@ -134,7 +134,7 @@ const HomePage: React.FC = () => {
         });
 
         // Use siteName as fallback for footer_company_name
-        if (!settings.footer_company_name) {
+            steps_title: settings.steps_title?.replace('Maigishiri Dynamic', siteName) || `3 Simple Steps to Enjoy ${siteName}.`
           settings.footer_company_name = siteName;
         }
 
