@@ -554,12 +554,12 @@ const DataServicePage: React.FC = () => {
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Data Plans</h2>
           
           {/* Duration Tabs */}
-          <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4">
+          <div className="flex overflow-x-auto scrollbar-hide space-x-1 border-b border-gray-200 dark:border-gray-700 mb-4 pb-1">
             {['HOT', 'Daily', 'Weekly', 'Monthly', 'XtraValue'].map((tab) => (
               <button
                 key={tab}
                 onClick={() => setSelectedDurationTab(tab)}
-                className={`px-4 py-2 text-sm font-medium whitespace-nowrap ${
+                className={`px-3 py-2 text-xs sm:text-sm font-medium whitespace-nowrap ${
                   selectedDurationTab === tab 
                     ? 'text-[#2C204D] border-b-2 border-[#2C204D]' 
                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
@@ -577,19 +577,19 @@ const DataServicePage: React.FC = () => {
             </div>
           ) : selectedNetwork ? (
             filteredPlans.length > 0 ? (
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {filteredPlans.map((plan) => (
                   <div
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`rounded-xl p-4 cursor-pointer transition-all ${
+                    className={`rounded-xl p-3 sm:p-4 cursor-pointer transition-all ${
                       selectedPlan?.id === plan.id
                         ? 'bg-[#2C204D]/10 border-2 border-[#2C204D]'
                         : 'bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600'
                     }`}
                   >
-                    <div className="mb-2">
-                      <h3 className="text-lg font-bold text-gray-900 dark:text-white">{plan.size}</h3>
+                    <div className="mb-1 sm:mb-2">
+                      <h3 className="text-base sm:text-lg font-bold text-gray-900 dark:text-white">{plan.size}</h3>
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         {plan.description || `Valid for ${plan.validity}`}
                       </p>
@@ -599,9 +599,9 @@ const DataServicePage: React.FC = () => {
                       <div className="bg-[#2C204D]/10 px-2 py-1 rounded text-xs">
                         <span className="text-[#2C204D] font-medium">{plan.validity}</span>
                       </div>
-                      <div className="text-right">
-                        <p className="text-lg font-bold text-[#2C204D]">
-                          ₦{plan.selling_price}
+                      <div className="text-right flex flex-col">
+                        <p className="text-base sm:text-lg font-bold text-[#2C204D]">
+                          {formatCurrency(plan.selling_price)}
                         </p>
                       </div>
                     </div>
@@ -659,7 +659,7 @@ const DataServicePage: React.FC = () => {
 
         {/* Selected Plan Summary */}
         {selectedPlan && (
-          <div className="bg-[#2C204D]/10 rounded-xl p-4 border border-[#2C204D]/20">
+          <div className="bg-[#2C204D]/10 rounded-xl p-3 sm:p-4 border border-[#2C204D]/20">
             <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Selected Plan</h3>
             <div className="flex justify-between items-center">
               <div>
@@ -672,7 +672,7 @@ const DataServicePage: React.FC = () => {
                     -{selectedPlan.discount_percentage}% OFF
                   </span>
                 )}
-                <p className="font-bold text-[#2C204D] text-lg">{formatCurrency(selectedPlan.selling_price)}</p>
+                <p className="font-bold text-[#2C204D] text-base sm:text-lg">{formatCurrency(selectedPlan.selling_price)}</p>
               </div>
             </div>
           </div>
