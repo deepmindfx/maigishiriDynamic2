@@ -253,9 +253,9 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Services Grid */}
-      <div className="px-4 py-4">
+      <div className="px-4 py-2">
         {/* Main Services */}
-        <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+        <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
           {filteredMainServices.map((service, index) => (
             <button
               key={index}
