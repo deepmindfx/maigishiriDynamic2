@@ -172,7 +172,7 @@ const DashboardPage: React.FC = () => {
       comingSoon: status === 'coming_soon'
     };
   });
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const { user } = useAuthStore();
   const { config: serviceConfig, fetchConfig } = useServiceConfigStore();
   const { siteName } = useAppSettingsStore();
