@@ -337,14 +337,6 @@ const ProductDetailPage: React.FC = () => {
       
       {/* This is a spacer to prevent content from being hidden behind the fixed buttons */}
       <div className="h-16"></div>
-        <button
-          onClick={handleAddToCart}
-          disabled={!isAuthenticated || !product.in_stock}
-          className="w-full py-3 bg-red-500 text-white rounded-full font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Add to Cart
-        </button>
-      </div>
 
       {/* Transaction PIN Modal */}
       <TransactionPinModal
