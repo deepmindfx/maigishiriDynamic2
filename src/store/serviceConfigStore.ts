@@ -27,8 +27,7 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
       const { data, error } = await supabase
         .from('admin_settings')
         .select('key, value')
-        .like('key', 'service_%_status')
-        .order('key');
+        .like('key', 'service_%_status');
 
       if (error) throw error;
 
@@ -50,19 +49,35 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
     try {
       const key = `service_${service}_status`;
       
-      // Upsert the setting (update if exists, insert if not)
-      const { error } = await supabase
+      // Check if the setting already exists
+      const { data: existingSetting, error: checkError } = await supabase
         .from('admin_settings')
-        .upsert([{ 
-          key, 
-          value: status,
-          description: `Status for ${service} service: active, disabled, or coming_soon`,
-          updated_at: new Date().toISOString()
-        }], {
-          onConflict: 'key'
-        });
-        
-      if (error) throw error;
+        .select('id')
+        .eq('key', key)
+        .maybeSingle();
+      
+      if (checkError) throw checkError;
+      
+      if (existingSetting) {
+        // Update existing setting
+        const { error } = await supabase
+          .from('admin_settings')
+          .update({ value: status })
+          .eq('id', existingSetting.id); // Use the actual ID from the database
+          
+        if (error) throw error;
+      } else {
+        // Insert new setting
+        const { error } = await supabase
+          .from('admin_settings')
+          .insert([{ 
+            key, 
+            value: status,
+            description: `Status for ${service} service: active, disabled, or coming_soon`
+          }]);
+          
+        if (error) throw error;
+      }
       
       // Update local state
       set(state => ({
