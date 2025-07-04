@@ -38,9 +38,8 @@ import {
   LogOut
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { useServiceConfigStore } from '../../store/serviceConfigStore';
-import { useAuthStore } from '../../store/authStore';
 import { useServiceConfigStore, ServiceStatus } from '../../store/serviceConfigStore';
+import { useAuthStore } from '../../store/authStore';
 
 type AdminSetting = {
   id: string;
