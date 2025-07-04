@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Shield, Zap, Users, Star } from 'lucide-react';
 import Button from '../components/ui/Button';
-import { Card } from '../components/ui/Card';
+import Card from '../components/ui/Card';
 
 const HomePage: React.FC = () => {
   return (
