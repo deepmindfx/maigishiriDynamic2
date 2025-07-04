@@ -52,7 +52,6 @@ const AdminSettings: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
   const { config: serviceConfig, fetchConfig, updateServiceStatus } = useServiceConfigStore();
-  const { fetchConfig } = useServiceConfigStore();
   const [settings, setSettings] = useState<AdminSetting[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
