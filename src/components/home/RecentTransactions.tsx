@@ -83,7 +83,7 @@ const RecentTransactions: React.FC = () => {
                       {isDebit(transaction.type) ? (
                         <ArrowUpRight className={isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'} size={20} />
                       ) : (
-                        <ArrowDownRight className="text-primary-500" size={20} />
+                        <ArrowDownRight className="text-success-500" size={20} />
                       )}
                     </div>
                     
@@ -103,15 +103,9 @@ const RecentTransactions: React.FC = () => {
                     }`}>
                       {isDebit(transaction.type) ? '-' : '+'}{formatCurrency(transaction.amount)}
                     </p>
-                    <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      transaction.status === 'success' 
-                        ? 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300'
-                        : transaction.status === 'pending'
-                        ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300'
-                        : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300'
-                    }`}>
+                    <Badge variant={getStatusColor(transaction.status) as any} className="text-xs">
                       {transaction.status}
-                    </span>
+                    </Badge>
                   </div>
                 </div>
               </div>

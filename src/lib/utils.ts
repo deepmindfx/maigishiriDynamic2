@@ -44,7 +44,7 @@ export function getStatusColor(status: string): string {
   switch (status.toLowerCase()) {
     case 'success':
     case 'delivered':
-      return 'primary';
+      return 'success';
     case 'pending':
     case 'processing':
       return 'warning';

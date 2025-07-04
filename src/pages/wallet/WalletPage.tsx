@@ -211,7 +211,7 @@ const WalletPage: React.FC = () => {
                     className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center ${
                       isDebit(transaction.type)
                         ? 'bg-error-500 bg-opacity-10'
-                        : 'bg-primary-500 bg-opacity-10'
+                        : 'bg-success-500 bg-opacity-10'
                     }`}
                   >
                     {isDebit(transaction.type) ? (
@@ -220,7 +220,7 @@ const WalletPage: React.FC = () => {
                         size={20}
                       />
                     ) : (
-                      <ArrowDownRight className="text-primary-500" size={20} />
+                      <ArrowDownRight className="text-success-500" size={20} />
                     )}
                   </div>
                   
@@ -236,7 +236,7 @@ const WalletPage: React.FC = () => {
                   <div className="text-right">
                     <p
                       className={`text-sm font-medium ${
-                        isDebit(transaction.type) ? 'text-error-500' : 'text-primary-500'
+                        isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'
                       }`}
                     >
                       {isDebit(transaction.type) ? '-' : '+'}
