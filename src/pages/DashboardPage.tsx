@@ -253,7 +253,7 @@ const DashboardPage: React.FC = () => {
       </div>
 
       {/* Services Grid */}
-      <div className="px-4 py-6">
+      <div className="px-4 py-4">
         {/* Main Services */}
         <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           {filteredMainServices.map((service, index) => (
