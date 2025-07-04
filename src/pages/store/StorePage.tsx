@@ -150,60 +150,6 @@ const StorePage: React.FC = () => {
       </div>
 
       <div className="p-4 space-y-6">
-        {/* Recommendation Section */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-medium text-gray-900 dark:text-white">Recommendation</h2>
-            <button className="p-1">
-              <Grid2X2 size={18} className="text-gray-500" />
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            {featuredProducts.map((product, index) => (
-              <div 
-                key={product.id} 
-                className={`rounded-2xl overflow-hidden ${bgColors[index % bgColors.length]}`}
-                onClick={() => navigate(`/store/product/${product.id}`)}
-              >
-                <div className="p-3 relative">
-                  <button className="absolute top-2 right-2 z-10 w-6 h-6 flex items-center justify-center rounded-full border border-red-500 bg-white">
-                    <Heart size={14} className="text-red-500" />
-                  </button>
-                  
-                  <div className="aspect-square rounded-xl overflow-hidden bg-white mb-2">
-                    <img
-                      src={product.image_url}
-                      alt={product.name}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = 'https://images.pexels.com/photos/163100/circuit-circuit-board-resistor-computer-163100.jpeg';
-                      }}
-                    />
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    <h3 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
-                      {product.name}
-                    </h3>
-                    <p className="text-base font-bold text-[#2C204D]">
-                      ${product.price.toFixed(2)}
-                    </p>
-                    <div className="flex justify-between items-center mt-1">
-                      <span className="text-xs text-gray-500">
-                        {product.in_stock ? 'In Stock' : 'Out of Stock'}
-                      </span>
-                      <button className="bg-gray-900 text-white text-xs px-3 py-1 rounded-full">
-                        Buy
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* All Products Section */}
         {filteredProducts.length > 0 && (
@@ -246,7 +192,7 @@ const StorePage: React.FC = () => {
                         {product.name}
                       </h3>
                       <p className="text-base font-bold text-[#2C204D]">
-                        ${product.price.toFixed(2)}
+                        ₦{product.price.toFixed(2)}
                       </p>
                       <div className="flex justify-between items-center mt-1">
                         <span className="text-xs text-gray-500">

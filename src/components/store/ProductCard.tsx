@@ -79,7 +79,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.name}
           </h3>
           <p className="text-base font-bold text-primary-500">
-            {formatCurrency(product.price)}
+            ₦{product.price.toFixed(2)}
           </p>
           <div className="flex justify-between items-center mt-1">
             <span className="text-xs text-gray-500">

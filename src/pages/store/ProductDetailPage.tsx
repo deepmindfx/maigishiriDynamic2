@@ -52,7 +52,6 @@ const ProductDetailPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showPinModal, setShowPinModal] = useState(false);
   const [showSetPinModal, setShowSetPinModal] = useState(false);
-  const [selectedSize, setSelectedSize] = useState('M');
 
   useEffect(() => {
     if (id) {
@@ -290,7 +289,7 @@ const ProductDetailPage: React.FC = () => {
           {/* Price */}
           <div>
             <p className="text-2xl font-bold text-[#0F9D58]">
-              ${product.price.toFixed(2)}
+              ₦{product.price.toFixed(2)}
             </p>
           </div>
 
@@ -299,28 +298,6 @@ const ProductDetailPage: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400 text-sm">
               {product.description}
             </p>
-          </div>
-
-          {/* Size Selection */}
-          <div>
-            <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Select Size
-            </p>
-            <div className="flex space-x-3">
-              {['XL', 'L', 'M', 'S'].map((size) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`w-10 h-10 flex items-center justify-center rounded-lg border ${
-                    selectedSize === size 
-                      ? 'bg-gray-900 text-white border-gray-900' 
-                      : 'bg-white text-gray-900 border-gray-300'
-                  }`}
-                >
-                  {size}
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Authentication Notice */}
@@ -338,7 +315,28 @@ const ProductDetailPage: React.FC = () => {
       </div>
 
       {/* Fixed Add to Cart Button */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+      <div className="fixed bottom-16 left-0 right-0 p-4 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex space-x-3">
+          <Button
+            onClick={handleAddToCart}
+            disabled={!isAuthenticated || !product.in_stock}
+            className="flex-1 bg-[#2C204D] text-white py-3 rounded-xl"
+          >
+            Add to Cart
+          </Button>
+          
+          <Button
+            onClick={handleBuyNow}
+            disabled={!isAuthenticated || !product.in_stock}
+            className="flex-1 bg-red-500 text-white py-3 rounded-xl"
+          >
+            Buy Now
+          </Button>
+        </div>
+      </div>
+      
+      {/* This is a spacer to prevent content from being hidden behind the fixed buttons */}
+      <div className="h-16"></div>
         <button
           onClick={handleAddToCart}
           disabled={!isAuthenticated || !product.in_stock}
