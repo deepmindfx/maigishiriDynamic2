@@ -467,6 +467,7 @@ const AdminSettings: React.FC = () => {
     { id: 'airtime', name: 'Airtime Recharge', description: 'Buy airtime for any network instantly' },
     { id: 'data', name: 'Data Bundles', description: 'Purchase data plans for any network' },
     { id: 'electricity', name: 'Electricity Bills', description: 'Pay electricity bills for any DISCO' },
+    { id: 'more', name: 'More Button', description: 'Control visibility of the "More" button in the dashboard' },
     { id: 'tv', name: 'TV Subscriptions', description: 'Pay for DSTV, GOTV, and Startimes' },
     { id: 'waec', name: 'WAEC Scratch Cards', description: 'Purchase WAEC scratch cards instantly' },
     { id: 'voucher', name: 'Redeem Voucher', description: 'Redeem vouchers and gift cards' },

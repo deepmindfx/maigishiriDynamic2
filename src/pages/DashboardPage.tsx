@@ -149,7 +149,7 @@ const DashboardPage: React.FC = () => {
   // Filter services based on their status
   const filteredMainServices = mainServices.filter(service => {
     const status = getServiceStatus(service.id);
-    return status !== 'disabled';
+    return status !== 'disabled'; 
   }).map(service => {
     const status = getServiceStatus(service.id);
     return {
@@ -160,7 +160,7 @@ const DashboardPage: React.FC = () => {
 
   const filteredSecondaryServices = secondaryServices.filter(service => {
     const status = getServiceStatus(service.id);
-    return status !== 'disabled';
+    return status !== 'disabled'; 
   }).map(service => {
     const status = getServiceStatus(service.id);
     return {
