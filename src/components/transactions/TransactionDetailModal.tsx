@@ -1,6 +1,6 @@
 import React from 'react';
 import { Download, X, CheckCircle, XCircle, Clock } from 'lucide-react';
-import { formatCurrency, formatDateTime, getStatusColor } from '../../lib/utils';
+import { formatCurrency, formatDateTime } from '../../lib/utils';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 
@@ -49,7 +49,7 @@ const getTransactionLabel = (type: string, details: any) => {
 const getStatusIcon = (status: string) => {
   switch (status) {
     case 'success':
-      return <CheckCircle className="text-green-500" size={20} />;
+      return <CheckCircle className="text-primary-500" size={20} />;
     case 'pending':
       return <Clock className="text-yellow-500" size={20} />;
     case 'failed':
@@ -61,6 +61,19 @@ const getStatusIcon = (status: string) => {
 
 const isDebit = (type: string) => {
   return ['airtime', 'data', 'electricity', 'waec', 'product_purchase'].includes(type);
+};
+
+const getStatusBadgeColor = (status: string) => {
+  switch (status) {
+    case 'success':
+      return 'bg-primary-100 text-primary-800 dark:bg-primary-900/30 dark:text-primary-300';
+    case 'pending':
+      return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300';
+    case 'failed':
+      return 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300';
+    default:
+      return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300';
+  }
 };
 
 const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
@@ -275,14 +288,14 @@ const TransactionDetailModal: React.FC<TransactionDetailModalProps> = ({
           <div className="flex justify-between items-center bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Status</p>
-              <Badge variant={getStatusColor(transaction.status) as any} className="mt-1">
+              <span className={`inline-flex px-2.5 py-0.5 rounded-full text-xs font-medium mt-1 ${getStatusBadgeColor(transaction.status)}`}>
                 {transaction.status.toUpperCase()}
-              </Badge>
+              </span>
             </div>
             <div className="text-right">
               <p className="text-sm text-gray-500 dark:text-gray-400">Amount</p>
               <p className={`text-xl font-bold ${
-                isDebit(transaction.type) ? 'text-error-500' : 'text-success-500'
+                isDebit(transaction.type) ? 'text-error-500' : 'text-primary-500'
               }`}>
                 {isDebit(transaction.type) ? '-' : '+'}
                 {formatCurrency(transaction.amount)}
