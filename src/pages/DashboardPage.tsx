@@ -175,7 +175,7 @@ const DashboardPage: React.FC = () => {
   //const navigate = useNavigate();
   //const { user } = useAuthStore();
   //const { config: serviceConfig, fetchConfig } = useServiceConfigStore();
-  const { siteName } = useAppSettingsStore();
+  //const { siteName } = useAppSettingsStore();
   const [showBalance, setShowBalance] = useState(true);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');
