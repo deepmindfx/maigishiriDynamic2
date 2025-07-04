@@ -322,10 +322,17 @@ const AdminSettings: React.FC = () => {
     setFormData(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleServiceStatusChange = async (service: string, status: ServiceStatus) => {
+        try {
+          await updateServiceStatus(service, status);
+        } catch (error) {
+          console.error(`Error updating ${service} status:`, error);
+        }
     setSavingService(service);
     try {
       await updateServiceStatus(service, status);
+      
+      // Refresh the service config after saving
+      await fetchConfig();
       
       // Log admin action
       await supabase.from('admin_logs').insert([{
@@ -470,6 +477,7 @@ const AdminSettings: React.FC = () => {
     { id: 'support', name: 'Support Tickets', description: 'Customer support ticket system' },
     { id: 'refer', name: 'Refer & Earn', description: 'Referral program for users' },
     { id: 'store', name: 'E-commerce Store', description: 'Online shopping for products' },
+    { id: 'more', name: 'More Button', icon: <MoreHorizontal size={20} /> },
   ];
 
   // Function to determine if a setting should be shown based on dependencies
