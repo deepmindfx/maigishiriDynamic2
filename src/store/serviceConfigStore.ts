@@ -27,7 +27,7 @@ export const useServiceConfigStore = create<ServiceConfigState>((set, get) => ({
       const { data, error } = await supabase
         .from('admin_settings')
         .select('key, value')
-        .or('key.like.service_%_status,key.eq.service_more_status');
+        .like('key', 'service_%_status');
 
       if (error) throw error;
 
