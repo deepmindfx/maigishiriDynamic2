@@ -942,7 +942,7 @@ const TransactionsManagement: React.FC = () => {
                   disabled={page === '...'}
                   className={`px-3 py-1 rounded-md ${
                     page === currentPage
-                      ? 'bg-[#0F9D58] text-white'
+                      ? 'bg-[#2C204D] text-white'
                       : 'border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300'
                   } ${page === '...' ? 'cursor-default' : ''}`}
                 >
